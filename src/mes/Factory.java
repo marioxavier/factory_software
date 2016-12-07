@@ -17,6 +17,8 @@ public class Factory {
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
+    private int numberOfConveyors;
+    private int activeSensors;
     
     
     /**
@@ -338,5 +340,67 @@ public class Factory {
         // if nb error ocurred
         else
             return true;
+    }
+    
+    /**
+     * Updates the number of conveyors
+     * @param updateOperation
+     * @return 
+     */
+    public boolean updateNumberOfConveyors(String updateOperation)
+    {
+        // if no update operation was given
+        if (null == updateOperation)
+        {
+            System.out.println("No update operation was given.\n");
+            return false;
+        }
+        // if a update operation was given
+        else
+            switch(updateOperation)
+            {
+                case "+": 
+                    // increments number of conveyors
+                    numberOfConveyors += 1;
+                    return true;
+                    
+                case "-":
+                    // decrements number of conveyors
+                    numberOfConveyors -= 1;
+                    return true;
+                    
+                default:
+                    System.out.println("Update operation not recognized.\n");
+                    return false;
+            }
+    }
+    
+    /**
+     * Gets the number of conveyors
+     * @return 
+     */
+    public int getNumberOfConveyors()
+    {
+        return numberOfConveyors;
+    }
+    
+    public boolean updateActiveSensores(Conveyor[] conveyors)
+    {
+        // if no array of conveyors was given
+        if (null == conveyors)
+        {
+            System.out.println("No array of conveyors was given");
+            return false;
+        }
+        // if an array of conveyors was given
+        else
+        {
+            for (Conveyor conveyor : conveyors) 
+            {
+                if ("active".equals(conveyor.getStatus()))
+                    activeSensors += 1; 
+            }
+            return true;
+        }
     }
 }

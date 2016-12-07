@@ -123,4 +123,35 @@ public class Conveyor {
     {
         return type;   
     }
+    
+    /**
+     * 
+     * Sets a conveyor group
+     * @param conveyorGroup
+     * @return 
+     */
+    public boolean setGroup(String conveyorGroup)
+    {
+        // if no conveyorGroup was given
+        if (null == conveyorGroup)
+        {
+            System.out.println("No conveyor group was given.\n");
+            return false;
+        }
+        // if a conveyor group was given
+        else
+        {
+            group = conveyorGroup;
+            return true;
+        }
+    }
+    
+    /**
+     * Gets the conveyor group
+     * @return 
+     */
+    public String getGroup()
+    {
+        return group;   
+    }
 }
