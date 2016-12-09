@@ -20,6 +20,19 @@ public class Factory {
     private int numberOfConveyors;
     private int activeSensors;
     
+    // Alteração do Nuno
+    private char[] factoryData;
+    private Monitor factoryMonitor;
+    
+    
+    
+    
+    
+    public Factory(Protocol protocol, Monitor factoryMonitor)
+    {
+        
+    }
+    
     
     /**
      * Initializes factory
@@ -32,6 +45,9 @@ public class Factory {
         this.addTransport(this);
         status = true;
         return status;
+        
+        //Alteração do Nuno
+        
     }
     
     /**
@@ -104,7 +120,7 @@ public class Factory {
      * @param machineIndex
      * @return 
      */
-    public Machine getConveyor(Machine[] machines, int machineIndex)
+    public Machine getMachine(Machine[] machines, int machineIndex)
     {
         // if no machine array was given
         if (null == machines)
@@ -402,5 +418,12 @@ public class Factory {
             }
             return true;
         }
+    }
+    
+    
+    public void readFactory()
+    {
+        Monitor.readSensors();
+        
     }
 }
