@@ -11,7 +11,7 @@ package mes;
  */
 public class Conveyor {
     
-    public int ID;
+    public String ID;
     private String type;
     private String group;
     private String status;

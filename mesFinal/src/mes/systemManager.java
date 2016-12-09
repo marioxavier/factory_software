@@ -25,6 +25,9 @@ public class systemManager
         Monitor factoryMonitor;
         Modbus protocolToPLC;
         UDP protocolToERP;
+        Factory virtualFactory;
+        
+        
         // creates UDP protocol object
         //protocolToERP = new Protocol();
         // error creating protocol to ERP
@@ -35,8 +38,8 @@ public class systemManager
         
         // creates Modbus protocol object
         protocolToPLC = new Modbus();
-        factoryMonitor = new Monitor(protocolToPLC); 
-        
+        virtualFactory = new Factory();
+        factoryMonitor = new Monitor(protocolToPLC, virtualFactory); 
         // error creating protocol to PLC
         if (protocolToPLC == null)
         {
@@ -51,33 +54,61 @@ public class systemManager
         
         protocolToPLC.openConnection();
         
-        // Tests the monitor readSensors() method
-        System.out.println(factoryMonitor.readSensors());
+        
+        
+        
         
 
+        //  Testes do NUNO a partir daqui
+        
+        
+        /*
+        Conveyor Conveyor1, Conveyor2;
+        
+        Conveyor1 = new Conveyor("transport","linear","04");
+        Conveyor2 = new Conveyor("transport","slide","010");
+        
+        
+        
+        Conveyor[] conveyorArray = new Conveyor[2]; 
+        conveyorArray[0]=Conveyor1;
+        conveyorArray[1]=Conveyor2;
+        
+        factoryMonitor.updateTransportConveyors(conveyorArray);
+        
+        
+        
+        */
+        
 
         
-        /* Tests the writeModbus Function
+        
+        //Tests the monitor readSensors() method
+        
+        /*
+        factoryMonitor.readSensors();
+        System.out.println(factoryMonitor.getInputData());
+        */
+
         
         
+
+        // ************  HOW TO PLACE A BLOCK IN FACTORY ****************
+        
+        /*
         // creating a bit vector of size 8
         BitVector b = new BitVector(8);
         
+        //b.setBit(3, true);
         
         // setting all bits to 1
-        int i=0;
-        do
-        {
-            b.setBit(i,true);
-            i++;
-        }while(i<1);
+
         
         // prints the bit vector
         System.out.println(b.toString());
         
         // prints the result of the function writeModbus (Write Multiple Coils) 
-        System.out.println(protocolToPLC.writeModbus(0,b));
-        
+        System.out.println(protocolToPLC.writeModbus(144,b));
         */
         
 
@@ -85,9 +116,6 @@ public class systemManager
         
 
 
-        
-        
-        
         
         
         
