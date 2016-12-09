@@ -384,6 +384,11 @@ public class Factory {
         return numberOfConveyors;
     }
     
+    /**
+     * Updates the number of active sensors
+     * @param conveyors
+     * @return 
+     */
     public boolean updateActiveSensores(Conveyor[] conveyors)
     {
         // if no array of conveyors was given
@@ -402,5 +407,14 @@ public class Factory {
             }
             return true;
         }
+    }
+    
+    /**
+     * Gets number of active sensors 
+     * @return 
+     */
+    public int getNumberOfActiveSensors()
+    {
+        return activeSensors;
     }
 }
