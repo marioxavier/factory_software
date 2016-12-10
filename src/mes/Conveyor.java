@@ -55,9 +55,11 @@ public class Conveyor {
               case "linear":
                   type = conveyorType;
                   break;
+                  
               case "slide":
                   type = conveyorType;
                   break;
+                  
               default:
                 System.out.println("Conveyor type not recognized.\n");
           }

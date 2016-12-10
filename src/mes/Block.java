@@ -13,9 +13,9 @@ public class Block {
     
     public String ID;
     private String type;
-    private int position;
+    private String position;
     private String status;
-    private int destination;
+    private String destination;
     
     
     public Block()
@@ -82,7 +82,7 @@ public class Block {
      * Gets the block position
      * @return 
      */
-    public int getPosition()
+    public String getPosition()
     {
         return position;
     }
@@ -92,14 +92,14 @@ public class Block {
      * @param blockPosition
      * @return 
      */
-    public boolean setPosition(int blockPosition)
+    public boolean setPosition(String blockPosition)
     {
         position = blockPosition;
         return true;
     }
     
     // gets the block destination
-    public int getDestination()
+    public String getDestination()
     {
         return destination;
     }
@@ -109,10 +109,10 @@ public class Block {
      * @param blockDestination
      * @return 
      */
-    public boolean setDestination(int blockDestination)
+    public boolean setDestination(String blockDestination)
     {
         // if no destination was given
-        if (blockDestination == 0)
+        if (null == blockDestination)
         {
             System.out.println("No destination was given.\n");
             return false;
@@ -132,6 +132,6 @@ public class Block {
     public boolean isDestination()
     {
         // if position is equal to destination returns true
-        return position == destination;
+        return position.equals(destination);
     }
 }
