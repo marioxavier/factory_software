@@ -5,10 +5,14 @@
  */
 package mes;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
+
 /**
  *
  * @author Utilizador
  */
 public class DecisionMaker {
     
+    public int ID;
+   
 }

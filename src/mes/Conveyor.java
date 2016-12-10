@@ -14,7 +14,8 @@ public class Conveyor {
     public int ID;
     private String type;
     private String group;
-    private String status;
+    private boolean isReady;
+    private boolean position;
     
     
       
@@ -68,29 +69,19 @@ public class Conveyor {
      * @param conveyorStatus
      * @return 
      */
-    public boolean updateStatus(String conveyorStatus)
-    {
-        // if no conveyor status was given
-        if (null == conveyorStatus)
-        {
-            System.out.println("No conveyor status was defined.\n");
-            return false;
-        }
-        // if a conveyor status was given
-        else
-        {
-            status = conveyorStatus;
-            return true;
-        }
+    public boolean updateStatus(boolean conveyorStatus)
+    { 
+        isReady = conveyorStatus;
+        return true;
     }
     
     /**
      * Gets conveyor status
      * @return 
      */
-    public String getStatus()
+    public boolean getStatus()
     {
-        return status;
+        return isReady;
     }
     
     /**
