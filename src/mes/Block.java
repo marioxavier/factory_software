@@ -18,8 +18,18 @@ public class Block {
     private String destination;
     
     
-    public Block()
+    public Block(String blockType, String blockDestination)
     {
+        if (null == blockType)
+            System.out.println("block type not sepcified");
+
+        
+        else if (null == blockDestination)
+            System.out.println("block destination not specified");
+        
+        type = blockType;
+        
+        destination = blockDestination;
         
     }
     

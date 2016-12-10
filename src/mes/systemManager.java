@@ -10,6 +10,8 @@ import java.util.*;
 import javax.swing.JOptionPane;
 import net.wimpi.modbus.util.BitVector;
 
+import graphs.*;
+
 /**
  * Classe para gerir o arranque e funcionamento do sistema
  * @author Mário Xavier
@@ -26,7 +28,7 @@ public class systemManager
         Modbus protocolToPLC;
         UDP protocolToERP;
         Factory virtualFactory;
-        
+        Graph graph;
         
         // creates UDP protocol object
         //protocolToERP = new Protocol();
@@ -52,6 +54,11 @@ public class systemManager
             //TO DO
         }
         
+        
+        
+        
+        /*
+        
         if (protocolToPLC.setModbusConnection())
             System.out.println("Modbus connection on.\n");
         else
@@ -61,21 +68,32 @@ public class systemManager
         protocolToPLC.openConnection();
         
         
-        
+        */
         
         
 
         //  Testes do NUNO a partir daqui
         
+        virtualFactory.initFactory();
         
         
-        char[] c = new char[] {'K',0,'V','I',1};
-        
-        String s = "";
-        
+        if(virtualFactory.addConveyors("transport", "linear", 3))
+            System.out.println("ok");
+        else
+            System.out.println("erro_");
+            
 
         
-        System.out.println(s);
+        try
+        {
+        graph = new Graph(virtualFactory.getConveyors("linear"));
+        graph.print();
+        }
+        catch( Exception Ex)
+        {
+            System.out.println("erro");
+        }
+        
         
         
         

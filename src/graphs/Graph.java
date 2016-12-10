@@ -40,8 +40,10 @@ class Vertex
     
     Vertex(Conveyor newConveyor, Neighbor neighbors)
     {
+        System.out.println("entrei no constructor vertex\n");
         this.conveyorVertex = newConveyor;
         this.adjacencyList = neighbors;
+        
     }
 }
 
@@ -60,14 +62,20 @@ public class Graph
     {
         System.out.println("Entrei no graph\n");
         
+        this.adjacencyLists = new Vertex[3];
+        
         // converts conveyors to vertices
-        for (int v = 0; v < adjacencyLists.length; v++) {
+        for (int v = 0; v < 3; v++) 
+        {
             System.out.println("Entrei no for que cria vertices\n");
-            adjacencyLists[v] = new Vertex(conveyors[v], null);
+            this.adjacencyLists[v] = new Vertex(conveyors[v], null);
+            
         }
  
+        System.out.println("saiu do 1 for");
+        
         // read edges
-       for (int v = 0; v < conveyors.length; v++) 
+       for (int v = 0; v < 3; v++) 
        {
            System.out.println("Entrei no for que cria conexões\n");
             // read vertex names and translate to vertex numbers

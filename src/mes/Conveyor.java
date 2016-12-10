@@ -30,19 +30,22 @@ public class Conveyor {
       if (null == conveyorType)
           System.out.println("No conveyor type given.\n");
       else
-      {
+       {
           ID = id;
+          
           // sets the conveyor group
           switch(conveyorGroup)
           {
               case "cell":
+              {
                   group = conveyorGroup;
                   break;
-                  
+              }
               case "transport":
+              {
                   group = conveyorGroup;
                   break;
-                  
+              }
               default:
                 System.out.println("Conveyor group not recognized.\n");
           }
@@ -51,16 +54,22 @@ public class Conveyor {
           switch(conveyorType)
           {
               case "rotating":
+              {
                   type = conveyorType;
                   break;
+              }
                   
               case "linear":
+              {
                   type = conveyorType;
                   break;
+              }
                   
               case "slide":
+              {
                   type = conveyorType;
                   break;
+              }
                   
               default:
                 System.out.println("Conveyor type not recognized.\n");

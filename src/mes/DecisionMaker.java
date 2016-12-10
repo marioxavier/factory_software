@@ -15,7 +15,7 @@ public class DecisionMaker {
     
     public int ID;
     
-    
+    /*
     public boolean makeDecision(Modbus protocolToPLC, Factory virtualFactory)
     {
         Block testBlock = new Block();
@@ -31,10 +31,11 @@ public class DecisionMaker {
       
         //TO DO
         while(!testBlock.isDestination());
-            testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
+            //testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
 
         
         return true;
     }
-   
+   */
+    
 }

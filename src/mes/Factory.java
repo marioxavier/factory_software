@@ -18,6 +18,7 @@ public class Factory {
     private Block[] blocksInFactory;
     private int numberOfConveyors;
     private int activeSensors;
+    private int numberOfBlocks;
     
     // Alteração do Nuno
     private String factoryData;
@@ -39,21 +40,38 @@ public class Factory {
     }
     
     
-    /**
-     * Initializes factory
-     * @return 
-     */
+    
+    
+
+    
     public boolean initFactory()
     {
+        //Alteração do Nuno
+        this.transportConveyors = new Conveyor[16];
+        this.cellConveyors = new Conveyor[14];
+        
+
+        return true;
+       // this.
+        
+        
+      //  return true;
+        
+        
+        
+        /*
         this.addCells("parallel", 2, this);
         this.addCells("serial", 2, this);
         this.addTransport(this);
         status = true;
         return status;
+        */
         
-        //Alteração do Nuno
         
+   
     }
+    
+
     
     /**
      * Gets factory status
@@ -212,6 +230,7 @@ public class Factory {
             return false;
         }
         
+        // no conveyor group given
         else if (null == conveyorGroup)
         {
             System.out.println("No conveyor group given\n");
@@ -220,28 +239,33 @@ public class Factory {
         
         // if a number of conveyors was given
         else
-        switch(conveyorType)
+        switch(conveyorGroup)
         {
             // creates transport conveyors
-            case "transport":   
+            case "transport":
+            {
                 // creates conveyors
                 for(int i = 0; i < numberOfConveyors; i++)
-                    transportConveyors[i] = new Conveyor(conveyorGroup, conveyorType, generateConveyorID(conveyorGroup, conveyorType));
+                {
+                    transportConveyors[i] = new Conveyor("transport", "linear", "abc"); //new Conveyor(conveyorGroup, conveyorType, generateConveyorID(conveyorGroup,conveyorType));
 
+                }
                 break;
+            }
             
             // creates cell conveyors
             case "cell":
+            {
                 // creates conveyors
                 for(int i = 0; i < numberOfConveyors; i++)
                     cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType,generateConveyorID(conveyorGroup, conveyorType));
-
-
                 break; 
-                
+            }
             default:
+            {
                 System.out.println("Conveyor type not recognized.\n");
                 return false;
+            }
         }  
         return true;
     }
@@ -446,9 +470,10 @@ public class Factory {
     
     public String generateConveyorID(String conveyorGroup, String conveyorType)
     {
-        // TO DO ---- Dont forget Return
         
-        return null;
+        // TESTS 
+        
+        return "00";
     }
     
     
@@ -475,8 +500,13 @@ public class Factory {
                 for (i in endereços pretendidos)
                     s+= Character.toString(c[i]);
                 
-                switch(s)
-                    case()
+                if (s.charAt(0)==0)
+                {
+                    switch(s)
+                        case()
+                    
+                }
+
                 
 
             }
@@ -486,6 +516,40 @@ public class Factory {
                 
     }
     */
+    
+    public boolean addBlock(String blockType, String blockDestination)
+    {
+        if (null == blockType)
+        {
+            System.out.println("block type not sepcified");
+            return false;
+        }
+        
+        else if (null == blockDestination)
+        {
+            System.out.println("block destination not specified");
+            return false;
+        }
+        else
+        {
+            Block newBlock = new Block(blockType, blockDestination);
+            
+            if (null == newBlock)
+            {
+                System.out.println("Error creating block");
+                return false;
+            }
+            else
+            {
+                blocksInFactory[blocksInFactory.length + 1] = newBlock;
+                return true;
+            }
+            
+        }
+         
+           
+    }
+    
     
     
     
