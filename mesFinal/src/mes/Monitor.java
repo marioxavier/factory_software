@@ -16,34 +16,32 @@ import java.util.*;
 public class Monitor 
 {
     
-    private char[] inputData;
-    private char[] outputData;
+    private String inputData;
+    private String outputData;
     private Modbus protocolToPLC;
-    private Factory virtualFactory;
+
     
     
-    public Monitor(Modbus protocol, Factory receivedFactory)
+    public Monitor(Modbus protocol)
     {
         protocolToPLC = protocol;
-        virtualFactory = receivedFactory;
     }
     
-    public char[] getInputData()
+    public String getInputData()
     {
         return inputData;
     }
     
-    public char[] getOutputData()
+    public String getOutputData()
     {
         return outputData;
     }
     
     
 
-    /**
-     * returns a char array with the values of all the sensors read by the PLC
-     * @return 
-     */
+/**
+ * 
+ */
     public void readSensors()
     {        
         // dataReceived contains a string with the value of all sensors, separated by a space on each byte
@@ -71,7 +69,7 @@ public class Monitor
         }
         
         // inputData contains an array in which each position has the value of the corresponding sensor on the PLC
-        inputData = dataReceived.toCharArray();
+        inputData = dataReceived;
         
 
         
@@ -108,7 +106,7 @@ public class Monitor
             }
         
             // outputData contains an array in which each position has the value of the corresponding actuator on the PLC
-            outputData = dataReceived.toCharArray();
+            outputData = dataReceived;
             
 
         
@@ -116,8 +114,8 @@ public class Monitor
     
     
     
-    
-    public void updateTransportConveyors()      // TO DO
+    /*
+    public void updateTransportConveyors()
     {
         // Reads the value of all the Sensors and Actuators at the time this method is called
         this.readSensors();
@@ -137,6 +135,8 @@ public class Monitor
         
         // iterator will be the index of inputIndexArray and outputIndexArray
         int iterator;
+        
+
         
         for (Conveyor conveyor : conveyorArray)
         {
@@ -669,6 +669,7 @@ public class Monitor
         }
         
     }
+    */
     
 
     

@@ -38,8 +38,14 @@ public class systemManager
         
         // creates Modbus protocol object
         protocolToPLC = new Modbus();
-        virtualFactory = new Factory();
-        factoryMonitor = new Monitor(protocolToPLC, virtualFactory); 
+        factoryMonitor = new Monitor(protocolToPLC);
+        
+        virtualFactory = new Factory(factoryMonitor);
+
+        //if (virtualFactory.initFactory()==false)
+         //   System.out.println("error initializing factory");
+        
+        
         // error creating protocol to PLC
         if (protocolToPLC == null)
         {
@@ -60,6 +66,17 @@ public class systemManager
         
 
         //  Testes do NUNO a partir daqui
+        
+        
+        
+        char[] c = new char[] {'K',0,'V','I',1};
+        
+        String s = "";
+        
+
+        
+        System.out.println(s);
+        
         
         
         /*
@@ -139,11 +156,7 @@ public class systemManager
           }
        }
          
-        // creates a factory object
-        Factory simulatedFactory = new Factory();
 
-        // initializes factory 
-        simulatedFactory.initFactory();
         
         // checks if factory is ready
         //if((simulatedFactory.isReady));

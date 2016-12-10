@@ -44,4 +44,18 @@ public class Transport {
         }
     }
     
+    public String getType()
+    {
+        return type;
+    }
+    
+    public String getStatus()
+    {
+        return status;
+    }
+    
+
+    
+    
+    
 }
