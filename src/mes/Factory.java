@@ -20,6 +20,25 @@ public class Factory {
     private int numberOfConveyors;
     private int activeSensors;
     
+    // Alteração do Nuno
+    private String factoryData;
+    private Monitor factoryMonitor;
+    
+    
+    
+    
+    public Factory(Monitor receivedMonitor)
+    {
+        factoryMonitor = receivedMonitor;
+        
+    }
+    
+    
+    public String getFactoryData()
+    {
+        return factoryData;
+    }
+    
     
     /**
      * Initializes factory
@@ -31,8 +50,10 @@ public class Factory {
         this.addCells("serial", 2, this);
         this.addTransport(this);
         status = true;
-        //teste testes teste
         return status;
+        
+        //Alteração do Nuno
+        
     }
     
     /**
@@ -105,7 +126,7 @@ public class Factory {
      * @param machineIndex
      * @return 
      */
-    public Machine getConveyor(Machine[] machines, int machineIndex)
+    public Machine getMachine(Machine[] machines, int machineIndex)
     {
         // if no machine array was given
         if (null == machines)
@@ -385,11 +406,6 @@ public class Factory {
         return numberOfConveyors;
     }
     
-    /**
-     * Updates the number of active sensors
-     * @param conveyors
-     * @return 
-     */
     public boolean updateActiveSensores(Conveyor[] conveyors)
     {
         // if no array of conveyors was given
@@ -410,12 +426,12 @@ public class Factory {
         }
     }
     
-    /**
-     * Gets number of active sensors 
-     * @return 
-     */
-    public int getNumberOfActiveSensors()
+    
+    public void readFactory()
     {
-        return activeSensors;
+       factoryMonitor.readSensors();
+       factoryMonitor.readActuators();
+       
+       factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
 }
