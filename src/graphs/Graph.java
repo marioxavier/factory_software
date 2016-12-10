@@ -58,15 +58,18 @@ public class Graph
      */
     public Graph (Conveyor[] conveyors) throws FileNotFoundException
     {
+        System.out.println("Entrei no graph\n");
         
         // converts conveyors to vertices
         for (int v = 0; v < adjacencyLists.length; v++) {
+            System.out.println("Entrei no for que cria vertices\n");
             adjacencyLists[v] = new Vertex(conveyors[v], null);
         }
  
         // read edges
        for (int v = 0; v < conveyors.length; v++) 
        {
+           System.out.println("Entrei no for que cria conexões\n");
             // read vertex names and translate to vertex numbers
             int v1 = indexForConveyor(conveyors[v]);
             int v2 = indexForConveyor(conveyors[v+1]);
@@ -84,6 +87,7 @@ public class Graph
      */
     private int indexForConveyor(Conveyor conveyorToAdd) 
     {
+        System.out.println("Entrei no index generator\n");
         for (int v = 0; v < adjacencyLists.length; v++) {
             if (adjacencyLists[v].conveyorVertex.equals(conveyorToAdd)) 
             {
@@ -99,7 +103,7 @@ public class Graph
      */
     public void print() 
     {
-        System.out.println();
+        System.out.println("Entrei no print\n");
         for (Vertex adjacencyList : adjacencyLists) {
             System.out.print(adjacencyList.conveyorVertex);
             for (Neighbor nbr = adjacencyList.adjacencyList; nbr != null; nbr = nbr.next) {
