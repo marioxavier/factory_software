@@ -5,10 +5,20 @@
  */
 package mes;
 
+import java.sql.*;
+
 /**
  *
  * @author Utilizador
  */
 public class ProductionGuide {
+    
+    public int ID;
+    private Date orderDate;
+    private Time orderTime;
+    private String creator;
+    private String initialBlock;
+    private String finalBlock;
+    private String operation;
     
 }
