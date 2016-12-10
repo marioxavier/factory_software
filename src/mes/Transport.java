@@ -44,4 +44,25 @@ public class Transport {
         }
     }
     
+    /**
+     * 
+     * @param newBlock
+     * @return 
+     */
+    public boolean start(Block newBlock)
+    {
+        // if no new block was given
+        if (null == newBlock)
+        {
+            System.out.println("No block was given to start transport.\n");
+            return false;
+        }
+        // if a block was given
+        else
+        {
+            newBlock.setPosition("00");
+            return true;
+        }
+    }
+    
 }
