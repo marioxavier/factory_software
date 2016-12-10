@@ -62,6 +62,10 @@ public class Conveyor {
           }
       }
     }
+
+    Conveyor(String conveyorGroup, String conveyorType, String generateConveyorID) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     /**
      * Updates the status of the conveyor

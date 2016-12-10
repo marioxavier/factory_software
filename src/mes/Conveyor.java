@@ -11,7 +11,7 @@ package mes;
  */
 public class Conveyor {
     
-    public int ID;
+    public String ID;
     private String type;
     private String group;
     private boolean isReady;
@@ -23,13 +23,15 @@ public class Conveyor {
      * Constructor
      * @param conveyorGroup
      * @param conveyorType
+     * @param id 
      */
-    public Conveyor(String conveyorGroup, String conveyorType)
+    public Conveyor(String conveyorGroup, String conveyorType, String id)
     {
       if (null == conveyorType)
           System.out.println("No conveyor type given.\n");
       else
       {
+          ID = id;
           // sets the conveyor group
           switch(conveyorGroup)
           {
@@ -149,9 +151,5 @@ public class Conveyor {
     }
     
     
-    public boolean createID()
-    {
-        
-    }
-    
+
 }

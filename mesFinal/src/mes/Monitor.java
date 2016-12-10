@@ -114,7 +114,7 @@ public class Monitor
     
     
     
-    /*
+
     public void updateTransportConveyors()
     {
         // Reads the value of all the Sensors and Actuators at the time this method is called
@@ -669,7 +669,7 @@ public class Monitor
         }
         
     }
-    */
+
     
 
     

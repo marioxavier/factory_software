@@ -1,9 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mes;
+
+
+
 
 /**
  *
@@ -17,6 +15,7 @@ public class Factory {
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
+    private Block[] blocksInFactory;
     private int numberOfConveyors;
     private int activeSensors;
     
@@ -213,22 +212,31 @@ public class Factory {
             return false;
         }
         
+        else if (null == conveyorGroup)
+        {
+            System.out.println("No conveyor group given\n");
+            return false;
+        }
+        
         // if a number of conveyors was given
         else
         switch(conveyorType)
         {
             // creates transport conveyors
-            case "transport":
+            case "transport":   
                 // creates conveyors
                 for(int i = 0; i < numberOfConveyors; i++)
-                    transportConveyors[i] = new Conveyor(conveyorGroup, conveyorType);
+                    transportConveyors[i] = new Conveyor(conveyorGroup, conveyorType, generateConveyorID(conveyorGroup, conveyorType));
+
                 break;
             
             // creates cell conveyors
             case "cell":
                 // creates conveyors
                 for(int i = 0; i < numberOfConveyors; i++)
-                    cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType);
+                    cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType,generateConveyorID(conveyorGroup, conveyorType));
+
+
                 break; 
                 
             default:
@@ -434,4 +442,51 @@ public class Factory {
        
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
+    
+    
+    public String generateConveyorID(String conveyorGroup, String conveyorType)
+    {
+        // TO DO ---- Dont forget Return
+        
+        return null;
+    }
+    
+    
+    
+    /*
+    public String getNewPosition(Block block)
+    {
+        for (int i=0;i<blocksInFactory.length;i++)
+        {
+            if (blocksInFactory[i].ID.equals(block.ID))
+            {
+                // Algoritmo de update
+                
+                // Entra na Hash Table e retorna indices que queremos ler
+                blocksInFactory[i].getPosition(); 
+                
+                readFactory();
+                
+                char[] c = factoryData.toCharArray();
+                
+                String s="";
+                
+                // verifica o numero de endereços recebidos
+                for (i in endereços pretendidos)
+                    s+= Character.toString(c[i]);
+                
+                switch(s)
+                    case()
+                
+
+            }
+            
+        }
+        
+                
+    }
+    */
+    
+    
+    
 }

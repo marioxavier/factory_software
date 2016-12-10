@@ -31,7 +31,7 @@ public class DecisionMaker {
       
         //TO DO
         while(!testBlock.isDestination());
-            //testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
+            testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
 
         
         return true;
