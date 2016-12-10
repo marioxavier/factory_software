@@ -21,16 +21,22 @@ public class Factory {
     private int activeSensors;
     
     // Alteração do Nuno
-    private char[] factoryData;
+    private String factoryData;
     private Monitor factoryMonitor;
     
     
     
     
-    
-    public Factory(Protocol protocol, Monitor factoryMonitor)
+    public Factory(Monitor receivedMonitor)
     {
+        factoryMonitor = receivedMonitor;
         
+    }
+    
+    
+    public String getFactoryData()
+    {
+        return factoryData;
     }
     
     
@@ -423,7 +429,9 @@ public class Factory {
     
     public void readFactory()
     {
-        Monitor.readSensors();
-        
+       factoryMonitor.readSensors();
+       factoryMonitor.readActuators();
+       
+       factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
 }
