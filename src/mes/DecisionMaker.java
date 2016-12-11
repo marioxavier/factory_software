@@ -21,7 +21,7 @@ public class DecisionMaker {
         // Creating Block in MES
             
             //Creating Block Object with type P8 and position 0.0 and destination 1.2
-            Block testBlock = new Block("P8","1.2");
+            Block testBlock = new Block("P8","1.2","Teste");
             testBlock.setPosition("0.0");
         
             // Adding the block to the virtual factory
@@ -37,8 +37,12 @@ public class DecisionMaker {
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
       
         //TO DO
-        while(!testBlock.isDestination());
-            //testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
+        while(!testBlock.isDestination())
+        {
+           testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
+           System.out.println(testBlock.getPosition());
+        }
+            
 
         
         return true;

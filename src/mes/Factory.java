@@ -479,6 +479,8 @@ public class Factory {
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
     
+    
+    
     /**
      * Falta ter em atenção tapetes duplos
      * @return 
@@ -548,13 +550,61 @@ public class Factory {
     
     
     
-    
+    /**
+     * updates the position of a given Block
+     * @param block
+     * @return 
+     */
     public String getNewPosition(Block block)
     {
-        for (int i=0;i<blocksInFactory.size();i++)
+        String newPosition="";
+        for (Block pastBlock : blocksInFactory)
         {
-            if (blocksInFactory.ID.equals(block.ID))
+
+            if (pastBlock.ID.equals(block.ID))
             {
+                
+                String pastBlockPosition = pastBlock.getPosition();
+                int pastConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]);
+                int nextConveyor = pastConveyor+1;
+                
+                // reads the factory and stores it in factoryDataArray
+                readFactory();
+                char[] factoryDataArray = factoryData.toCharArray();
+                
+                String[] memoryOfPastConveyor = transportMemoryIndexes[pastConveyor].split(",");
+                
+                String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
+                
+                
+                int pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+                int nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                
+                
+                
+                if (pastConveyorSensor==0 && nextConveyorSensor==1)
+                {
+                    newPosition = "0."+Integer.toString(nextConveyor);
+                    //block.setPosition(newPosition);
+                }
+                    
+
+                else
+                {
+                    newPosition = pastBlockPosition;
+                }
+                    
+                
+                
+                
+                
+                
+                /*
+                int valuesOfThisConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]);
+                int valuesOfNextConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]+1);
+                
+                String indexes = transportMemoryIndexes[indexOfMemoryArray];
+                        
                 // Algoritmo de update
                 
                 // Entra na Hash Table e retorna indices que queremos ler
@@ -576,14 +626,22 @@ public class Factory {
                         case()
                     
                 }
+                */
 
                 
 
             }
             
+            else
+            {
+                System.out.println("couldn't find given block in factory");
+                return null;
+            }
+                
+            
         }
         
-                
+          return newPosition;      
     }
     
 
