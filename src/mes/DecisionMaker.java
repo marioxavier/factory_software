@@ -5,7 +5,10 @@
  */
 package mes;
 
+
+
 import net.wimpi.modbus.util.BitVector;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -30,20 +33,60 @@ public class DecisionMaker {
             
         // Creating the block in the factory
         
+        
             // creating a bit vector of size 8
             BitVector setBlock = new BitVector(8);
-            setBlock.setBit(3, true);
-            // prints the result of the function writeModbus (Write Multiple Coils) 
+            
+            // resets the memory
+            System.out.println(setBlock);
+            
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
-      
+            
+            
+            // Needs to wait 2 seconds before sending the byte with block type
+            try{
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            
+            
+            // Sends the byte with information about block type to add 
+            
+            setBlock.setBit(1, true);
+            
+            System.out.println(setBlock);
+            
+            System.out.println(protocolToPLC.writeModbus(144, setBlock));
+          
+            
+            
+            // Bug in reading actuators -> read Modbus
+            virtualFactory.readFactory();
+            
+            
+            String test = virtualFactory.getFactoryData();
+            
+            System.out.println(test);
+            
+            
+            
+            
+            
+            
+            
+            /*
         //TO DO
         while(!testBlock.isDestination())
         {
-           testBlock.setPosition(virtualFactory.getNewPosition(testBlock));
+           String newPosition = virtualFactory.getNewPosition(testBlock);
+           testBlock.setPosition(newPosition);
            System.out.println(testBlock.getPosition());
         }
-            
-
+            */
         
         return true;
     }

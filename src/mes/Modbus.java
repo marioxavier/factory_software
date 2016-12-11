@@ -261,13 +261,22 @@ public final class Modbus {
                 switch(transactionType)
                 {
                     // if type is 1 we set up a Transaction to Read Discrete Inputs
-                    case "read":                
+                    case "read":
+                    {
                         modbusTransaction.setRequest(modbusReadRequest);
                         break;
+                        
+                    }
 
                     // if type is 2 we set up a Transaction to Write Multiple Coils
                     case "write":
-                     modbusTransaction.setRequest(modbusWriteRequest);
+                    {
+                        System.out.println("entrou no transaction - write");
+                        modbusTransaction.setRequest(modbusWriteRequest);
+                        break;
+                        
+                    }
+                     
 
                     default: 
                     {
@@ -323,6 +332,7 @@ public final class Modbus {
     {
         modbusWriteRequest = new WriteMultipleCoilsRequest(startWritingReference, bitsToWrite);
         
+
         // returns true if the write request is not null
         return modbusWriteRequest != null;  
     }
@@ -399,13 +409,19 @@ public final class Modbus {
         // if read request was created succsessfully
         if(setModbusReadRequest())
         {
+
             // if read transaction was read successfully
             if(setModbusTransaction("read"))
             {
                 try
                 {
+                    
                     // executes a reading
                     modbusTransaction.execute();
+                    
+                    
+                    
+                    
                 }
                 catch (Exception ex) 
                 {

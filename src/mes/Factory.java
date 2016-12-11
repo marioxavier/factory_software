@@ -473,9 +473,16 @@ public class Factory {
     
     public void readFactory()
     {
+        
+        
        factoryMonitor.readSensors();
-       factoryMonitor.readActuators();
        
+       System.out.println("read sensors sem problema");
+       
+       
+        
+       factoryMonitor.readActuators();
+
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
     
@@ -564,8 +571,13 @@ public class Factory {
             if (pastBlock.ID.equals(block.ID))
             {
                 
+                System.out.println("ENTROU");
+                
                 String pastBlockPosition = pastBlock.getPosition();
-                int pastConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]);
+                
+                
+                int pastConveyor = Integer.parseInt(pastBlockPosition.split("\\.")[1]);
+
                 int nextConveyor = pastConveyor+1;
                 
                 // reads the factory and stores it in factoryDataArray

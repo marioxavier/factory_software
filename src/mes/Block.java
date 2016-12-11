@@ -32,6 +32,7 @@ public class Block {
         destination = blockDestination;
         
         ID = id;
+        position = "0.0";
         
     }
     
