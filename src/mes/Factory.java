@@ -1,6 +1,6 @@
 package mes;
 
-
+import java.util.*;
 
 
 /**
@@ -15,7 +15,9 @@ public class Factory {
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
-    private Block[] blocksInFactory;
+    
+    private List<Block> blocksInFactory;
+    
     private int numberOfConveyors;
     private int activeSensors;
     private int numberOfBlocks;
@@ -24,13 +26,14 @@ public class Factory {
     private String factoryData;
     private Monitor factoryMonitor;
     
+    private String[] transportMemoryIndexes;
+    
     
     
     
     public Factory(Monitor receivedMonitor)
     {
         factoryMonitor = receivedMonitor;
-        
     }
     
     
@@ -40,19 +43,22 @@ public class Factory {
     }
     
     
-    
-    
 
-    
     public boolean initFactory()
     {
         //Alteração do Nuno
         this.transportConveyors = new Conveyor[16];
         this.cellConveyors = new Conveyor[14];
         
-
+        this.addConveyors("transport", "linear", 16);
+        generateTransportConveyorID();
+        generateTransportMemoryIndexes();
+        
+        //Initializing Block Array, needs some testing
+         blocksInFactory = new ArrayList<Block>();
+        
+        
         return true;
-       // this.
         
         
       //  return true;
@@ -213,8 +219,7 @@ public class Factory {
      * @param numberOfConveyors 
      * @return
      */
-    public boolean addConveyors(String conveyorGroup, String conveyorType,
-            int numberOfConveyors)
+    public boolean addConveyors(String conveyorGroup, String conveyorType, int numberOfConveyors)
     {
         // no conveyor type was given
         if (null == conveyorType)
@@ -226,7 +231,7 @@ public class Factory {
         // the number of conveyors is zero
         else if (numberOfConveyors == 0)
         {
-            System.out.println("The number of conveyors if zero.\n");
+            System.out.println("The number of conveyors is zero.\n");
             return false;
         }
         
@@ -245,9 +250,16 @@ public class Factory {
             case "transport":
             {
                 // creates conveyors
-                for(int i = 0; i < numberOfConveyors; i++)
+                for(int i = 0; i < transportConveyors.length-1; i++)
                 {
-                    transportConveyors[i] = new Conveyor("transport", "linear", "abc"); //new Conveyor(conveyorGroup, conveyorType, generateConveyorID(conveyorGroup,conveyorType));
+                    if (i==2 || i==5 || i==7 || i==10)
+                    {
+                        transportConveyors[i] = new Conveyor(conveyorGroup, "rotator");
+                    }
+                    else
+                    {
+                        transportConveyors[i] = new Conveyor(conveyorGroup, conveyorType);
+                    }
 
                 }
                 break;
@@ -258,7 +270,7 @@ public class Factory {
             {
                 // creates conveyors
                 for(int i = 0; i < numberOfConveyors; i++)
-                    cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType,generateConveyorID(conveyorGroup, conveyorType));
+                    cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType);
                 break; 
             }
             default:
@@ -340,7 +352,7 @@ public class Factory {
         // the number of cells is zero
         else if (numberOfCells == 0)
         {
-            System.out.println("The number of cells if zero.\n");
+            System.out.println("The number of cells is zero.\n");
             return false;
         }
         
@@ -467,23 +479,81 @@ public class Factory {
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
     
-    
-    public String generateConveyorID(String conveyorGroup, String conveyorType)
+    /**
+     * Falta ter em atenção tapetes duplos
+     * @return 
+     */
+    public boolean generateTransportConveyorID()
     {
+        String conveyorID="";
         
-        // TESTS 
+        for (int i=0; i<transportConveyors.length-1; i++)
+        {
+            conveyorID="0.";
+            conveyorID += Integer.toString(i);
+            transportConveyors[i].setID(conveyorID);
+            
+        }
         
+        // Mudar
+        return true;
+        
+        
+        
+        /*
+        if (null == conveyorGroup)
+        {
+            System.out.println("no conveyor group given");
+        }
+        else if (null == conveyorType)
+            System.out.println("no conveyor type given");
+        else
+        {
+            if (conveyorGroup.equals("transport"))
+            {
+                // if the transport conveyor is empty, the first conveyor is "00"
+                if (transportConveyors[0]==null)
+                    return "0.0";
+                
+                else
+                {
+                    
+                    //gets the ID of the last conveyor added
+                    String transportConveyorID = this.transportConveyors[this.transportConveyors.length - 1].ID;
+                    
+                    // turns the last part of the ID, corresponding to the column, and adds 1
+                    int generatedID = Integer.parseInt(transportConveyorID.split(".")[1])+1;
+                    
+                    // returns the ID in string format
+                    return Integer.toString(generatedID);
+                    
+                }
+               
+
+                
+            }
+            
+            else if (conveyorGroup.equals("cell"))
+            {
+                // TO DO
+                
+            }
+            
+        }
+
         return "00";
+        
+        */
     }
     
     
     
-    /*
+    
     public String getNewPosition(Block block)
     {
-        for (int i=0;i<blocksInFactory.length;i++)
+        for (int i=0;i<blocksInFactory.size();i++)
         {
-            if (blocksInFactory[i].ID.equals(block.ID))
+            if (blocksInFactory.ID.equals(block.ID))
             {
                 // Algoritmo de update
                 
@@ -515,10 +585,11 @@ public class Factory {
         
                 
     }
-    */
     
-    public boolean addBlock(String blockType, String blockDestination)
+
+    public boolean addBlock(Block newBlock)
     {
+        /*
         if (null == blockType)
         {
             System.out.println("block type not sepcified");
@@ -530,27 +601,60 @@ public class Factory {
             System.out.println("block destination not specified");
             return false;
         }
+        */
+        
+        if (null == newBlock)
+        {
+            System.out.println("No block given to addBlock");
+            return false;
+        }
+        
         else
         {
-            Block newBlock = new Block(blockType, blockDestination);
-            
-            if (null == newBlock)
-            {
-                System.out.println("Error creating block");
-                return false;
-            }
-            else
-            {
-                blocksInFactory[blocksInFactory.length + 1] = newBlock;
-                return true;
-            }
-            
+        blocksInFactory.add(newBlock);
+        return true;
         }
-         
-           
+
     }
     
-    // TESTE TESTE TESTE TESTE
+    /**
+     * generates the array with the memory indexes corresponding to each transport conveyor
+     */
+    public void generateTransportMemoryIndexes()
+    {
+        // initializes the string array
+        transportMemoryIndexes = new String[16];
+        
+        // fills the array with the respective values
+        transportMemoryIndexes[0]="0,146,147";
+        transportMemoryIndexes[1]="2,151,152";
+        transportMemoryIndexes[2]="3,4,5,153,154,155";
+        transportMemoryIndexes[3]="6,7,157,158";
+        transportMemoryIndexes[4]="32,193,194";
+        transportMemoryIndexes[5]="33,34,35,195,196,197,198";
+        transportMemoryIndexes[6]="53,225,226";
+        transportMemoryIndexes[7]="54,55,56,227,228,229,230";
+        transportMemoryIndexes[8]="57,58,231,232";
+        transportMemoryIndexes[9]="83,267,268";
+        transportMemoryIndexes[10]="84,85,86,269,270,271,272";
+        transportMemoryIndexes[11]="104,299,300";
+        transportMemoryIndexes[12]="105,106,107,301,302,303,304";
+        transportMemoryIndexes[13]="128,322,323";
+        transportMemoryIndexes[14]="129,130,131,324,325,326,327";
+        transportMemoryIndexes[15]="132,328,329";
+
+    }
+    
+    /**
+     * Returns a string array with the memory indexes of all the transport arrays
+     * @return 
+     */
+    public String[] getTransportMemoryIndexes()
+    {
+        return transportMemoryIndexes;
+    }
+    
+    
     
     
 }

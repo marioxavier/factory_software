@@ -25,13 +25,12 @@ public class Conveyor {
      * @param conveyorType
      * @param id 
      */
-    public Conveyor(String conveyorGroup, String conveyorType, String id)
+    public Conveyor(String conveyorGroup, String conveyorType)
     {
       if (null == conveyorType)
           System.out.println("No conveyor type given.\n");
       else
        {
-          ID = id;
           
           // sets the conveyor group
           switch(conveyorGroup)
@@ -53,7 +52,7 @@ public class Conveyor {
           // sets the conveyor type
           switch(conveyorType)
           {
-              case "rotating":
+              case "rotator":
               {
                   type = conveyorType;
                   break;
@@ -159,6 +158,10 @@ public class Conveyor {
         return group;   
     }
     
+    public void setID(String id)
+    {
+        ID = id;
+    }
     
 
 }

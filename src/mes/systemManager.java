@@ -76,23 +76,21 @@ public class systemManager
         
         virtualFactory.initFactory();
         
+        String[] s = virtualFactory.getTransportMemoryIndexes();
         
-        if(virtualFactory.addConveyors("transport", "linear", 3))
+        String[] split = s[0].split(",");
+        
+        System.out.println(split[0]+split[1]+split[2]);
+        
+        
+        /*
+        if(virtualFactory.addConveyors("transport", "linear", 2))
             System.out.println("ok");
         else
-            System.out.println("erro_");
-            
+            System.out.println("erro");
+            */
 
         
-        try
-        {
-        graph = new Graph(virtualFactory.getConveyors("linear"));
-        graph.print();
-        }
-        catch( Exception Ex)
-        {
-            System.out.println("erro");
-        }
         
         
         

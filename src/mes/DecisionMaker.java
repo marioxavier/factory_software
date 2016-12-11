@@ -15,19 +15,26 @@ public class DecisionMaker {
     
     public int ID;
     
-    /*
+    
     public boolean makeDecision(Modbus protocolToPLC, Factory virtualFactory)
     {
-        Block testBlock = new Block();
-        testBlock.setPosition("00");
-        // send to first cell
-        testBlock.setDestination("02");
+        // Creating Block in MES
+            
+            //Creating Block Object with type P8 and position 0.0 and destination 1.2
+            Block testBlock = new Block("P8","1.2");
+            testBlock.setPosition("0.0");
         
-        // creating a bit vector of size 8
-        BitVector setBlock = new BitVector(8);
-        setBlock.setBit(3, true);
-        // prints the result of the function writeModbus (Write Multiple Coils) 
-        System.out.println(protocolToPLC.writeModbus(144, setBlock));
+            // Adding the block to the virtual factory
+            virtualFactory.addBlock(testBlock);
+        
+            
+        // Creating the block in the factory
+        
+            // creating a bit vector of size 8
+            BitVector setBlock = new BitVector(8);
+            setBlock.setBit(3, true);
+            // prints the result of the function writeModbus (Write Multiple Coils) 
+            System.out.println(protocolToPLC.writeModbus(144, setBlock));
       
         //TO DO
         while(!testBlock.isDestination());
@@ -36,6 +43,6 @@ public class DecisionMaker {
         
         return true;
     }
-   */
+   
     
 }
