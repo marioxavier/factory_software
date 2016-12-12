@@ -28,7 +28,8 @@ public class systemManager
         Modbus protocolToPLC;
         UDP protocolToERP;
         Factory virtualFactory;
-        Graph graph;
+        
+        DecisionMaker Decisor;
         
         // creates UDP protocol object
         //protocolToERP = new Protocol();
@@ -57,42 +58,69 @@ public class systemManager
         
         
         
-        /*
-        
         if (protocolToPLC.setModbusConnection())
             System.out.println("Modbus connection on.\n");
         else
             System.out.println("Modbus connection failed.\n");
 
+
         
         protocolToPLC.openConnection();
         
         
-        */
+        
+        
         
         
 
         //  Testes do NUNO a partir daqui
         
+        
         virtualFactory.initFactory();
         
+        Decisor = new DecisionMaker();
         
-        if(virtualFactory.addConveyors("transport", "linear", 3))
-            System.out.println("ok");
-        else
-            System.out.println("erro_");
-            
+        Decisor.makeDecision(protocolToPLC, virtualFactory);
+        
+    }
+}
+
+        // CREATING DATABASE
+/*
+    
+        // creates a database object
+       Database db = new Database();
+      
+       // if database is initialized
+       if(db.initDatabase("org.postgresql.Driver", 
+                "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
+       {
+          // if credentials are right
+          if(db.setCredentials("sinf16g67","manueljoaofraga"))
+           {
+               // if a databased connection is opened
+               if(db.openConnection())
+               {
+                   // executes a query
+                   db.executeQuery("CREATE TABLE mes.TEST_THREE();");
+              }
+          }
+       }
+    
+*/
+        
 
         
-        try
-        {
-        graph = new Graph(virtualFactory.getConveyors("linear"));
-        graph.print();
-        }
-        catch( Exception Ex)
-        {
+        
+        
+        /*
+        if(virtualFactory.addConveyors("transport", "linear", 2))
+            System.out.println("ok");
+        else
             System.out.println("erro");
-        }
+            */
+
+        
         
         
         
@@ -155,24 +183,7 @@ public class systemManager
         
         
         
-       // creates a database object
-       Database db = new Database();
-      
-       // if database is initialized
-       if(db.initDatabase("org.postgresql.Driver", 
-                "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
-       {
-          // if credentials are right
-          if(db.setCredentials("sinf16g67","manueljoaofraga"))
-           {
-               // if a databased connection is opened
-               if(db.openConnection())
-               {
-                   // executes a query
-                   db.executeQuery("CREATE TABLE mes.TEST_THREE();");
-              }
-          }
-       }
+       
          
 
         
@@ -188,7 +199,3 @@ public class systemManager
         
         
         
-        
- }
-   
-}
