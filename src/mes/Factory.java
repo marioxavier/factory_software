@@ -532,22 +532,10 @@ public class Factory {
         }
         else
         {
-            Block newBlock = new Block(blockType, blockDestination);
-            
-            if (null == newBlock)
-            {
-                System.out.println("Error creating block");
-                return false;
-            }
-            else
-            {
-                blocksInFactory[blocksInFactory.length + 1] = newBlock;
-                return true;
-            }
-            
+            Block newBlock = new Block(blockType, blockDestination);           
+            blocksInFactory[blocksInFactory.length + 1] = newBlock;
+            return true;
         }
-         
-           
     }
     
     // TESTE TESTE TESTE TESTE
