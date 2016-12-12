@@ -50,7 +50,7 @@ public class Monitor
         // dataReceived contains a string with the value of all sensors, separated by a space on each byte
         String dataReceived = protocolToPLC.readModbus(0,146);
         
-        
+
         // s is a string array in which each position has a byte
         String[] split = dataReceived.split(" ");
         
@@ -86,9 +86,7 @@ public class Monitor
             
             // dataReceived contains a string with the value of all actuators, separated by a space on each byte
             String dataReceived = protocolToPLC.readModbus(160,200);
-            
-            
-        
+
         
             // s is a string array in which each position has a byte
             String[] split = dataReceived.split(" ");

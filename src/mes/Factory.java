@@ -479,9 +479,10 @@ public class Factory {
        
        System.out.println("read sensors sem problema");
        
-       
-        
+
        factoryMonitor.readActuators();
+       
+       System.out.println("read actuators sem problema");
 
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
@@ -571,13 +572,10 @@ public class Factory {
             if (pastBlock.ID.equals(block.ID))
             {
                 
-                System.out.println("ENTROU");
-                
                 String pastBlockPosition = pastBlock.getPosition();
                 
                 
                 int pastConveyor = Integer.parseInt(pastBlockPosition.split("\\.")[1]);
-
                 int nextConveyor = pastConveyor+1;
                 
                 // reads the factory and stores it in factoryDataArray
@@ -588,14 +586,26 @@ public class Factory {
                 
                 String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
                 
+                //System.out.println(Integer.parseInt(memoryOfPastConveyor[0]));
+                //System.out.println(Integer.parseInt(memoryOfNextConveyor[0]));
                 
-                int pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
-                int nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                //System.out.println(factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])]);
+                //System.out.println(factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])]);
                 
                 
+                //int pastConveyorSensor,nextConveyorSensor=0;
                 
-                if (pastConveyorSensor==0 && nextConveyorSensor==1)
+                char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+                char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                
+
+                System.out.println(pastConveyorSensor);
+                System.out.println(nextConveyorSensor);
+                
+                
+                if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
                 {
+                    System.out.println("entra no if");
                     newPosition = "0."+Integer.toString(nextConveyor);
                     //block.setPosition(newPosition);
                 }
@@ -603,6 +613,7 @@ public class Factory {
 
                 else
                 {
+                    System.out.println("entra no else");
                     newPosition = pastBlockPosition;
                 }
                     

@@ -63,22 +63,10 @@ public class DecisionMaker {
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
           
             
-            
-            // Bug in reading actuators -> read Modbus
-            virtualFactory.readFactory();
-            
-            
-            String test = virtualFactory.getFactoryData();
-            
-            System.out.println(test);
+
             
             
             
-            
-            
-            
-            
-            /*
         //TO DO
         while(!testBlock.isDestination())
         {
@@ -86,7 +74,7 @@ public class DecisionMaker {
            testBlock.setPosition(newPosition);
            System.out.println(testBlock.getPosition());
         }
-            */
+            
         
         return true;
     }
