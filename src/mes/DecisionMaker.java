@@ -24,12 +24,21 @@ public class DecisionMaker {
         // Creating Block in MES
             
             //Creating Block Object with type P8 and position 0.0 and destination 1.2
-            Block testBlock = new Block("P8","1.2","Teste");
-            testBlock.setPosition("0.0");
+            Block testBlock = new Block("P8","0.5","Teste");
         
             // Adding the block to the virtual factory
             virtualFactory.addBlock(testBlock);
         
+            
+            
+            // creating a bit vector of size 16
+            BitVector settingAllToZero = new BitVector(16);
+                
+            System.out.println(settingAllToZero);
+            
+            protocolToPLC.writeModbus(0, settingAllToZero);
+            
+
             
         // Creating the block in the factory
         
@@ -44,7 +53,8 @@ public class DecisionMaker {
             
             
             // Needs to wait 2 seconds before sending the byte with block type
-            try{
+            try
+            {
                 TimeUnit.SECONDS.sleep(2);
             }
             catch(Exception Ex)
@@ -61,11 +71,10 @@ public class DecisionMaker {
             System.out.println(setBlock);
             
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
-          
-            
 
             
             
+        boolean permissao=true;    
             
         //TO DO
         while(!testBlock.isDestination())
@@ -73,9 +82,29 @@ public class DecisionMaker {
            String newPosition = virtualFactory.getNewPosition(testBlock);
            testBlock.setPosition(newPosition);
            System.out.println(testBlock.getPosition());
+           
+           if (testBlock.getPosition().equals("0.2") && permissao==true)
+           {
+               permissao=false;
+               System.out.println("Digo para não entrar na C1");
+               BitVector keepGoingC1 = new BitVector(8);
+               keepGoingC1.setBit(0, true);
+               protocolToPLC.writeModbus(8, keepGoingC1);
+           }
+           
+           
         }
-            
         
+
+            // creating a bit vector of size 8
+            BitVector cellTwoOrder = new BitVector(8);
+            
+            // allows entry on C2
+            cellTwoOrder.setBit(1, true);
+            System.out.println(cellTwoOrder);
+            
+            protocolToPLC.writeModbus(0, cellTwoOrder);
+
         return true;
     }
    
