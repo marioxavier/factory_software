@@ -15,15 +15,12 @@ public class Conveyor {
     private String type;
     private String group;
     private boolean isReady;
-    private boolean position;
-    
-    
+    private boolean orientation;
       
     /**
      * Constructor
      * @param conveyorGroup
      * @param conveyorType
-     * @param id 
      */
     public Conveyor(String conveyorGroup, String conveyorType)
     {
@@ -163,6 +160,6 @@ public class Conveyor {
     {
         ID = id;
     }
+   
     
-
 }
