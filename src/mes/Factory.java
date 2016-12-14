@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @author Mário Xavier
  */
-public class Factory {
+public class Factory extends Thread {
     
     public int ID;
     private boolean status;
@@ -31,6 +31,13 @@ public class Factory {
     
     
     
+    public void run()
+    {
+        System.out.println(this.factoryMonitor.getInputData());
+        
+        
+    }
+    
     public Factory(Monitor receivedMonitor)
     {
         factoryMonitor = receivedMonitor;
@@ -46,6 +53,8 @@ public class Factory {
 
     public boolean initFactory()
     {
+        
+        
         //Alteração do Nuno
         this.transportConveyors = new Conveyor[16];
         this.cellConveyors = new Conveyor[14];
@@ -54,24 +63,26 @@ public class Factory {
         generateTransportConveyorID();
         generateTransportMemoryIndexes();
         
+        this.addTransport(this);
+        
+
         //Initializing Block Array, needs some testing
          blocksInFactory = new ArrayList<Block>();
         
-        
-        return true;
-        
-        
-      //  return true;
-        
-        
-        
-        /*
         this.addCells("parallel", 2, this);
         this.addCells("serial", 2, this);
-        this.addTransport(this);
+        
+        //this.addConveyors()
+
         status = true;
         return status;
-        */
+         
+         
+         
+
+
+        
+        
         
         
    
@@ -379,6 +390,9 @@ public class Factory {
         return true;
     }
     
+    
+    
+    
     /**
      * Adds transport to factory
      * @param currentFactory
@@ -392,21 +406,30 @@ public class Factory {
         // creates output transport
         outputTransport = new Transport("output", currentFactory);
         
+        
+        // Error creating input Transport
         if (null == inputTransport)
         {
             System.out.println("Error creating input transport.\n");
             return false;                    
         }
         
+        // Error creating output Transport
         else if (null == outputTransport)
         {
             System.out.println("Error creating output transport.\n");
             return false; 
         }
-        // if nb error ocurred
+        
+        
+        // if no error ocurred
         else
             return true;
     }
+    
+    
+    
+    
     
     /**
      * Updates the number of conveyors
@@ -473,16 +496,9 @@ public class Factory {
     
     public void readFactory()
     {
-        
-        
        factoryMonitor.readSensors();
-       
-       System.out.println("read sensors sem problema");
-       
 
        factoryMonitor.readActuators();
-       
-       System.out.println("read actuators sem problema");
 
        factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
     }
@@ -605,53 +621,15 @@ public class Factory {
                 
                 if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
                 {
-                    System.out.println("entra no if");
                     newPosition = "0."+Integer.toString(nextConveyor);
-                    //block.setPosition(newPosition);
                 }
                     
 
                 else
                 {
-                    System.out.println("entra no else");
                     newPosition = pastBlockPosition;
                 }
-                    
-                
-                
-                
-                
-                
-                /*
-                int valuesOfThisConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]);
-                int valuesOfNextConveyor = Integer.parseInt(pastBlockPosition.split(".")[1]+1);
-                
-                String indexes = transportMemoryIndexes[indexOfMemoryArray];
-                        
-                // Algoritmo de update
-                
-                // Entra na Hash Table e retorna indices que queremos ler
-                blocksInFactory[i].getPosition(); 
-                
-                readFactory();
-                
-                char[] c = factoryData.toCharArray();
-                
-                String s="";
-                
-                // verifica o numero de endereços recebidos
-                for (i in endereços pretendidos)
-                    s+= Character.toString(c[i]);
-                
-                if (s.charAt(0)==0)
-                {
-                    switch(s)
-                        case()
-                    
-                }
-                */
 
-                
 
             }
             

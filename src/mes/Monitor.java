@@ -13,14 +13,18 @@ import java.util.*;
  *
  * @author Utilizador
  */
-public class Monitor 
+public class Monitor extends Thread
 {
     
     private String inputData;
     private String outputData;
     private Modbus protocolToPLC;
 
-    
+    public void run()
+    {
+        this.readSensors();
+        this.readActuators();
+    }
     
     public Monitor(Modbus protocol)
     {

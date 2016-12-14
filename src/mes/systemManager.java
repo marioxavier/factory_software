@@ -42,12 +42,16 @@ public class systemManager
         // creates Modbus protocol object
         protocolToPLC = new Modbus();
         factoryMonitor = new Monitor(protocolToPLC);
-        
         virtualFactory = new Factory(factoryMonitor);
-
-        //if (virtualFactory.initFactory()==false)
-         //   System.out.println("error initializing factory");
         
+        /*
+        if (virtualFactory.initFactory()==false)
+            System.out.println("error initializing factory");
+        */
+        
+        
+
+
         
         // error creating protocol to PLC
         if (protocolToPLC == null)
@@ -57,6 +61,7 @@ public class systemManager
         
         
         
+        // Setting the Modbus Connection
         
         if (protocolToPLC.setModbusConnection())
             System.out.println("Modbus connection on.\n");
@@ -64,9 +69,10 @@ public class systemManager
             System.out.println("Modbus connection failed.\n");
 
 
-        
         protocolToPLC.openConnection();
         
+        
+        factoryMonitor.start();
         
         
         
@@ -76,18 +82,12 @@ public class systemManager
         //  Testes do NUNO a partir daqui
         
         
-        virtualFactory.initFactory();
-        
         Decisor = new DecisionMaker();
         
         Decisor.makeDecision(protocolToPLC, virtualFactory);
         
-    }
-}
-
-        // CREATING DATABASE
-/*
-    
+        
+        /*
         // creates a database object
        Database db = new Database();
       
@@ -102,15 +102,23 @@ public class systemManager
                if(db.openConnection())
                {
                    // executes a query
-                   db.executeQuery("CREATE TABLE mes.TEST_THREE();");
+                   db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
               }
           }
        }
-    
-*/
+       
+       */
+       
+       
+       
         
+    }
+}
+
 
         
+
+
         
         
         /*
@@ -144,14 +152,6 @@ public class systemManager
         */
         
 
-        
-        
-        //Tests the monitor readSensors() method
-        
-        /*
-        factoryMonitor.readSensors();
-        System.out.println(factoryMonitor.getInputData());
-        */
 
         
         
