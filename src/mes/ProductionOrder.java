@@ -18,6 +18,12 @@ public class ProductionOrder
      private Date orderDate;
      private String orderStatus;
      
+      public ProductionOrder convertToOrder(String receivedOrder)
+     {
+         ProductionOrder newOrder = new ProductionOrder();
+         return newOrder;
+     }
+     
      /**
       * 
       * @return 

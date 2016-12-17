@@ -4,6 +4,12 @@ import java.util.*;
 import edu.uci.ics.jung.graph.Graph;
 
 
+abstract class AbstractGraph<V,E>
+extends Object
+implements Graph<V,E>
+{
+}
+
 /**
  *
  * @author Mário Xavier
@@ -12,7 +18,7 @@ public class Factory extends Thread {
     
     public Integer ID;
     private boolean status;
-    private Graph cellConveyors, transportConveyors;
+    private AbstractGraph<Conveyor,Integer> cellConveyors, transportConveyors;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
@@ -32,8 +38,6 @@ public class Factory extends Thread {
     {
         System.out.println(this.factoryMonitor.getInputData());    
     }
-    
-    
     
     public Factory(Monitor receivedMonitor)
     {
@@ -113,7 +117,7 @@ public class Factory extends Thread {
      * @param conveyorType
      * @return 
      */
-    public Graph getConveyors(String conveyorType)
+    public AbstractGraph getConveyors(String conveyorType)
     {
         // if no conveyor type was given
         if (null == conveyorType)
@@ -279,25 +283,26 @@ public class Factory extends Thread {
                          // adds the cell entrance conveyor
                         if (i == 2 || i == 5 || i == 7 || i == 10)
                         {
-                            transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
+                            this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
                             this.updateNumberOfConveyors("+");
                         }
                         else
                         {
-                            transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
+                            this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
                             this.updateNumberOfConveyors("+");
                         }
                     }
                     
                     break;
                 }
+                
 
                 // creates cell conveyors
                 case "cell":
                 {
                     // creates conveyors
                     for(int i = 0; i < numberOfConveyors; i++)
-                        cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
+                        this.cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
                     break; 
                 }
                 
@@ -646,14 +651,20 @@ public class Factory extends Thread {
             System.out.println("No block given to add.\n");
             return false;
         }
-        // if a block was given
+       
+        else if (null == newBlock.ID)
+        {
+            System.out.println("No ID given to this block.\n");
+            return false;
+        }
+        
+        // if all parameters are 
         else
         {
             // adds a block to the hashtable
-            blocksInFactory.put(newBlock.ID, newBlock);
+            this.blocksInFactory.put(newBlock.ID, newBlock);
             return true;
         }
-
     }
     
     /**

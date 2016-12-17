@@ -18,7 +18,7 @@ import net.wimpi.modbus.util.BitVector;
 public class systemManager 
 {    
     private String ID;
-    private PriorityQueue taskQueue;
+    private PriorityQueue orderQueue;
     private int status;
     
      public static void main (String[] args) throws SQLException
@@ -78,24 +78,25 @@ public class systemManager
        */ 
     }
      
+     /**
+      * Adds a new order to the order queue
+      * @param newOrder
+      * @return 
+      */
      public boolean addToQueue(ProductionOrder newOrder)
      {
-         //TO DO
-         return true;
+         return orderQueue.add(newOrder);
      }
      
-     public boolean removeFromQueue()
+     /**
+      * Removes a order from the order queue
+      * @param orderToRemove
+      * @return 
+      */
+     public boolean removeFromQueue(ProductionOrder orderToRemove)
      {
-         //TO DO
-         return true;
+         return orderQueue.remove(orderToRemove);
      }  
-     
-     public ProductionOrder convertToOrder(String receivedOrder)
-     {
-         ProductionOrder newOrder = new ProductionOrder();
-         //TO DO
-         return newOrder;
-     }
 }
         /*
         if(virtualFactory.addConveyors("transport", "linear", 2))

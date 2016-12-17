@@ -73,6 +73,7 @@ public class Transport {
         else
         {
             newBlock.setPosition("00");
+            
             return true;
         }
     }
