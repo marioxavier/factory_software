@@ -17,7 +17,12 @@ public class Block {
     private String status;
     private String destination;
     
-    
+    /**
+     * Constructor
+     * @param blockType
+     * @param blockDestination
+     * @param blockID 
+     */
     public Block(String blockType, String blockDestination, String blockID)
     {
         if (null == blockType)

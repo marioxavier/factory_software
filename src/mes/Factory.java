@@ -1,6 +1,7 @@
 package mes;
 
 import java.util.*;
+import edu.uci.ics.jung.graph.Graph;
 
 
 /**
@@ -11,7 +12,7 @@ public class Factory extends Thread {
     
     public Integer ID;
     private boolean status;
-    private Conveyor[] cellConveyors, transportConveyors;
+    private Graph cellConveyors, transportConveyors;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
@@ -23,15 +24,10 @@ public class Factory extends Thread {
     private Monitor factoryMonitor;
     private String[] transportMemoryIndexes;
     
-    
-    
-    
     @Override
     public void run()
     {
-        System.out.println(this.factoryMonitor.getInputData());
-        
-        
+        System.out.println(this.factoryMonitor.getInputData());    
     }
     
     public Factory(Monitor receivedMonitor)
@@ -53,44 +49,50 @@ public class Factory extends Thread {
      * @return 
      */
     public boolean initFactory()
-    {
-        
-        
-        //Alteração do Nuno
-        this.transportConveyors = new Conveyor[16];
-        this.cellConveyors = new Conveyor[14];
+    {   
+        // initial status
+        status = false;
         
         // resets the number of conveyors
         numberOfConveyors = 0;
         
-        this.addTransport(this);
-        
+        // resets the number of active conveyors
+        activeSensors = 0;
 
-        //Initializing Block Array, needs some testing
+        // asks the factory to get in the init status
+        // TO DO
+        
+        // creates Hashtable to store all the incoming blocks 
          blocksInFactory = new Hashtable<>();
         
-        this.addCells("parallel", 2, this);
-        this.addCells("serial", 2, this);
-        
-        //this.addConveyors()
-
-        status = true;
-        return status;
-         
-         
-         
-
-
-        
-        
-        
-        
-   
+        // adds a transport unit to the factory
+        if(this.addTransport(this))
+        {
+            // adds parallel cell units to the factory
+            if(this.addCells("parallel", 2, this))
+                if (this.addCells("serial", 2, this))
+                {
+                    status = true;
+                    return true;
+                }
+                else
+                {
+                    System.out.println("Error creating serial cell.\n");
+                    return false;
+                } 
+            else
+            {
+                System.out.println("Error creating parallel cell.\n");
+                return false;   
+            } 
+        }
+        else
+        {
+            System.out.println("Error creating transport unit.\n");
+            return false;
+        }
     }
-    
-
-    
-
+   
     /**
      * Gets factory status
      * @return 
@@ -105,17 +107,21 @@ public class Factory extends Thread {
      * @param conveyorType
      * @return 
      */
-    public Conveyor[] getConveyors(String conveyorType)
+    public Graph getConveyors(String conveyorType)
     {
+        // if no conveyor type was given
         if (null == conveyorType)
             return null;
+        
         else
         {
             switch (conveyorType) {
                 case "transport":
                     return transportConveyors;
+                    
                 case "cell":
                     return cellConveyors;
+                    
                 // if some error occured
                 default:
                     return null;
@@ -254,45 +260,47 @@ public class Factory extends Thread {
             return false;
         }
         
-        // if a number of conveyors was given
+        // if the input arguments are OK
         else
-        switch(conveyorGroup)
-        {
-            // creates transport conveyors
-            case "transport":
+            switch(conveyorGroup)
             {
-                // creates conveyors
-                for(int i = 0; i < transportConveyors.length-1; i++)
+                // creates transport conveyors
+                case "transport":
                 {
-                    if (i==2 || i==5 || i==7 || i==10)
+                    // creates conveyors
+                    for(int i = 0; i < numberOfConveyors; i++)
                     {
-                        transportConveyors[i] = new Conveyor(conveyorGroup, "rotator");
-                        this.updateNumberOfConveyors("+");
+                         // adds the cell entrance conveyor
+                        if (i == 2 || i == 5 || i == 7 || i == 10)
+                        {
+                            transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
+                            this.updateNumberOfConveyors("+");
+                        }
+                        else
+                        {
+                            transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
+                            this.updateNumberOfConveyors("+");
+                        }
                     }
-                    else
-                    {
-                        transportConveyors[i] = new Conveyor(conveyorGroup, conveyorType);
-                        this.updateNumberOfConveyors("+");
-                    }
-
+                    
+                    break;
                 }
-                break;
-            }
-            
-            // creates cell conveyors
-            case "cell":
-            {
-                // creates conveyors
-                for(int i = 0; i < numberOfConveyors; i++)
-                    cellConveyors[i] = new Conveyor(conveyorGroup,conveyorType);
-                break; 
-            }
-            default:
-            {
-                System.out.println("Conveyor type not recognized.\n");
-                return false;
-            }
-        }  
+
+                // creates cell conveyors
+                case "cell":
+                {
+                    // creates conveyors
+                    for(int i = 0; i < numberOfConveyors; i++)
+                        cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
+                    break; 
+                }
+                
+                default:
+                {
+                    System.out.println("Conveyor type not recognized.\n");
+                    return false;
+                }
+            }  
         return true;
     }
     
@@ -370,26 +378,27 @@ public class Factory extends Thread {
             return false;
         }
         
-        // if a number of cells was given
+        // if a given number of cells was given
         else
-        switch(cellType)
-        {
-            case "parallel":
-                // creates cells
-                 for(int i = 0; i < numberOfCells; i++)
-                    parallelCells[i] = new Cell(cellType, currentFactory);
-                break;
-            
-            case "serial":
-                // creates cells
-                for(int i = 0; i < numberOfCells; i++)
-                    serialCells[i] = new Cell(cellType, currentFactory);
-                break; 
-                
-            default:
-                System.out.println("Cell type not recognized.\n");
-                return false;
-        }  
+            switch(cellType)
+            {
+                case "parallel":
+                    // creates parallel cells
+                     for(int i = 0; i < numberOfCells; i++)
+                        parallelCells[i] = new Cell(cellType, currentFactory);
+                    break;
+
+                case "serial":
+                    // creates serial cells
+                    for(int i = 0; i < numberOfCells; i++)
+                        serialCells[i] = new Cell(cellType, currentFactory);
+                    break; 
+
+                default:
+                    System.out.println("Cell type not recognized.\n");
+                    return false;
+            }  
+        
         return true;
     }
     
@@ -400,31 +409,39 @@ public class Factory extends Thread {
      */
     public boolean addTransport(Factory currentFactory)
     {
-        // creates input transport
-        inputTransport = new Transport("input", currentFactory);
-       
-        // creates output transport
-        outputTransport = new Transport("output", currentFactory);
-        
-        
-        // Error creating input Transport
-        if (null == inputTransport)
+        // checks if the current factory is null
+        if (null == currentFactory)
         {
-            System.out.println("Error creating input transport.\n");
-            return false;                    
+            System.out.println("No factory given\n");
+            return false;
         }
-        
-        // Error creating output Transport
-        else if (null == outputTransport)
-        {
-            System.out.println("Error creating output transport.\n");
-            return false; 
-        }
-        
-        
-        // if no error ocurred
+        // if a factory was given
         else
-            return true;
+        {
+            // creates input transport
+            inputTransport = new Transport("input", currentFactory);
+            
+            // error creating input Transport unit
+            if (null == inputTransport)
+            {
+                System.out.println("Error creating input transport.\n");
+                return false;                    
+            }
+            else
+            {
+                // creates output transport
+                outputTransport = new Transport("output", currentFactory);
+            }
+             
+            // error creating output Transport unit
+            if (null == outputTransport)
+            {
+                System.out.println("Error creating output transport.\n");
+                return false; 
+            }
+            else
+                return true;
+        }
     }
    
     /**
@@ -501,13 +518,24 @@ public class Factory extends Thread {
      */
     public boolean readFactory()
     {
-       factoryMonitor.readSensors();
-
-       factoryMonitor.readActuators();
-
-       factoryData = factoryMonitor.getInputData()+factoryMonitor.getOutputData();
-       
-       return true;
+        if(factoryMonitor.readSensors())
+            if (factoryMonitor.readActuators())
+            {
+                // updates factory data
+                factoryData = factoryMonitor.getInputData() + 
+                factoryMonitor.getOutputData();
+                return true;
+            }
+            else
+            {
+                System.out.println("Error reading actuators.\n");
+                return false;
+            }
+        else
+        {
+            System.out.println("Error reading sensors.\n");
+            return false;
+        }
     }
     
     /**
@@ -521,11 +549,11 @@ public class Factory extends Thread {
         // TO DO - tapetes duplos
         String conveyorID;
         
-        for (int i = 0; i < transportConveyors.length-1; i++)
+        for (int i = 0; i < transportConveyors.getVertexCount(); i++)
         {
             conveyorID = "0.";
             conveyorID += Integer.toString(i);
-            transportConveyors[i].setID(conveyorID);  
+            //TO DO
         }
         
         // Mudar return

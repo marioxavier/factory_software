@@ -22,26 +22,38 @@ public class Transport {
      */
     public Transport(String transportType, Factory currentFactory)
     {
+        // if no transport type was given
         if (null == transportType)
-            System.out.println("No transport type given.\n");
-        else
-        switch(transportType)
         {
-            case "input":
-                type = transportType;
-                // creates transport conveyors in the curren factory
-                currentFactory.addConveyors("linear","transport", 30);
-                break;
-
-            case "output":
-                type = transportType;
-                //creates transport conveyors in the current factory
-                currentFactory.addConveyors("linear","transport", 30);
-                break;
-            
-            default:
-                System.out.println("Transport type not recognized.\n");
+            System.out.println("No transport type given.\n");
+            System.exit(-1);
         }
+        // if no factory was given
+        else if (null == currentFactory)
+        {
+            System.out.println("No factory was given.\n");
+            System.exit(-1);
+        }
+        // all parameters are OK
+        else
+            switch(transportType)
+            {
+                case "input":
+                    type = transportType;
+                    // creates transport conveyors in the curreny factory
+                    currentFactory.addConveyors("linear","transport", 30);
+                    break;
+
+                case "output":
+                    type = transportType;
+                    //creates transport conveyors in the current factory
+                    currentFactory.addConveyors("linear","transport", 30);
+                    break;
+
+                default:
+                    System.out.println("Transport type not recognized.\n");
+                    System.exit(-1);
+            }
     }
     
     /**

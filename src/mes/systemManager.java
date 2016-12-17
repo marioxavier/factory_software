@@ -10,7 +10,6 @@ import java.util.*;
 import javax.swing.JOptionPane;
 import net.wimpi.modbus.util.BitVector;
 
-import graphs.*;
 
 /**
  * Classe para gerir o arranque e funcionamento do sistema
