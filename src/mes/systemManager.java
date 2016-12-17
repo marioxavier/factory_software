@@ -75,7 +75,7 @@ public class systemManager
        */ 
     }
      
-     public boolean addToQueue()
+     public boolean addToQueue(ProductionOrder newOrder)
      {
          //TO DO
          return true;

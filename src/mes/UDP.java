@@ -21,6 +21,19 @@ public class UDP extends Thread
     private DatagramSocket serverSocket;
     private int port;
     private byte[] receivedData ;
+    systemManager manager;
+    
+    public UDP(systemManager systemManager)
+    {
+        // no manager was given
+        if (null == systemManager)
+        {
+            System.out.println("No manager was given.\n");
+            System.exit(-1);
+        }
+        else
+            manager = systemManager;
+    }
     
     @Override
     public void run()
@@ -41,7 +54,8 @@ public class UDP extends Thread
             }
             
             // retrieves the sentence from the packet
-            String sentence = new String( receivePacket.getData());
+            manager.addToQueue(
+                    manager.convertToOrder(new String(receivePacket.getData())));
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);
