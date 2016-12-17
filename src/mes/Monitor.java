@@ -15,12 +15,25 @@ public class Monitor extends Thread
     private String inputData;
     private String outputData;
     private Modbus protocolToPLC;
-
+    // variable used to stop the thread
+    private volatile boolean killThread;
+    
+    // method called to stop Thread
+    public void stopThread()
+    {
+        killThread = true;
+    }
+            
+    // method to run in a Thread
     @Override
     public void run()
     {
-        this.readSensors();
-        this.readActuators();
+        while (!killThread)
+        {
+            this.readSensors();
+            this.readActuators();
+        }
+        
     }
     
     public Monitor(Modbus protocol)

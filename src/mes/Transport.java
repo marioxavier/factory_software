@@ -41,13 +41,13 @@ public class Transport {
                 case "input":
                     type = transportType;
                     // creates transport conveyors in the curreny factory
-                    currentFactory.addConveyors("linear","transport", 30);
+                    currentFactory.addConveyors("transport", "linear", 30);
                     break;
 
                 case "output":
                     type = transportType;
                     //creates transport conveyors in the current factory
-                    currentFactory.addConveyors("linear","transport", 30);
+                    currentFactory.addConveyors("transport", "linear", 30);
                     break;
 
                 default:

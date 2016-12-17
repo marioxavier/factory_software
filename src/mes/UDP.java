@@ -9,60 +9,64 @@ import java.net.DatagramSocket;
 
 import java.io.*;
 import java.net.*;
-import net.wimpi.modbus.*;
-import net.wimpi.modbus.msg.*;
-import net.wimpi.modbus.io.*;
-import net.wimpi.modbus.net.*;
-import net.wimpi.modbus.util.*;
-import java.util.*;
-import javax.swing.JOptionPane;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Extends Protocol class 
  * @author Mário Xavier
  */
-public class UDP 
+public class UDP extends Thread
 {
-    
     private DatagramSocket serverSocket;
-
-    private String type;
-    
     private int port;
+    private byte[] receivedData ;
     
-    
-    public UDP() 
+    @Override
+    public void run()
     {
-        
-        
-        // starts UDP protocol
-        if(type == "UDP")
+        while(true)
         {
-            try
+            // creates new packet to receive data
+            DatagramPacket receivePacket 
+                    = new DatagramPacket(receivedData, receivedData.length);
+            try 
             {
-                // creates new datagram socket (Port: 54321)  
-                DatagramSocket serverSocket = new DatagramSocket(port);
-                // creates array of bytes (receiveData)
-                byte[] receiveData = new byte[1024]; 
-       
-                while(true)
-                {
+                // receives a packet from port 54321
+                serverSocket.receive(receivePacket);
+            } 
+            catch (IOException ex) 
+            {
+                Logger.getLogger(UDP.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-                    // creates new packet to receive data
-                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                    // receives a packet from port 54321
-                    serverSocket.receive(receivePacket);
-                    // retrieves the sentence from the packet
-                    String sentence = new String( receivePacket.getData());
-                    // prints the sentence
-                    System.out.println("RECEIVED: " + sentence);
-                }
-            }
-            catch(Exception e)
-            {
-                System.out.println("Error in UDP Protocol");
-            }
+            // retrieves the sentence from the packet
+            String sentence = new String( receivePacket.getData());
+            
+            // DEBUG - prints the sentence
+            //System.out.println("DEBUG:: RECEIVED: " + sentence);
         }
     }
     
+    /**
+     * Initializes UDP protocol 
+     * @return 
+     */
+    public boolean initUDP()
+    {
+        try
+        {
+            // creates new datagram socket (Port: 54321)  
+            serverSocket = new DatagramSocket(port);
+            // creates array of bytes (receiveData)
+            receivedData = new byte[1024]; 
+            return true;
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error in UDP Protocol");
+            return false;
+        }
+    }
+
 }
