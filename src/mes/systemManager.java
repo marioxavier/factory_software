@@ -77,16 +77,23 @@ public class systemManager
      
      public boolean addToQueue()
      {
+         //TO DO
          return true;
      }
      
      public boolean removeFromQueue()
      {
+         //TO DO
          return true;
-     }
+     }  
      
+     public ProductionOrder convertToOrder(String receivedOrder)
+     {
+         ProductionOrder newOrder = new ProductionOrder();
+         //TO DO
+         return newOrder;
+     }
 }
-
         /*
         if(virtualFactory.addConveyors("transport", "linear", 2))
             System.out.println("ok");
