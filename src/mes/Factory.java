@@ -25,11 +25,15 @@ public class Factory extends Thread {
     private Monitor factoryMonitor;
     private String[] transportMemoryIndexes;
     
+    
+    
     @Override
     public void run()
     {
         System.out.println(this.factoryMonitor.getInputData());    
     }
+    
+    
     
     public Factory(Monitor receivedMonitor)
     {

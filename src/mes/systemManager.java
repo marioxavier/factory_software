@@ -25,8 +25,11 @@ public class systemManager
      {     
         // creates Modbus protocol object 
         Modbus protocolToPLC = new Modbus();
+        
         // creates UDP protocol object
         //UDP protocolToERP = new UDP();
+        
+        
         // creates a factory monitor
         Monitor factoryMonitor = new Monitor(protocolToPLC);
         // creates a virtual factory
@@ -137,3 +140,10 @@ public class systemManager
         // checks if factory is ready
         //if((simulatedFactory.isReady));
   
+
+
+
+
+
+
+// TESTE 17 DEZEMBRO
