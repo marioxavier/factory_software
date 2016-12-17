@@ -29,8 +29,7 @@ public class Factory extends Thread {
     public void run()
     {
         System.out.println(this.factoryMonitor.getInputData());
-        
-        
+
     }
     
     public Factory(Monitor receivedMonitor)

@@ -329,6 +329,7 @@ public final class Modbus {
      * false
      */
     public boolean setModbusWriteRequest()
+            
     {
         modbusWriteRequest = new WriteMultipleCoilsRequest(startWritingReference, bitsToWrite);
         
