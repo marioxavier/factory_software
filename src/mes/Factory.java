@@ -1,14 +1,9 @@
 package mes;
 
 import java.util.*;
-import edu.uci.ics.jung.graph.Graph;
 
-
-abstract class AbstractGraph<V,E>
-extends Object
-implements Graph<V,E>
-{
-}
+import mes.graph.*;
+import mes.graph.exception.InvalidConstructionException;
 
 
 /**
@@ -20,11 +15,7 @@ public class Factory extends Thread
     
     public Integer ID;
     private boolean status;
-    
-    
-    private AbstractGraph<Conveyor,Integer> cellConveyors, transportConveyors;
-    
-    
+    private Graph<Conveyor> cellConveyors, transportConveyors;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
@@ -45,8 +36,6 @@ public class Factory extends Thread
         System.out.println(this.factoryMonitor.getInputData());    
     }
     
-    
-    
     public Factory(Monitor receivedMonitor)
     {
         factoryMonitor = receivedMonitor;
@@ -66,7 +55,7 @@ public class Factory extends Thread
      * @return 
      */
     @SuppressWarnings("UseOfObsoleteCollectionType")
-    public boolean initFactory()
+    public boolean initFactory() throws InvalidConstructionException
     {   
         // initial status
         status = false;
@@ -125,7 +114,7 @@ public class Factory extends Thread
      * @param conveyorType
      * @return 
      */
-    public AbstractGraph getConveyors(String conveyorType)
+    public Graph getConveyors(String conveyorType)
     {
         // if no conveyor type was given
         if (null == conveyorType)
@@ -255,7 +244,7 @@ public class Factory extends Thread
      * @param numberOfConveyors 
      * @return
      */
-    public boolean addConveyors(String conveyorGroup, String conveyorType, int numberOfConveyors)
+    public boolean addConveyors(String conveyorGroup, String conveyorType, int numberOfConveyors) throws InvalidConstructionException
     {
         // no conveyor type was given
         if (null == conveyorType)
@@ -292,13 +281,10 @@ public class Factory extends Thread
                         if (i == 2 || i == 5 || i == 7 || i == 10)
                         {
                             this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
-                            updateNumberOfConveyors("+");
+                            this.updateNumberOfConveyors("+");
                         }
                         else
                         {
-                            //Debugging
-                            
-                           
                             this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
                             this.updateNumberOfConveyors("+");
                         }
@@ -306,13 +292,14 @@ public class Factory extends Thread
                     
                     break;
                 }
+                
 
                 // creates cell conveyors
                 case "cell":
                 {
                     // creates conveyors
                     for(int i = 0; i < numberOfConveyors; i++)
-                        cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
+                        this.cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
                     break; 
                 }
                 
@@ -383,7 +370,7 @@ public class Factory extends Thread
      * @return 
      */
     public boolean addCells(String cellType, int numberOfCells, Factory
-            currentFactory)
+            currentFactory) throws InvalidConstructionException
     {  
         // no cell type was given
         if (null == cellType)
@@ -428,7 +415,7 @@ public class Factory extends Thread
      * @param currentFactory
      * @return 
      */
-    public boolean addTransport(Factory currentFactory)
+    public boolean addTransport(Factory currentFactory) throws InvalidConstructionException
     {
         // checks if the current factory is null
         if (null == currentFactory)
@@ -570,7 +557,7 @@ public class Factory extends Thread
         // TO DO - tapetes duplos
         String conveyorID;
         
-        for (int i = 0; i < transportConveyors.getVertexCount(); i++)
+        for (int i = 0; i < transportConveyors.vertexCount; i++)
         {
             conveyorID = "0.";
             conveyorID += Integer.toString(i);
@@ -662,22 +649,20 @@ public class Factory extends Thread
             System.out.println("No block given to add.\n");
             return false;
         }
-        
+       
         else if (null == newBlock.ID)
         {
-            System.out.println("Block given has no string");
+            System.out.println("No ID given to this block.\n");
             return false;
         }
         
-        // if a block was given
+        // if all parameters are 
         else
         {
             // adds a block to the hashtable
-            blocksInFactory.put(newBlock.ID, newBlock);
-
+            this.blocksInFactory.put(newBlock.ID, newBlock);
             return true;
         }
-
     }
     
     /**

@@ -26,51 +26,60 @@ public class Conveyor {
      */
     public Conveyor(String conveyorGroup, String conveyorType)
     {
-      if (null == conveyorType)
-          System.out.println("No conveyor type given.\n");
-      else
-       {
+        // if no conveyor type was given
+        if (null == conveyorType)
+        {
+            System.out.println("No conveyor type given.\n"); 
+            System.exit(-1);
+        }
+         
+        else
+        {
+            // sets the conveyor group
+            switch(conveyorGroup)
+            {
+                case "cell":
+                {
+                    this.group = conveyorGroup;
+                    break;
+                }
+              
+                case "transport":
+                {
+                    this.group = conveyorGroup;
+                    break;
+                }
+              
+                default:
+                    System.out.println("Conveyor group not recognized.\n");
+                    System.exit(-1);
+            }
           
-          // sets the conveyor group
-          switch(conveyorGroup)
-          {
-              case "cell":
-              {
-                  group = conveyorGroup;
-                  break;
-              }
-              case "transport":
-              {
-                  group = conveyorGroup;
-                  break;
-              }
-              default:
-                System.out.println("Conveyor group not recognized.\n");
-          }
-          
-          // sets the conveyor type
-          switch(conveyorType)
-          {
-              case "rotator":
-              {
-                  type = conveyorType;
-                  break;
-              }
+            // sets the conveyor type
+            switch(conveyorType)
+            {
+                case "rotator":
+                {
+                    this.type = conveyorType;
+                    break;
+                }
                   
-              case "linear":
-              {
-                  type = conveyorType;
-                  break;
-              }
+                case "linear":
+                {
+                    this.type = conveyorType;
+                    break;
+                }
                   
-              case "slide":
-              {
-                  type = conveyorType;
-                  break;
-              }
-                  
-              default:
-                System.out.println("Conveyor type not recognized.\n");
+                case "slide":
+                {
+                    this.type = conveyorType;
+                    break;
+                }
+
+                default:
+                    System.out.println("Conveyor type not recognized.\n");
+                    System.exit(-1);
+
             }
         }
     }

@@ -5,6 +5,8 @@
  */
 package mes;
 
+import mes.graph.exception.InvalidConstructionException;
+
 /**
  *
  * @author Utilizador
@@ -19,7 +21,7 @@ public class Cell {
      * @param cellType 
      * @param currentFactory
      */
-    public Cell(String cellType, Factory currentFactory)
+    public Cell(String cellType, Factory currentFactory) throws InvalidConstructionException
     {
          if (null == cellType)
             System.out.println("No conveyor type given.\n");

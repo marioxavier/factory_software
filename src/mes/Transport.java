@@ -5,6 +5,8 @@
  */
 package mes;
 
+import mes.graph.exception.InvalidConstructionException;
+
 /**
  *
  * @author Mário Xavier
@@ -20,7 +22,7 @@ public class Transport {
      * @param transportType 
      * @param currentFactory
      */
-    public Transport(String transportType, Factory currentFactory)
+    public Transport(String transportType, Factory currentFactory) throws InvalidConstructionException
     {
         // if no transport type was given
         if (null == transportType)
@@ -81,6 +83,7 @@ public class Transport {
         else
         {
             newBlock.setPosition("00");
+            
             return true;
         }
     }

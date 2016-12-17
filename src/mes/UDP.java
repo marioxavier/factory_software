@@ -22,8 +22,9 @@ public class UDP extends Thread
     private int port;
     private byte[] receivedData ;
     systemManager manager;
+    ProductionOrder newOrder;
     
-    public UDP(systemManager systemManager)
+    public UDP(systemManager systemManager, ProductionOrder newProductionOrder)
     {
         // no manager was given
         if (null == systemManager)
@@ -31,8 +32,19 @@ public class UDP extends Thread
             System.out.println("No manager was given.\n");
             System.exit(-1);
         }
+        
+        else if (null == newProductionOrder)
+        {
+            System.out.println("Production Order is null \n");
+            System.exit(-1);
+        }
+        
         else
+        {
             manager = systemManager;
+            newOrder = newProductionOrder;
+        }
+            
     }
     
     @Override
@@ -53,9 +65,7 @@ public class UDP extends Thread
                 Logger.getLogger(UDP.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            
-            // retrieves the sentence from the packet
-            manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
+                manager.addToQueue(newOrder.convertToOrder(new String(receivePacket.getData())));
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);
