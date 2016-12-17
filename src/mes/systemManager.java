@@ -23,67 +23,27 @@ public class systemManager
     
      public static void main (String[] args) throws SQLException
      {     
-        Monitor factoryMonitor;
-        Modbus protocolToPLC;
-        UDP protocolToERP;
-        Factory virtualFactory;
-        
-        DecisionMaker Decisor;
-        
+        // creates Modbus protocol object 
+        Modbus protocolToPLC = new Modbus();
         // creates UDP protocol object
-        //protocolToERP = new Protocol();
-        // error creating protocol to ERP
-        //if (protocolToERP == null)
-        {
-            //TO DO
-        }
-        
-        // creates Modbus protocol object
-        protocolToPLC = new Modbus();
-        factoryMonitor = new Monitor(protocolToPLC);
-        virtualFactory = new Factory(factoryMonitor);
-        
-        /*
-        if (virtualFactory.initFactory()==false)
-            System.out.println("error initializing factory");
-        */
-        
-        
-
-
-        
-        // error creating protocol to PLC
-        if (protocolToPLC == null)
-        {
-            //TO DO
-        }
-        
-        
-        
-        // Setting the Modbus Connection
-        
+        UDP protocolToERP = new UDP();
+        Monitor factoryMonitor = new Monitor(protocolToPLC);
+        Factory virtualFactory = new Factory(factoryMonitor);
+        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, 
+                virtualFactory);
+              
+        // setting the Modbus Connection   
         if (protocolToPLC.setModbusConnection())
             System.out.println("Modbus connection on.\n");
         else
             System.out.println("Modbus connection failed.\n");
-
-
+        
         protocolToPLC.openConnection();
         
+       // runs Monitor thread
+       factoryMonitor.start();
         
-        factoryMonitor.start();
-        
-        
-        
-        
-        
-
-        //  Testes do NUNO a partir daqui
-        
-        
-        Decisor = new DecisionMaker();
-        
-        Decisor.makeDecision(protocolToPLC, virtualFactory);
+       decisionUnit.makeDecision();
         
         
         /*

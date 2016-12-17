@@ -17,9 +17,40 @@ import java.util.concurrent.TimeUnit;
 public class DecisionMaker {
     
     public int ID;
+    Modbus protocolToPLC;
+    Factory virtualFactory;
     
+    /**
+     * 
+     * @param protocol
+     * @param currentFactory 
+     */
+    public DecisionMaker(Modbus protocol, Factory currentFactory)
+    {
+        if(null == protocol)
+        {
+            System.out.println("No protocol was given.\n");
+            System.exit(-1);
+        }
+        else if (null == currentFactory)
+        {
+            System.out.println("No factory was given.\n");
+            System.exit(-1);
+        }
+        else 
+        {
+            protocolToPLC = protocol;
+            virtualFactory = currentFactory;
+        }
+    }
     
-    public boolean makeDecision(Modbus protocolToPLC, Factory virtualFactory)
+    /**
+     * 
+     * @param protocolToPLC
+     * @param virtualFactory
+     * @return 
+     */
+    public boolean makeDecision()
     {
         // Creating Block in MES
             
@@ -29,8 +60,7 @@ public class DecisionMaker {
             // Adding the block to the virtual factory
             virtualFactory.addBlock(testBlock);
         
-            
-            
+          
             // creating a bit vector of size 16
             BitVector settingAllToZero = new BitVector(16);
                 
@@ -38,10 +68,7 @@ public class DecisionMaker {
             
             protocolToPLC.writeModbus(0, settingAllToZero);
             
-
-            
         // Creating the block in the factory
-        
         
             // creating a bit vector of size 8
             BitVector setBlock = new BitVector(8);
@@ -62,8 +89,6 @@ public class DecisionMaker {
                 System.out.println("error in sleep");
             }
             
-            
-            
             // Sends the byte with information about block type to add 
             
             setBlock.setBit(1, true);
@@ -72,8 +97,6 @@ public class DecisionMaker {
             
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
 
-            
-            
         boolean permissao=true;    
             
         //TO DO
