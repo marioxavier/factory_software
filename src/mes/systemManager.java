@@ -26,11 +26,17 @@ public class systemManager
         // creates Modbus protocol object 
         Modbus protocolToPLC = new Modbus();
         // creates UDP protocol object
-        UDP protocolToERP = new UDP();
+        //UDP protocolToERP = new UDP();
+        // creates a factory monitor
         Monitor factoryMonitor = new Monitor(protocolToPLC);
+        // creates a virtual factory
         Factory virtualFactory = new Factory(factoryMonitor);
+        // creates a decision unit
         DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, 
                 virtualFactory);
+        // creates a database object
+        Database db = new Database();
+        
               
         // setting the Modbus Connection   
         if (protocolToPLC.setModbusConnection())
@@ -42,14 +48,14 @@ public class systemManager
         
        // runs Monitor thread
        factoryMonitor.start();
-        
+       
+       // runs Database thread
+       db.start();
+       
+ 
        decisionUnit.makeDecision();
         
-        
-        /*
-        // creates a database object
-       Database db = new Database();
-      
+        /*     
        // if database is initialized
        if(db.initDatabase("org.postgresql.Driver", 
                 "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
@@ -66,20 +72,21 @@ public class systemManager
           }
        }
        
-       */
-       
-       
-       
-        
+       */ 
     }
+     
+     public boolean addToQueue()
+     {
+         return true;
+     }
+     
+     public boolean removeFromQueue()
+     {
+         return true;
+     }
+     
 }
 
-
-        
-
-
-        
-        
         /*
         if(virtualFactory.addConveyors("transport", "linear", 2))
             System.out.println("ok");
@@ -87,33 +94,19 @@ public class systemManager
             System.out.println("erro");
             */
 
-        
-        
-        
-        
-        
         /*
         Conveyor Conveyor1, Conveyor2;
         
         Conveyor1 = new Conveyor("transport","linear","04");
         Conveyor2 = new Conveyor("transport","slide","010");
-        
-        
-        
+
         Conveyor[] conveyorArray = new Conveyor[2]; 
         conveyorArray[0]=Conveyor1;
         conveyorArray[1]=Conveyor2;
         
         factoryMonitor.updateTransportConveyors(conveyorArray);
-        
-        
-        
+
         */
-        
-
-
-        
-        
 
         // ************  HOW TO PLACE A BLOCK IN FACTORY ****************
         
@@ -134,27 +127,6 @@ public class systemManager
         */
         
 
-
-        
-
-
-        
-        
-        
-        
-       
-         
-
-        
         // checks if factory is ready
         //if((simulatedFactory.isReady));
   
-        
-        
-        
-        
-        
-        
-        
-        
-        

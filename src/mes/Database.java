@@ -11,7 +11,8 @@ import java.sql.*;
  *
  * @author Utilizador
  */
-public class Database {
+public class Database extends Thread
+{
     
     private static String jdbcDriver;  
     private static String URL;
@@ -21,6 +22,14 @@ public class Database {
     private Connection databaseConnection;
     private Statement databaseStatement;
     private ResultSet dataSet;
+    
+    
+    @Override
+    public void run()
+    {
+        
+    }
+    
     
     /**
      * Gets the username
@@ -39,7 +48,6 @@ public class Database {
     {
         return password;
     }
-    
     
     /**
      * Gets database status
@@ -70,8 +78,8 @@ public class Database {
     
   /**
    * Initializes database with given parameters
-   * @param driver
-   * @param url
+   * @param databaseDriver
+   * @param databaseURL
    * @return
    * true - database initialized with success
    * false - database not initialized
@@ -101,8 +109,8 @@ public class Database {
     
     /**
      * Sets the database credentials 
-     * @param username
-     * @param password
+     * @param databaseUsername
+     * @param databasePassword
      * @return 
      * true 
      * false
@@ -150,7 +158,6 @@ public class Database {
         {
             // if there was some exception
             System.out.println("Connection Failed! Check output console");
-            e.printStackTrace();
             return false;
         }
       
@@ -225,7 +232,6 @@ public class Database {
 
             System.out.println("Where is your PostgreSQL JDBC Driver? "
                                 + "Include in your library path!");
-            e.printStackTrace();
             return;
 
         }
@@ -242,7 +248,7 @@ public class Database {
     {
       System.out.println("Creating statement...");
       databaseStatement = databaseConnection.createStatement();
-      ResultSet dataSet = databaseStatement.executeQuery(query);
+      this.dataSet = databaseStatement.executeQuery(query);
     }
 }
 

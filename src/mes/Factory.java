@@ -16,6 +16,7 @@ public class Factory extends Thread {
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
+    @SuppressWarnings("UseOfObsoleteCollectionType")
     private Hashtable<String, Block> blocksInFactory;
     private int numberOfConveyors;
     private int activeSensors;
@@ -48,6 +49,7 @@ public class Factory extends Thread {
      * Initizes factory
      * @return 
      */
+    @SuppressWarnings("UseOfObsoleteCollectionType")
     public boolean initFactory()
     {   
         // initial status
@@ -615,8 +617,6 @@ public class Factory extends Thread {
                     newPosition = pastBlockPosition;
                     return newPosition;    
                 }
-
-
             }
             // if the given does not exist
             else
@@ -628,7 +628,6 @@ public class Factory extends Thread {
         * */
         return null;
     }
-
 
     /**
      * 

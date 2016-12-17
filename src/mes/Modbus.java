@@ -84,8 +84,7 @@ public final class Modbus {
         return bitsToWrite;
         
     }
-    
-    
+   
     /**
      * Sets bits to write
      * @param vectorOfBits
@@ -97,7 +96,6 @@ public final class Modbus {
         // returns true if bitsToWrite is not null
         return bitsToWrite != null;
     }
-    
    
     /**
      * Gets modbus address
@@ -195,7 +193,6 @@ public final class Modbus {
         return true;
     }
     
-    
     /**
      * Sets a modbus connection
      * @return 
@@ -275,8 +272,7 @@ public final class Modbus {
                         modbusTransaction.setRequest(modbusWriteRequest);
                         break;
                         
-                    }
-                     
+                    } 
 
                     default: 
                     {

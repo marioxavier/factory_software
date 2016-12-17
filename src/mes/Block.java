@@ -25,20 +25,35 @@ public class Block {
      */
     public Block(String blockType, String blockDestination, String blockID)
     {
+        // if block type was not given
         if (null == blockType)
-            System.out.println("block type not sepcified");
-
-        
+        {
+                System.out.println("Block type not sepcified.\n");
+                System.exit(-1);
+        }
+           
+        // if block destination was not given
         else if (null == blockDestination)
-            System.out.println("block destination not specified");
+        {
+            System.out.println("Block destination not specified.\n");
+            System.exit(-1);
+        }
         
-        type = blockType;
+        else if(null == blockID)
+        {
+            System.out.println("Block ID not specified.\n");
+            System.exit(-1);
+        }
         
-        destination = blockDestination;
-        
-        ID = blockID;
-        position = "0.0";
-        
+        // all input arguments OK
+        else
+        {
+            this.type = blockType;
+            this.destination = blockDestination;
+            this.ID = blockID;
+            // initial position
+            this.position = "0.0";
+        }
     }
     
     /**

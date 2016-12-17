@@ -5,10 +5,6 @@
  */
 package mes;
 
-
-import java.util.*;
-
-
 /**
  *
  * @author Utilizador
@@ -20,6 +16,7 @@ public class Monitor extends Thread
     private String outputData;
     private Modbus protocolToPLC;
 
+    @Override
     public void run()
     {
         this.readSensors();
@@ -36,9 +33,10 @@ public class Monitor extends Thread
         // if some protocol was given
         else
         {
+            // initializes variables
             protocolToPLC = protocol;
-            inputData = "";
-            outputData = "";
+            inputData = null;
+            outputData = null;
         }
         
     }

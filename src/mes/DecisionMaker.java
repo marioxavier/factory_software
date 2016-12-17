@@ -46,8 +46,6 @@ public class DecisionMaker {
     
     /**
      * 
-     * @param protocolToPLC
-     * @param virtualFactory
      * @return 
      */
     public boolean makeDecision()
@@ -55,7 +53,7 @@ public class DecisionMaker {
         // Creating Block in MES
             
             //Creating Block Object with type P8 and position 0.0 and destination 1.2
-            Block testBlock = new Block("P8","0.5","Teste");
+            Block testBlock = new Block("P8", "0.5", "Teste");
         
             // Adding the block to the virtual factory
             virtualFactory.addBlock(testBlock);
@@ -117,8 +115,7 @@ public class DecisionMaker {
            
            
         }
-        
-
+    
             // creating a bit vector of size 8
             BitVector cellTwoOrder = new BitVector(8);
             
