@@ -18,7 +18,7 @@ public class Block {
     private String destination;
     
     
-    public Block(String blockType, String blockDestination, String id)
+    public Block(String blockType, String blockDestination, String blockID)
     {
         if (null == blockType)
             System.out.println("block type not sepcified");
@@ -31,7 +31,7 @@ public class Block {
         
         destination = blockDestination;
         
-        ID = id;
+        ID = blockID;
         position = "0.0";
         
     }

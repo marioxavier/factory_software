@@ -9,13 +9,13 @@ import java.util.*;
  */
 public class Factory extends Thread {
     
-    public int ID;
+    public Integer ID;
     private boolean status;
     private Conveyor[] cellConveyors, transportConveyors;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
-    private List<Block> blocksInFactory;
+    private Hashtable<String, Block> blocksInFactory;
     private int numberOfConveyors;
     private int activeSensors;
     private int numberOfBlocks;
@@ -26,6 +26,7 @@ public class Factory extends Thread {
     
     
     
+    @Override
     public void run()
     {
         System.out.println(this.factoryMonitor.getInputData());
@@ -65,7 +66,7 @@ public class Factory extends Thread {
         
 
         //Initializing Block Array, needs some testing
-         blocksInFactory = new ArrayList<Block>();
+         blocksInFactory = new Hashtable<>();
         
         this.addCells("parallel", 2, this);
         this.addCells("serial", 2, this);
@@ -391,9 +392,6 @@ public class Factory extends Thread {
         return true;
     }
     
-    
-    
-    
     /**
      * Adds transport to factory
      * @param currentFactory
@@ -427,11 +425,7 @@ public class Factory extends Thread {
         else
             return true;
     }
-    
-    
-    
-    
-    
+   
     /**
      * Updates the number of conveyors using + to increment and - to decrement
      * @param updateOperation
@@ -545,6 +539,9 @@ public class Factory extends Thread {
     public String getNewPosition(Block blockToUpdate)
     {
         String newPosition;
+        // gets a block with given ID
+        blocksInFactory.get(blockToUpdate.ID);
+        /**
         // loops the block array
         for (Block pastBlock : blocksInFactory)
         {
@@ -599,6 +596,7 @@ public class Factory extends Thread {
                 return null;
             }
         }
+        * */
         return null;
     }
 
@@ -619,8 +617,8 @@ public class Factory extends Thread {
         // if a block was given
         else
         {
-            // adds a block in the list
-            blocksInFactory.add(newBlock);
+            // adds a block to the hashtable
+            blocksInFactory.put(newBlock.ID, newBlock);
             return true;
         }
 
