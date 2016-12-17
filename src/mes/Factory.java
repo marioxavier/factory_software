@@ -71,6 +71,22 @@ public class Factory extends Thread
         
         // creates Hashtable to store all the incoming blocks 
          blocksInFactory = new Hashtable<>();
+         
+         
+         // creates graph to store all the conveyors
+         transportConveyors = new Graph<>();
+         
+         // creates graph to store all cell Conveyors
+         cellConveyors = new Graph<>();
+         
+         // creates Cell array containing all parallel cells
+         parallelCells = new Cell[2];
+         
+         // creates Cell array containing all serial cells
+         serialCells = new Cell[2];
+         
+         // creates the machine array containing all the machines
+         machines = new Machine[8];
         
         // adds a transport unit to the factory
         if(this.addTransport(this))
@@ -282,6 +298,8 @@ public class Factory extends Thread
                         {
                             this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
                             this.updateNumberOfConveyors("+");
+                           
+                            
                         }
                         else
                         {
@@ -393,7 +411,13 @@ public class Factory extends Thread
                 case "parallel":
                     // creates parallel cells
                      for(int i = 0; i < numberOfCells; i++)
-                        parallelCells[i] = new Cell(cellType, currentFactory);
+                     {
+                         parallelCells[i] = new Cell(cellType, currentFactory);
+                         
+                         // DEBUGGING
+                         System.out.println("entrou no for");
+                         
+                     }
                     break;
 
                 case "serial":

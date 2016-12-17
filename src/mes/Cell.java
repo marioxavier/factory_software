@@ -29,18 +29,25 @@ public class Cell {
          switch(cellType)
          {
             case "parallel":
+            {
                 type = cellType;
                 // creates cells in the current factory
                 currentFactory.addConveyors("cell", "linear", 3);
                 currentFactory.addMachines("A", 1);
                 
                 break;
+            }
+                
 
             case "serial":
+            {
                 type = cellType;
                 // creates cells in the current factory
                 currentFactory.addCells(cellType, 4, currentFactory);
                 break; 
+                
+            }
+                
             
             default:
                 System.out.println("Cell type not recognized.\n");

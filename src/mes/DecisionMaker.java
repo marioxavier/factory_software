@@ -52,7 +52,7 @@ public class DecisionMaker {
     {
         // Creating Block in MES
             
-            //Creating Block Object with type P8 and position 0.0 and destination 1.2
+            //Creating Block Object with type P8 and position 0.0 and destination 0.5 and ID "Teste"
             Block testBlock = new Block("P8", "0.5", "Teste");
         
             // Adding the block to the virtual factory
@@ -64,7 +64,10 @@ public class DecisionMaker {
                 
             System.out.println(settingAllToZero);
             
+            
             protocolToPLC.writeModbus(0, settingAllToZero);
+            
+            
             
         // Creating the block in the factory
         
@@ -75,6 +78,7 @@ public class DecisionMaker {
             System.out.println(setBlock);
             
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
+            
             
             
             // Needs to wait 2 seconds before sending the byte with block type
