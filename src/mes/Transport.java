@@ -39,16 +39,24 @@ public class Transport {
             switch(transportType)
             {
                 case "input":
+                {
                     type = transportType;
                     // creates transport conveyors in the curreny factory
                     currentFactory.addConveyors("transport", "linear", 30);
                     break;
+                    
+                }
+                    
 
                 case "output":
+                {
                     type = transportType;
                     //creates transport conveyors in the current factory
                     currentFactory.addConveyors("transport", "linear", 30);
                     break;
+                    
+                }
+                    
 
                 default:
                     System.out.println("Transport type not recognized.\n");

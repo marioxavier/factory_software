@@ -53,9 +53,9 @@ public class UDP extends Thread
                 Logger.getLogger(UDP.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            
             // retrieves the sentence from the packet
-            manager.addToQueue(
-                    manager.convertToOrder(new String(receivePacket.getData())));
+            manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);

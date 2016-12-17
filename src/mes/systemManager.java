@@ -11,6 +11,14 @@ import javax.swing.JOptionPane;
 import net.wimpi.modbus.util.BitVector;
 
 
+import java.util.*;
+import edu.uci.ics.jung.graph.Graph;
+
+
+
+
+
+
 /**
  * Classe para gerir o arranque e funcionamento do sistema
  * @author Mário Xavier
@@ -50,14 +58,21 @@ public class systemManager
         protocolToPLC.openConnection();
         
        // runs Monitor thread
-       factoryMonitor.start();
+       //factoryMonitor.start();
+       
+       
+       // initializing factory
+       virtualFactory.initFactory();
        
        // runs Database thread
        db.start();
-       
- 
+
+
        decisionUnit.makeDecision();
         
+       
+       
+       
         /*     
        // if database is initialized
        if(db.initDatabase("org.postgresql.Driver", 
