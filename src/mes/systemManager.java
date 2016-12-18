@@ -19,18 +19,20 @@ import net.wimpi.modbus.util.BitVector;
 public class systemManager 
 {    
     private String ID;
-    private PriorityQueue orderQueue;
+    public PriorityQueue<ProductionOrder> orderQueue;
     private int status;
     
      public static void main (String[] args) throws SQLException, InvalidConstructionException
-     {     
+     {  
+        systemManager manager = new systemManager();
         // creates Modbus protocol object 
         Modbus protocolToPLC = new Modbus();
         
-        
+        // creates UDP protocol object
+        UDP protocolToERP = new UDP(manager);
           
         // creates a virtual factory
-        Factory virtualFactory = new Factory(protocolToPLC);
+        Factory virtualFactory = new Factory(protocolToPLC, manager);
         // creates a decision unit
         DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
         // creates a database object
@@ -155,6 +157,17 @@ public class systemManager
      {
          return orderQueue.remove(orderToRemove);
      }  
+     
+      /**
+      * Converts received order from UDP to ProductionOrder
+      * @param receivedOrder
+      * @return 
+      */
+     public ProductionOrder convertToOrder(String receivedOrder)
+     {
+         ProductionOrder newOrder = new ProductionOrder();
+         return newOrder;
+     }
 }
 
 

@@ -26,6 +26,7 @@ public class Factory extends Thread
     private int numberOfBlocks;
     private String factoryData;
     private Monitor factoryMonitor;
+    private systemManager systemManager;
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
     private Hashtable<Integer, String> memoryMap;
@@ -41,23 +42,10 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
-            String position;
-        
-            for (String i : blocksInFactory.keySet())
+            if(this.isReady())
             {
-                Block blockToUpdate = blocksInFactory.get(i);
-                position = this.getNewPosition(blockToUpdate);
-                blockToUpdate.setPosition(position);
-                System.out.println(blockToUpdate.getPosition());
-                
-                try
-                {
-                TimeUnit.SECONDS.sleep(2);
-                }
-                catch(Exception Ex)
-                {
-                System.out.println("error in sleep");
-                }
+                systemManager.orderQueue.element();
+                //this.addBlock(newBlock);
             }
         }
         
@@ -83,9 +71,10 @@ public class Factory extends Thread
      * 
      * @param protocol 
      */
-    public Factory(Modbus protocol)
+    public Factory(Modbus protocol, systemManager manager)
     {
         protocolToPLC = protocol;
+        systemManager = manager;
         factoryMonitor = new Monitor(protocol, this);
     }
     
