@@ -848,22 +848,41 @@ public class Factory extends Thread
     {
         //status = "Ready", "Sending", "receiving"
         
-        // orientation,
+        // percorrer todos os tapetes
+        // para cada tapete, ir à hashtable com o get (.hashcode).
+        // fazer parse "1,2,7" (split)
+        // rotativos (7), lineares, duplos (4) e paralelos (7 posições);
+        // ler nessas posições de memória e atualizar as variáveis abaixo
+        
+ 
+        // orientation, status
         // TO DO
         return true;
     }
     
     public boolean updateBlockStatus(String factoryData)
     {
+         // percorrer todos os blocos
+        // para cada tapete, ir à hashtable com o get (.hashcode).
+        // fazer parse "1,2,7" (split)
+        // ler nessas posições de memória e atualizar as variáveis abaixo
+        
         //status =  "Waiting", "Transporting", "Transforming", "Ready"
         
-        // position, type
+        // // position, type
+        
+        
         // TO DO
         return true;
     }
     
     public boolean updateMachineStatus(String factoryData)
     {
+         // percorrer todas as máquinas
+        // para cada tapete, ir à hashtable com o get (.hashcode).
+        // fazer parse "1,2,7" (split)
+        // ler nessas posições de memória e atualizar as variáveis abaixo
+        
         
         // status = "Working", "Shifting", "Ready"
         
