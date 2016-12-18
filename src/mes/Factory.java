@@ -843,16 +843,18 @@ public class Factory extends Thread
     
     public boolean updateConveyorStatus(String factoryData)
     {
-        //"Ready", "Sending", "receiving"
+        //status = "Ready", "Sending", "receiving"
         
+        // orientation,
         // TO DO
         return true;
     }
     
     public boolean updateBlockStatus(String factoryData)
     {
-        // "Waiting", "Transporting", "Transforming", "Ready"
+        //status =  "Waiting", "Transporting", "Transforming", "Ready"
         
+        // position, type
         // TO DO
         return true;
     }
@@ -860,8 +862,9 @@ public class Factory extends Thread
     public boolean updateMachineStatus(String factoryData)
     {
         
-        //"Working", "Shifting", "Ready"
+        // status = "Working", "Shifting", "Ready"
         
+        //current tool, nextTool (decisor)
         // TO DO
         return true;
     }
