@@ -80,6 +80,126 @@ public class Transport extends Thread  {
             }
     }
     
+    @Override
+    public void run()
+    {
+        
+        // if no new block was given
+        if (null == blockToControl)
+        {
+            System.out.println("No block was given to start transport.\n");
+            System.exit(-1);
+        }
+        
+        
+        // if a block was given sends it to destination
+        else
+        {
+            /*
+            // Adding the block to the virtual factory
+            if(!virtualFactory.addBlock(blockToControl))
+            {
+                System.out.println("No block was created\n");
+                System.exit(-1);
+            }
+            */
+
+            // Setting "Blocks to add in factory" to zero
+            BitVector setBlock = new BitVector(8);
+            System.out.println(protocolToPLC.writeModbus(144, setBlock));
+            
+            
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            // stores the bitVector to write in order to create this block
+            setBlock = blockVector.get(blockToControl.getType());
+            
+            // sends order to PLC to create this Block
+            protocolToPLC.writeModbus(144, setBlock);
+            
+
+            
+            // variable to control in which cell entrance the decision is being made
+            short entradaCelula=0;
+            
+            // Bitvector with decision to keep going
+            BitVector keepGoingDecision = new BitVector(8);
+            
+            // control algorithm
+            while(!blockToControl.isDestination())
+            {  
+                
+                System.out.println(blockToControl.getPosition());
+                
+                // decision not to enter in first Cell
+                if (blockToControl.getPosition().equals("0.2") && !(blockToControl.isDestination()) && entradaCelula==0)
+                {
+                    entradaCelula +=1;
+                    keepGoingDecision.setBit(0, true);
+                    protocolToPLC.writeModbus(8, keepGoingDecision);
+
+                }
+                // decision not to enter in second Cell
+                else if (blockToControl.getPosition().equals("0.5") && !(blockToControl.isDestination()) && entradaCelula==1)
+                {
+                    entradaCelula+=1;
+                    keepGoingDecision.setBit(0, false);
+                    keepGoingDecision.setBit(1, true);
+                    protocolToPLC.writeModbus(8, keepGoingDecision);
+                }
+                // decision not to enter in third Cell
+                else if (blockToControl.getPosition().equals("0.7") && !(blockToControl.isDestination()) && entradaCelula==2)
+                {
+                    entradaCelula+=1;
+                    keepGoingDecision.setBit(1, false);
+                    keepGoingDecision.setBit(2, true);
+                    protocolToPLC.writeModbus(8, keepGoingDecision);
+                }
+                
+                // decision not to enter in fourth Cell
+                else if (blockToControl.getPosition().equals("0.10") && !(blockToControl.isDestination()) && entradaCelula==3)
+                {
+                    entradaCelula+=1;
+                    keepGoingDecision.setBit(2, false);
+                    keepGoingDecision.setBit(3, true);
+                    protocolToPLC.writeModbus(8, keepGoingDecision);
+                }
+                
+                // decision not to enter in fifth Cell
+                else if (blockToControl.getPosition().equals("0.12") && !(blockToControl.isDestination()) && entradaCelula==4)
+                {
+                    entradaCelula+=1;
+                    keepGoingDecision.setBit(3, false);
+                    keepGoingDecision.setBit(4, true);
+                    protocolToPLC.writeModbus(8, keepGoingDecision);
+                }
+                
+            }
+            
+            System.out.println("Saiu do while");
+            
+            // creates byte array with size 1
+            byte[] decisionToBitvector = new byte[1];
+            // creates a byte with the information about where to let the block enter
+            decisionToBitvector[0] = (byte)(entradaCelula & 0xff);
+            // turns byte into bitvector
+            BitVector enterDecision = BitVector.createBitVector(decisionToBitvector);
+            
+            // writes the decision where to enter in PLC
+            protocolToPLC.writeModbus(0, enterDecision);
+            
+
+        }
+    }
+    
     public boolean addBlockToControl(Block block)
     {
         blockToControl = block;
@@ -158,127 +278,6 @@ public class Transport extends Thread  {
     }
     
     
-
-    /**
-     * 
-     * @param newBlock
-     * @param destination 
-     */
-    public void run()
-    {
-        
-        // if no new block was given
-        if (null == blockToControl)
-        {
-            System.out.println("No block was given to start transport.\n");
-            System.exit(-1);
-        }
-        
-        
-        // if a block was given sends it to destination
-        else
-        {
-            // Adding the block to the virtual factory
-            if(!virtualFactory.addBlock(blockToControl))
-            {
-                System.out.println("No block was created\n");
-                System.exit(-1);
-            }
-            
-            
-            // Setting "Blocks to add in factory" to zero
-            BitVector setBlock = new BitVector(8);
-            System.out.println(protocolToPLC.writeModbus(144, setBlock));
-            
-            
-            // Needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-            
-            // stores the bitVector to write in order to create this block
-            setBlock = blockVector.get(blockToControl.getType());
-            
-            // sends order to PLC to create this Block
-            protocolToPLC.writeModbus(144, setBlock);
-            
-            
-            
-            // variable to control in which cell entrance the decision is being made
-            short entradaCelula=0;
-            
-            // Bitvector with decision to keep going
-            BitVector keepGoingDecision = new BitVector(8);
-            
-            // control algorithm
-            while(!blockToControl.isDestination())
-            {  
-                
-                System.out.println(blockToControl.getPosition());
-                
-                // decision not to enter in first Cell
-                if (blockToControl.getPosition().equals("0.2") && !(blockToControl.isDestination()) && entradaCelula==0)
-                {
-                    entradaCelula +=1;
-                    keepGoingDecision.setBit(0, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-
-                }
-                // decision not to enter in second Cell
-                if (blockToControl.getPosition().equals("0.5") && !(blockToControl.isDestination()) && entradaCelula==1)
-                {
-                    entradaCelula+=1;
-                    keepGoingDecision.setBit(0, false);
-                    keepGoingDecision.setBit(1, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                // decision not to enter in third Cell
-                if (blockToControl.getPosition().equals("0.7") && !(blockToControl.isDestination()) && entradaCelula==2)
-                {
-                    entradaCelula+=1;
-                    keepGoingDecision.setBit(1, false);
-                    keepGoingDecision.setBit(2, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                
-                // decision not to enter in fourth Cell
-                if (blockToControl.getPosition().equals("0.10") && !(blockToControl.isDestination()) && entradaCelula==3)
-                {
-                    entradaCelula+=1;
-                    keepGoingDecision.setBit(2, false);
-                    keepGoingDecision.setBit(3, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                
-                // decision not to enter in fifth Cell
-                if (blockToControl.getPosition().equals("0.12") && !(blockToControl.isDestination()) && entradaCelula==4)
-                {
-                    entradaCelula+=1;
-                    keepGoingDecision.setBit(3, false);
-                    keepGoingDecision.setBit(4, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                
-            }
-            
-            // creates byte array with size 1
-            byte[] decisionToBitvector = new byte[1];
-            // creates a byte with the information about where to let the block enter
-            decisionToBitvector[0] = (byte)(entradaCelula & 0xff);
-            // turns byte into bitvector
-            BitVector enterDecision = BitVector.createBitVector(decisionToBitvector);
-            
-            // writes the decision where to enter in PLC
-            protocolToPLC.writeModbus(0, enterDecision);
-            
-
-        }
-    }
 
     
 }

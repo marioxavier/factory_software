@@ -268,7 +268,6 @@ public final class Modbus {
                     // if type is 2 we set up a Transaction to Write Multiple Coils
                     case "write":
                     {
-                        System.out.println("entrou no transaction - write");
                         modbusTransaction.setRequest(modbusWriteRequest);
                         break;
                         

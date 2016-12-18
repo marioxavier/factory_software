@@ -32,10 +32,7 @@ public class Monitor extends Thread
         {
             this.readSensors();
             this.readActuators();
-            
-            
-            
-            
+
         }
         
     }
