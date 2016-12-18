@@ -31,7 +31,7 @@ public class Factory extends Thread
     private volatile boolean killThread;
     
     /**
-     * 
+     * Thread to run
      */
     @Override
     public void run()
@@ -39,9 +39,7 @@ public class Factory extends Thread
         while(!killThread)
         {
             this.readFactory();
-            this.factoryMonitor.getInputData();
-            this.factoryMonitor.getOutputData();
-        
+            
             String position;
         
             for (String i : blocksInFactory.keySet())

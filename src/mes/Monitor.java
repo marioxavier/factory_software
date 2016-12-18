@@ -31,15 +31,15 @@ public class Monitor extends Thread
         while (!killThread)
         {
             this.readSensors();
-            this.readActuators();
-            
-            
-            
-            
-        }
-        
+            this.readActuators();  
+        }   
     }
     
+    
+    /**
+     * Constructor
+     * @param protocol 
+     */
     public Monitor(Modbus protocol)
     {
         // if protocolModbus is empty
