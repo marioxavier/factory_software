@@ -30,7 +30,7 @@ public class Factory extends Thread
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
     private Hashtable<Integer, String> memoryMap;
-   
+    private Controller controlUnit;
     
     private volatile boolean killThread;
     
@@ -950,6 +950,42 @@ public class Factory extends Thread
          
     }
     
-    
+   /**
+    * Gets the blocks hashtable
+    * @return 
+    */ 
+   public Hashtable<String, Block> getBlocksInFactory()
+   {
+       return blocksInFactory;
+   }
+   
+   /**
+    * Gets the control unit
+    * @return 
+    */
+   public Controller getControlUnit()
+   {
+       return controlUnit;
+   }
+   
+   /**
+    * Gets the control unit
+     * @param factoryControl
+    * @return 
+    */
+   public boolean setControlUnit(Controller factoryControl)
+   {
+       if (null == factoryControl)
+       {
+           System.out.println("No control unit given.\n");
+           return false;
+       }
+       else
+       {
+           controlUnit = factoryControl;
+           return true;
+       }
+       
+   }
 }
 

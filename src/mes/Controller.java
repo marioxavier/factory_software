@@ -63,7 +63,6 @@ class WriteModbus
     }
 }
 
-
 /**
  *
  * @author Utilizador
@@ -72,4 +71,45 @@ public class Controller extends Thread
 {
     List<WriteModbus> factoryBuffer = new ArrayList<>();
     
+    /**
+     * 
+     * @param dataToUpdate
+     * @param classType
+     * @return 
+     */
+    public boolean updateBuffer(String dataToUpdate, String classType)
+    {
+        if (null == dataToUpdate)
+        {
+            System.out.println("No data to update.\n");
+            return false;
+        }
+        else if (null == classType)
+        {
+            System.out.println("No class type given.\n");
+            return false;
+        }
+        
+        if ("block".equals(classType))
+        {
+            switch(dataToUpdate)
+            {
+                case "0.2":
+                    break;
+                case "0.5":
+                    break;
+                case "0.7":
+                    break;
+                case "0.10":
+                    break;
+                case "0.12":
+                    break;
+                default:
+                    System.out.println("Data type not recognized.\n");
+                    return false;         
+            }
+             
+        }
+        return true;
+    }
 }

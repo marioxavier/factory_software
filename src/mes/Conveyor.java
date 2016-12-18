@@ -16,9 +16,7 @@ public class Conveyor {
     private String group;
     private String status;
     private boolean orientation;
-    
-    
-    
+   
     /**
      * Constructor
      * @param conveyorGroup
@@ -79,7 +77,6 @@ public class Conveyor {
                 default:
                     System.out.println("Conveyor type not recognized.\n");
                     System.exit(-1);
-
             }
         }
     }
@@ -101,6 +98,26 @@ public class Conveyor {
              status = conveyorStatus;
              return true;
         }   
+    }
+    
+    /**
+     * Sets convoyr orientation
+     * @param conveyorOrientation
+     * @return 
+     */
+    public boolean setOrientation(boolean conveyorOrientation)
+    {
+        orientation = conveyorOrientation;
+        return orientation;
+    }
+    
+      /**
+     * Sets convoyr orientation
+     * @return 
+     */
+    public boolean getOrientation()
+    {
+        return orientation;
     }
     
     /**
@@ -179,6 +196,4 @@ public class Conveyor {
     {
         ID = id;
     }
-   
-    
 }

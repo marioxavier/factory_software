@@ -47,8 +47,6 @@ public class systemManager
         
         protocolToPLC.openConnection();
         
-        
-        
         // creating new Modbus Object for Transport
         Modbus transportProtocol = new Modbus();
         
@@ -60,12 +58,8 @@ public class systemManager
         
         transportProtocol.openConnection();
         
-        
-        
-        
        // runs Monitor thread
        //factoryMonitor.start();
-       
        
        // initializing factory
        virtualFactory.initFactory();
@@ -80,16 +74,10 @@ public class systemManager
        // runs Database thread
        db.start();
        
-  
        Transport inputTransport = new Transport("input", virtualFactory, transportProtocol);
-       
-       inputTransport.addBlockToControl(block1);
-       
+      
        inputTransport.start();
-       
-
-       
-       
+      
        /*
             try
             {
@@ -100,10 +88,7 @@ public class systemManager
                 System.out.println("error in sleep");
             }
        */
-       
-       
-       
-       
+
        /*
        inputTransport.addBlockToControl(block2);
        inputTransport.start();
@@ -207,10 +192,5 @@ public class systemManager
         // checks if factory is ready
         //if((simulatedFactory.isReady));
   
-
-
-
-
-
 
 // TESTE 17 DEZEMBRO
