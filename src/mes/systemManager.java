@@ -34,10 +34,10 @@ public class systemManager
         // creates a virtual factory
         Factory virtualFactory = new Factory(protocolToPLC, manager);
         // creates a decision unit
-        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, 
-                virtualFactory);
+        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
         // creates a database object
         Database db = new Database();
+        
         
               
         // setting the Modbus Connection   
@@ -48,16 +48,6 @@ public class systemManager
         
         protocolToPLC.openConnection();
         
-        // creating new Modbus Object for Transport
-        Modbus transportProtocol = new Modbus();
-        
-        // setting the Modbus Connection   
-        if (transportProtocol.setModbusConnection())
-            System.out.println("Modbus connection on.\n");
-        else
-            System.out.println("Modbus connection failed.\n");
-        
-        transportProtocol.openConnection();
         
        // runs Monitor thread
        //factoryMonitor.start();
@@ -70,15 +60,16 @@ public class systemManager
        virtualFactory.addBlock(block1);
        
        // starts factory Thread
-       virtualFactory.start();
+      // virtualFactory.start();
        
        // runs Database thread
        db.start();
        
-       Transport inputTransport = new Transport("input", virtualFactory, transportProtocol);
-      
-       inputTransport.start();
-      
+  
+       
+
+       
+       
        /*
             try
             {

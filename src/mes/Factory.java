@@ -15,6 +15,7 @@ public class Factory extends Thread
     public Integer ID;
     private boolean status;
     private Graph<Conveyor> cellConveyors, transportConveyors;
+    private Hashtable<String, Conveyor> cellConveyorsTable, transportConveyorsTable;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
@@ -31,6 +32,7 @@ public class Factory extends Thread
     private Hashtable<Integer, String> memoryMap;
     private Controller controlUnit;
     private volatile boolean killThread;
+    
     
     /**
      * Thread to run
@@ -119,6 +121,10 @@ public class Factory extends Thread
          
         // creates graph to store all cell Conveyors
         cellConveyors = new Graph<>();
+        
+        // creates conveyors tables
+        transportConveyorsTable = new Hashtable<>();
+        cellConveyorsTable = new Hashtable<>();
          
         // creates Cell array containing all parallel cells
         parallelCells = new Cell[2];
@@ -333,6 +339,7 @@ public class Factory extends Thread
             return false;
         }
         
+        
         // if the input arguments are OK
         else
             switch(conveyorGroup)
@@ -340,15 +347,26 @@ public class Factory extends Thread
                 // creates transport conveyors
                 case "transport":
                 {
+                    String ID ="";
                     // creates conveyors
                     for(int i = 0; i < numberOfConveyors; i++)
                     {
                          // adds the cell entrance conveyor
                         if (i == 2 || i == 5 || i == 7 || i == 10)
-                            this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
+                        {
+                            //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
+                            ID = "0."+Integer.toString(i);
+                            this.transportConveyorsTable.put(ID, new Conveyor(conveyorGroup, "rotator"));
+                        }
+                            
 
                         else
-                            this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
+                        {
+                            //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
+                            ID = "0."+Integer.toString(i);
+                            this.transportConveyorsTable.put(ID, new Conveyor(conveyorGroup, conveyorType));
+                        }
+                            
                     }
                     
                     break;
@@ -606,7 +624,7 @@ public class Factory extends Thread
         // TO DO - tapetes duplos
         String conveyorID;
         
-        for (int i = 0; i < transportConveyors.vertexCount; i++)
+        for (int i = 0; i < transportConveyorsTable.size(); i++)
         {
             conveyorID = "0.";
             conveyorID += Integer.toString(i);
@@ -624,6 +642,7 @@ public class Factory extends Thread
      */
     public String getNewPosition(Block blockToUpdate)
     {
+        
         String newPosition;
         
         // gets a block with given ID
@@ -842,15 +861,74 @@ public class Factory extends Thread
         return true;
     }
     
-    public boolean updateBlockStatus(String factoryData)
+    
+    
+    public boolean updateBlockPositions(String factoryData)
     {
+        String position="";
+        
+        String newPosition="";
+        
+        for (String i : blocksInFactory.keySet())
+            {
+                
+                // gets the block to update
+                Block blockToUpdate = blocksInFactory.get(i);
+
+                // reads the block position 
+                position = blockToUpdate.getPosition();
+                
+                // stores the conveyor index that the block was in
+                int pastConveyor = Integer.parseInt(position.split("\\.")[1]);
+
+                // stores conveyor index of the conveyor in front of the block
+                int nextConveyor = pastConveyor + 1;
+                
+                // 
+                char[] factoryDataArray = factoryData.toCharArray();
+                
+                Conveyor presentConveyor = transportConveyorsTable.get("0."+Integer.toString(pastConveyor));
+                Conveyor futureConveyor = transportConveyorsTable.get("0."+Integer.toString(nextConveyor));
+                
+
+                String[] memoryOfPastConveyor = memoryMap.get(presentConveyor.hashCode()).split(",");
+                String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.hashCode()).split(",");
+                
+                
+                // stores the value of both sensors
+                char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+                char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                
+                // if block changed position
+                if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
+                {
+                    newPosition = futureConveyor.ID;
+                    blockToUpdate.setPosition(newPosition);
+                }
+
+                // if block didn't change position
+                else
+                {
+                   newPosition = presentConveyor.ID;
+                   blockToUpdate.setPosition(newPosition);
+                }
+
+                try
+                {
+                TimeUnit.SECONDS.sleep(2);
+                }
+                catch(Exception Ex)
+                {
+                System.out.println("error in sleep");
+                }
+            }
+        
+
+        
          // percorrer todos os blocos
-        // para cada tapete, ir à hashtable com o get (.hashcode).
-        // fazer parse "1,2,7" (split)
-        // ler nessas posições de memória e atualizar as variáveis abaixo
+        // ler esses valores e atualizar as variáveis abaixo
         
         //status =  "Waiting", "Transporting", "Transforming", "Ready"
-        
         // // position, type
         
         
@@ -878,6 +956,20 @@ public class Factory extends Thread
         // percorrer todos os objectos
         
         memoryMap = new Hashtable<>();
+        
+        
+        /*
+        for (String i : transportConveyorsTable.keySet())
+        {
+            switch(transportConveyorsTable.get(i).ID)
+            {
+                case 
+            }
+            
+            
+            
+        }
+        */
         
         // while aqui? 
         

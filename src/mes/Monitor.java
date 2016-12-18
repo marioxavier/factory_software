@@ -11,7 +11,6 @@ package mes;
  */
 public class Monitor extends Thread
 {
-    
     private String inputData;
     private String outputData;
     private Modbus protocolToPLC;
@@ -33,16 +32,17 @@ public class Monitor extends Thread
         {
             this.readSensors();
             this.readActuators();
-            virtualFactory.updateConveyorStatus(inputData + outputData);
-            virtualFactory.updateBlockStatus(inputData + outputData);
-            virtualFactory.updateMachineStatus(inputData + outputData);
+            //virtualFactory.updateConveyorStatus(inputData + outputData);
+            virtualFactory.updateBlockPositions(inputData + outputData);
+            //virtualFactory.updateMachineStatus(inputData + outputData);
         }   
     }
     
     
     /**
-     * Constructor
-     * @param protocol 
+     * 
+     * @param protocol
+     * @param currentFactory 
      */
     public Monitor(Modbus protocol, Factory currentFactory)
     {
