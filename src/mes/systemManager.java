@@ -48,12 +48,8 @@ public class systemManager
         protocolToPLC.openConnection();
         
         
-        
-        
-        
        // runs Monitor thread
        //factoryMonitor.start();
-       
        
        // initializing factory
        virtualFactory.initFactory();
@@ -83,10 +79,7 @@ public class systemManager
                 System.out.println("error in sleep");
             }
        */
-       
-       
-       
-       
+
        /*
        inputTransport.addBlockToControl(block2);
        inputTransport.start();
@@ -147,6 +140,18 @@ public class systemManager
          return orderQueue.remove(orderToRemove);
      }  
 }
+
+
+
+
+
+
+
+
+
+
+
+
         /*
         if(virtualFactory.addConveyors("transport", "linear", 2))
             System.out.println("ok");
@@ -190,10 +195,5 @@ public class systemManager
         // checks if factory is ready
         //if((simulatedFactory.isReady));
   
-
-
-
-
-
 
 // TESTE 17 DEZEMBRO

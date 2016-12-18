@@ -18,14 +18,19 @@ public class ProductionOrder
      private Date orderDate;
      private String orderStatus;
      
-      public ProductionOrder convertToOrder(String receivedOrder)
+     /**
+      * Converts received order from UDP to ProductionOrder
+      * @param receivedOrder
+      * @return 
+      */
+     public ProductionOrder convertToOrder(String receivedOrder)
      {
          ProductionOrder newOrder = new ProductionOrder();
          return newOrder;
      }
      
      /**
-      * 
+      * Gets order ID
       * @return 
       */
      public String getOrderID()
@@ -34,7 +39,7 @@ public class ProductionOrder
      }
      
      /**
-      * 
+      * Gets order date
       * @return 
       */
      public Date getOrderDate()
@@ -59,6 +64,4 @@ public class ProductionOrder
      {
          return true;
      }
-     
-    
 }

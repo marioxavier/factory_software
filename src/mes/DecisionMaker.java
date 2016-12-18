@@ -70,8 +70,6 @@ public class DecisionMaker {
             
             protocolToPLC.writeModbus(0, settingEverythingToZero);
             
-            
-            
             // Needs to wait before sending consecutive packets to PLC
             try
             {

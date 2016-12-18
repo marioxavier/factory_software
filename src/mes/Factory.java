@@ -2,7 +2,6 @@ package mes;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
 import mes.graph.*;
 import mes.graph.exception.InvalidConstructionException;
 
@@ -13,7 +12,6 @@ import mes.graph.exception.InvalidConstructionException;
  */
 public class Factory extends Thread 
 {
-    
     public Integer ID;
     private boolean status;
     private Graph<Conveyor> cellConveyors, transportConveyors;
@@ -31,8 +29,7 @@ public class Factory extends Thread
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
     private Hashtable<Integer, String> memoryMap;
-   
-    
+    private Controller controlUnit;
     private volatile boolean killThread;
     
     
@@ -72,7 +69,6 @@ public class Factory extends Thread
         
         atualizar estado de maquinas
         */
-        
     }
     
     /**
@@ -524,7 +520,6 @@ public class Factory extends Thread
         // if a factory was given
         else
         {
-
             // creates input transport
             inputTransport = new Transport("input", currentFactory, factoryMonitor.getProtocol());
             
@@ -681,7 +676,6 @@ public class Factory extends Thread
         // gets the memory indexes of the conveyor in front of the block
         String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
 
-        
         // stores the value of both sensors
         char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
         char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
@@ -697,8 +691,7 @@ public class Factory extends Thread
         {
            newPosition = pastBlockPosition;
         }
-        
-        
+      
         return newPosition;
         
         
@@ -1042,6 +1035,42 @@ public class Factory extends Thread
          
     }
     
-    
+   /**
+    * Gets the blocks hashtable
+    * @return 
+    */ 
+   public Hashtable<String, Block> getBlocksInFactory()
+   {
+       return blocksInFactory;
+   }
+   
+   /**
+    * Gets the control unit
+    * @return 
+    */
+   public Controller getControlUnit()
+   {
+       return controlUnit;
+   }
+   
+   /**
+    * Gets the control unit
+     * @param factoryControl
+    * @return 
+    */
+   public boolean setControlUnit(Controller factoryControl)
+   {
+       if (null == factoryControl)
+       {
+           System.out.println("No control unit given.\n");
+           return false;
+       }
+       else
+       {
+           controlUnit = factoryControl;
+           return true;
+       }
+       
+   }
 }
 

@@ -10,6 +10,46 @@ import java.util.concurrent.TimeUnit;
 import mes.graph.exception.InvalidConstructionException;
 import net.wimpi.modbus.util.BitVector;
 
+
+class Transporter implements Runnable
+{
+    Transport transportUnit;
+    
+    public Transporter(Transport transportObject)
+    {
+        // if no transport object was given
+        if (null == transportObject)
+        {
+            System.out.println("No transport object given.\n");
+            System.exit(-1);
+        }
+        else
+            transportUnit = transportObject;
+    }
+    
+    /**
+     * Thread 
+     */
+    @Override
+    @SuppressWarnings("empty-statement")
+    public void run()
+    {
+        // loops forever
+        while(true)
+        {
+            // loops all blocks
+            for (String i : transportUnit.blocksInFactory.keySet())
+            {
+                Block blockToTransport = transportUnit.blocksInFactory.get(i);
+                // if the block arrived destination
+                if(blockToTransport.isDestination())
+                    // writes in the buffer
+                    transportUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+            }
+        }         
+    }
+}
+
 /**
  *
  * @author Mário Xavier
@@ -21,11 +61,10 @@ public class Transport extends Thread  {
     private String status;
     private Factory virtualFactory;
     private Modbus protocolToPLC;
-    
-    private Block blockToControl;
+    public Hashtable<String, Block> blocksInFactory;
+    public Controller controlUnit;
     
     private Hashtable<String, BitVector> blockVector;
-    
     
     /**
      * Constructor
@@ -52,7 +91,9 @@ public class Transport extends Thread  {
         else
             virtualFactory = currentFactory;
             protocolToPLC = protocol;
-            this.createHashTable();
+            blocksInFactory = currentFactory.getBlocksInFactory();
+            controlUnit = currentFactory.getControlUnit();
+            this.createBlockMap();
             switch(transportType)
             {
                 case "input":
@@ -77,10 +118,80 @@ public class Transport extends Thread  {
             }
     }
     
-    
     /**
      * Thread 
      */
+    @Override
+    @SuppressWarnings("empty-statement")
+    public void run()
+    {
+        Runnable transporter = new Transporter(this);
+        new Thread(transporter).start();
+    }
+   
+    /*
+      // if no new block was given
+        if (null == blockToControl)
+        {
+            System.out.println("No block was given to start transport.\n");
+            System.exit(-1);
+        }
+        
+        
+        // if a block was given sends it to destination
+        else
+        {
+            // Adding the block to the virtual factory
+            if(!virtualFactory.addBlock(blockToControl))
+            {
+                System.out.println("No block was created\n");
+                System.exit(-1);
+            }
+            
+            // setting "Blocks to add in factory" to zero
+            BitVector setBlock = new BitVector(8);
+            protocolToPLC.writeModbus(144, setBlock);
+            
+            
+            // needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep.\n");
+            }
+            
+            // stores the bitVector to write in order to create this block
+            setBlock = blockVector.get(blockToControl.getType());
+            
+            // sends order to PLC to create this Block
+            protocolToPLC.writeModbus(144, setBlock);
+            
+            // variable to control in which cell entrance the decision is being made
+            short conditionEnterFlag = 0;
+            
+            // bitvector with decision to keep going
+            BitVector keepGoingDecision = new BitVector(8);
+    
+        
+            // creates byte array with size 1
+            byte[] decisionToBitvector = new byte[1];
+            
+            // creates a byte with the information about where to let the block enter
+            decisionToBitvector[0] = (byte)(conditionEnterFlag & 0xff);
+            
+            // turns byte into bitvector
+            BitVector enterDecision = BitVector.createBitVector(decisionToBitvector);
+            
+            // writes the decision where to enter in PLC
+            protocolToPLC.writeModbus(0, enterDecision);
+    
+    */
+    
+    
+/*
     @Override
     public void run()
     {
@@ -192,6 +303,7 @@ public class Transport extends Thread  {
             protocolToPLC.writeModbus(0, enterDecision);
         }
     }
+    */
     
     
     /**
@@ -271,21 +383,9 @@ public class Transport extends Thread  {
     }
     
     /**
-     * 
-     * @param block
-     * @return 
-     */
-    public boolean addBlockToControl(Block block)
-    {
-        blockToControl = block;
-        return true;
-        
-    }
-    
-    /**
      * Creates a hashtable to store the block type 
      */
-    public void createHashTable()
+    public void createBlockMap()
     {
         // creates the hashtable
         blockVector = new Hashtable<>();
@@ -355,7 +455,32 @@ public class Transport extends Thread  {
         return protocolToPLC;
     }
     
-    
-
-    
+    /**
+    * Gets the control unit
+    * @return 
+    */
+   public Controller getControlUnit()
+   {
+       return controlUnit;
+   }
+   
+   /**
+    * Gets the control unit
+     * @param factoryControl
+    * @return 
+    */
+   public boolean setControlUnit(Controller factoryControl)
+   {
+       if (null == factoryControl)
+       {
+           System.out.println("No control unit given.\n");
+           return false;
+       }
+       else
+       {
+           controlUnit = factoryControl;
+           return true;
+       }
+       
+   }
 }
