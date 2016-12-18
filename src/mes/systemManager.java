@@ -30,10 +30,8 @@ public class systemManager
         // creates UDP protocol object
         //UDP protocolToERP = new UDP();
           
-        // creates a factory monitor
-        Monitor factoryMonitor = new Monitor(protocolToPLC);
         // creates a virtual factory
-        Factory virtualFactory = new Factory(factoryMonitor);
+        Factory virtualFactory = new Factory(protocolToPLC);
         // creates a decision unit
         DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, 
                 virtualFactory);

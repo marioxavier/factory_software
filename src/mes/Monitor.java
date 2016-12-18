@@ -15,6 +15,7 @@ public class Monitor extends Thread
     private String inputData;
     private String outputData;
     private Modbus protocolToPLC;
+    private Factory virtualFactory;
     // variable used to stop the thread
     private volatile boolean killThread;
     
@@ -31,7 +32,12 @@ public class Monitor extends Thread
         while (!killThread)
         {
             this.readSensors();
-            this.readActuators();  
+            this.readActuators();
+            virtualFactory.updateConveyorStatus(inputData + outputData);
+            virtualFactory.updateBlockStatus(inputData + outputData);
+            virtualFactory.updateMachineStatus(inputData + outputData);
+            
+            
         }   
     }
     
@@ -40,17 +46,25 @@ public class Monitor extends Thread
      * Constructor
      * @param protocol 
      */
-    public Monitor(Modbus protocol)
+    public Monitor(Modbus protocol, Factory currentFactory)
     {
         // if protocolModbus is empty
         if (null == protocol)
         {
             System.out.println("No protocol was given.\n");
+            System.exit(-1);
         }
         // if some protocol was given
+        else if (null == currentFactory)
+        {
+            System.out.println("No factory was given.\n");
+            System.exit(-1);
+        }
+        // all input arguments are OK
         else
         {
             // initializes variables
+            virtualFactory = currentFactory;
             protocolToPLC = protocol;
             inputData = null;
             outputData = null;
