@@ -16,6 +16,7 @@ public class Machine {
     public int ID;
     private String type;
     private String status;
+    private String currentTool;
     private String[] tools;
     
     /**
