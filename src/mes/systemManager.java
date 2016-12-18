@@ -7,6 +7,7 @@ package mes;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import mes.graph.exception.InvalidConstructionException;
 
 
@@ -50,17 +51,57 @@ public class systemManager
        // runs Monitor thread
        //factoryMonitor.start();
        
-       /*DESCOMENTAR
+       
        // initializing factory
-       //virtualFactory.initFactory();
+       virtualFactory.initFactory();
+       
+       // starts factory Thread
+       virtualFactory.start();
        
        // runs Database thread
-       //db.start();
+       db.start();
+       
+       
+       
+       Block block1 = new Block("P1","0.2","1");
+       
+       Block block2 = new Block("P3","0.7","1");
 
+       Block block3 = new Block("P6","0.5","1");
+       
+       Transport inputTransport = virtualFactory.getInputTransport();
+       
+       inputTransport.addBlockToControl(block1);
+       inputTransport.start();
+       
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+       
+       inputTransport.addBlockToControl(block2);
+       inputTransport.start();
+       
+       try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+       
+       inputTransport.addBlockToControl(block3);
+       inputTransport.start();
 
+       
        //decisionUnit.makeDecision();
         
-        /*     
+       /*
        // if database is initialized
        if(db.initDatabase("org.postgresql.Driver", 
                 "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))

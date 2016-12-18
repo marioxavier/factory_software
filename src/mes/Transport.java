@@ -23,13 +23,17 @@ public class Transport extends Thread  {
     private Factory virtualFactory;
     private Modbus protocolToPLC;
     
+    private Block blockToControl;
+    
     private Hashtable<String, BitVector> blockVector;
     
     
     /**
-     * Constructor that creates his own conveyors
-     * @param transportType 
+     * 
+     * @param transportType
      * @param currentFactory
+     * @param protocol
+     * @throws InvalidConstructionException 
      */
     public Transport(String transportType, Factory currentFactory, Modbus protocol) throws InvalidConstructionException
     {
@@ -78,7 +82,12 @@ public class Transport extends Thread  {
             }
     }
     
-    
+    public boolean addBlockToControl(Block block)
+    {
+        blockToControl = block;
+        return true;
+        
+    }
     
     public void generateHashTable()
     {
@@ -153,33 +162,28 @@ public class Transport extends Thread  {
     }
     
     
+
     /**
      * 
-     * @param newBlock 
+     * @param newBlock
+     * @param destination 
      */
-    
-    
-    public void run(Block newBlock, String destination)
+    public void run()
     {
+        
         // if no new block was given
-        if (null == newBlock)
+        if (null == blockToControl)
         {
             System.out.println("No block was given to start transport.\n");
             System.exit(-1);
         }
         
-        // if no destination was given
-        else if (null == destination)
-        {
-            System.out.println("No destination was given");
-            System.exit(-1);
-        }
         
         // if a block was given sends it to destination
         else
         {
             // Adding the block to the virtual factory
-            if(!virtualFactory.addBlock(newBlock))
+            if(!virtualFactory.addBlock(blockToControl))
             {
                 System.out.println("No block was created\n");
                 System.exit(-1);
@@ -202,7 +206,7 @@ public class Transport extends Thread  {
             }
             
             // stores the bitVector to write in order to create this block
-            setBlock = blockVector.get(newBlock.getType());
+            setBlock = blockVector.get(blockToControl.getType());
             
             // sends order to PLC to create this Block
             protocolToPLC.writeModbus(144, setBlock);
@@ -216,17 +220,21 @@ public class Transport extends Thread  {
             BitVector keepGoingDecision = new BitVector(8);
             
             // control algorithm
-            while(!newBlock.isDestination())
+            while(!blockToControl.isDestination())
             {  
+                
+                System.out.println(blockToControl.getPosition());
+                
                 // decision not to enter in first Cell
-                if (newBlock.getPosition().equals("0.2") && !(newBlock.isDestination()) && entradaCelula==0)
+                if (blockToControl.getPosition().equals("0.2") && !(blockToControl.isDestination()) && entradaCelula==0)
                 {
                     entradaCelula +=1;
                     keepGoingDecision.setBit(0, true);
                     protocolToPLC.writeModbus(8, keepGoingDecision);
+
                 }
                 // decision not to enter in second Cell
-                if (newBlock.getPosition().equals("0.5") && !(newBlock.isDestination()) && entradaCelula==1)
+                if (blockToControl.getPosition().equals("0.5") && !(blockToControl.isDestination()) && entradaCelula==1)
                 {
                     entradaCelula+=1;
                     keepGoingDecision.setBit(0, false);
@@ -234,7 +242,7 @@ public class Transport extends Thread  {
                     protocolToPLC.writeModbus(8, keepGoingDecision);
                 }
                 // decision not to enter in third Cell
-                if (newBlock.getPosition().equals("0.7") && !(newBlock.isDestination()) && entradaCelula==2)
+                if (blockToControl.getPosition().equals("0.7") && !(blockToControl.isDestination()) && entradaCelula==2)
                 {
                     entradaCelula+=1;
                     keepGoingDecision.setBit(1, false);
@@ -243,7 +251,7 @@ public class Transport extends Thread  {
                 }
                 
                 // decision not to enter in fourth Cell
-                if (newBlock.getPosition().equals("0.10") && !(newBlock.isDestination()) && entradaCelula==3)
+                if (blockToControl.getPosition().equals("0.10") && !(blockToControl.isDestination()) && entradaCelula==3)
                 {
                     entradaCelula+=1;
                     keepGoingDecision.setBit(2, false);
@@ -252,7 +260,7 @@ public class Transport extends Thread  {
                 }
                 
                 // decision not to enter in fifth Cell
-                if (newBlock.getPosition().equals("0.12") && !(newBlock.isDestination()) && entradaCelula==4)
+                if (blockToControl.getPosition().equals("0.12") && !(blockToControl.isDestination()) && entradaCelula==4)
                 {
                     entradaCelula+=1;
                     keepGoingDecision.setBit(3, false);
