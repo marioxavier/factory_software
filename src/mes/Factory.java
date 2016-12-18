@@ -28,9 +28,29 @@ public class Factory extends Thread
     private Monitor factoryMonitor;
     private String[] transportMemoryIndexes;
     
+    private volatile boolean killThread;
+    
+    /**
+     * 
+     */
     @Override
     public void run()
     {
+        while(!killThread)
+        {
+            this.readFactory();
+            this.factoryMonitor.getInputData();
+            this.factoryMonitor.getOutputData();
+        
+            String position;
+        
+            for (String i : blocksInFactory.keySet())
+            {
+                Block blockToUpdate = blocksInFactory.get(i);
+                position = this.getNewPosition(blockToUpdate);
+                blockToUpdate.setPosition(position);
+            }
+        }
         
         /*
         ler fabrica
@@ -41,11 +61,20 @@ public class Factory extends Thread
         atualizar estado de maquinas
         */
         
-        System.out.println(this.factoryMonitor.getInputData());
-        
-        
     }
     
+    /**
+     * 
+     */
+    public void stopThread()
+    {
+        killThread = true;
+    }
+    
+    /**
+     * 
+     * @param receivedMonitor 
+     */
     public Factory(Monitor receivedMonitor)
     {
         factoryMonitor = receivedMonitor;
@@ -70,6 +99,9 @@ public class Factory extends Thread
     {   
         // initial status
         status = false;
+        
+        // initalizes variable that kills the thread as false
+        killThread = false;
         
         // resets the number of conveyors
         numberOfConveyors = 0;
@@ -807,5 +839,16 @@ public class Factory extends Thread
     {
         return transportMemoryIndexes;
     }
+    
+    public Transport getInputTransport()
+    {
+        return inputTransport;
+    }
+    
+    public Transport getOutputTransport()
+    {
+        return outputTransport;
+    }
+    
 }
 

@@ -23,12 +23,14 @@ public class Transport extends Thread  {
     private Factory virtualFactory;
     private Modbus protocolToPLC;
     
+    private Block blockToControl;
+    
     private Hashtable<String, BitVector> blockVector;
     
     
     /**
-     * Constructor that creates his own conveyors
-     * @param transportType 
+     * 
+     * @param transportType
      * @param currentFactory
      * @param protocol
      * @throws mes.graph.exception.InvalidConstructionException
@@ -76,10 +78,14 @@ public class Transport extends Thread  {
             }
     }
     
-    /**
-     * 
-     */
-    public void generateHashable()
+    public boolean addBlockToControl(Block block)
+    {
+        blockToControl = block;
+        return true;
+        
+    }
+    
+    public void generateHashTable()
     {
         // creates the hashtable
         blockVector = new Hashtable<>();
@@ -150,32 +156,28 @@ public class Transport extends Thread  {
     }
     
     
+
     /**
      * 
      * @param newBlock
      * @param destination 
      */
-    public void run(Block newBlock, String destination)
+    public void run()
     {
+        
         // if no new block was given
-        if (null == newBlock)
+        if (null == blockToControl)
         {
             System.out.println("No block was given to start transport.\n");
             System.exit(-1);
         }
         
-        // if no destination was given
-        else if (null == destination)
-        {
-            System.out.println("No destination was given");
-            System.exit(-1);
-        }
         
         // if a block was given sends it to destination
         else
         {
             // Adding the block to the virtual factory
-            if(!virtualFactory.addBlock(newBlock))
+            if(!virtualFactory.addBlock(blockToControl))
             {
                 System.out.println("No block was created\n");
                 System.exit(-1);
@@ -197,7 +199,7 @@ public class Transport extends Thread  {
             }
             
             // stores the bitVector to write in order to create this block
-            setBlock = blockVector.get(newBlock.getType());
+            setBlock = blockVector.get(blockToControl.getType());
             
             // sends order to PLC to create this Block
             protocolToPLC.writeModbus(144, setBlock);
@@ -209,14 +211,18 @@ public class Transport extends Thread  {
             BitVector keepGoingDecision = new BitVector(8);
             
             // control algorithm
-            while(!newBlock.isDestination())
+            while(!blockToControl.isDestination())
             {  
+                
+                System.out.println(blockToControl.getPosition());
+                
                 // decision not to enter in first Cell
                 if (newBlock.getPosition().equals("0.2") && !(newBlock.isDestination()) && conditionEnterFlag == 0)
                 {
                     conditionEnterFlag +=1;
                     keepGoingDecision.setBit(0, true);
                     protocolToPLC.writeModbus(8, keepGoingDecision);
+
                 }
                 // decision not to enter in second Cell
                 else if (newBlock.getPosition().equals("0.5") && !(newBlock.isDestination()) && conditionEnterFlag == 1)
