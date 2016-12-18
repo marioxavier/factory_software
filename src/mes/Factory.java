@@ -85,6 +85,11 @@ public class Factory extends Thread
          
          // creates the machine array containing all the machines
          machines = new Machine[8];
+         
+         // creates the array containing the memory index of sensors/actuators
+         // concerning each transport conveyor
+         this.generateTransportMemoryIndexes();
+         
         
         // adds a transport unit to the factory
         if(this.addTransport(this))
@@ -414,10 +419,6 @@ public class Factory extends Thread
                      for(int i = 0; i < numberOfCells; i++)
                      {
                          parallelCells[i] = new Cell(cellType, currentFactory);
-                         
-                         // DEBUGGING
-                         System.out.println("entrou no for");
-                         
                      }
                     break;
 
@@ -602,8 +603,50 @@ public class Factory extends Thread
     public String getNewPosition(Block blockToUpdate)
     {
         String newPosition;
+        
         // gets a block with given ID
-        blocksInFactory.get(blockToUpdate.ID);
+        Block blockInFactory = blocksInFactory.get(blockToUpdate.ID);
+        
+        // checks the position the block was in
+        String pastBlockPosition = blockInFactory.getPosition();
+        
+        // stores the conveyor index that the block was in
+        int pastConveyor = Integer.parseInt(pastBlockPosition.split("\\.")[1]);
+        
+        // stores conveyor index of the conveyor in front of the block
+        int nextConveyor = pastConveyor + 1;
+        
+        
+        // reads the factory and stores it in factoryDataArray
+        readFactory();
+        char[] factoryDataArray = factoryData.toCharArray();
+        
+        // gets the memory indexes of the conveyor the block was in
+        String[] memoryOfPastConveyor = transportMemoryIndexes[pastConveyor].split(",");
+        
+        // gets the memory indexes of the conveyor in front of the block
+        String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
+        
+        // stores the value of both sensors
+        char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+        char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+        
+        // if block changed position
+        if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
+        {
+            newPosition = "0."+Integer.toString(nextConveyor);
+        }
+        
+        // if block didn't change position
+        else
+        {
+           newPosition = pastBlockPosition;
+        }
+        
+        
+        return newPosition;
+        
+        
         /**
         // loops the block array
         for (Block pastBlock : blocksInFactory)
@@ -658,7 +701,6 @@ public class Factory extends Thread
             }
         }
         * */
-        return null;
     }
 
     /**
