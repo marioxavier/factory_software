@@ -31,7 +31,19 @@ public class Factory extends Thread
     @Override
     public void run()
     {
-        System.out.println(this.factoryMonitor.getInputData());    
+        
+        /*
+        ler fabrica
+        atualizar a posiçao de todos os blocos
+        
+        atualizar estado de tapetes
+        
+        atualizar estado de maquinas
+        */
+        
+        System.out.println(this.factoryMonitor.getInputData());
+        
+        
     }
     
     public Factory(Monitor receivedMonitor)
@@ -64,6 +76,9 @@ public class Factory extends Thread
         
         // resets the number of active conveyors
         activeSensors = 0;
+        
+        // initializes number of Blocks
+        numberOfBlocks = 0;
 
         // asks the factory to get in the init status
         // TO DO
@@ -300,17 +315,10 @@ public class Factory extends Thread
                     {
                          // adds the cell entrance conveyor
                         if (i == 2 || i == 5 || i == 7 || i == 10)
-                        {
                             this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
-                            this.updateNumberOfConveyors("+");
-                           
-                            
-                        }
+
                         else
-                        {
                             this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
-                            this.updateNumberOfConveyors("+");
-                        }
                     }
                     
                     break;
@@ -453,8 +461,9 @@ public class Factory extends Thread
         // if a factory was given
         else
         {
+
             // creates input transport
-            inputTransport = new Transport("input", currentFactory);
+            inputTransport = new Transport("input", currentFactory, factoryMonitor.getProtocol());
             
             // error creating input Transport unit
             if (null == inputTransport)
@@ -465,7 +474,7 @@ public class Factory extends Thread
             else
             {
                 // creates output transport
-                outputTransport = new Transport("output", currentFactory);
+                outputTransport = new Transport("output", currentFactory, factoryMonitor.getProtocol());
             }
              
             // error creating output Transport unit
@@ -484,7 +493,7 @@ public class Factory extends Thread
      * @param updateOperation
      * @return 
      */
-    public boolean updateNumberOfConveyors(String updateOperation)
+    public boolean updateNumberOfBlocks(String updateOperation)
     {
         // if no update operation was given
         if (null == updateOperation)
@@ -498,12 +507,12 @@ public class Factory extends Thread
             {
                 case "+": 
                     // increments number of conveyors
-                    numberOfConveyors += 1;
+                    numberOfBlocks += 1;
                     return true;
                     
                 case "-":
                     // decrements number of conveyors
-                    numberOfConveyors -= 1;
+                    numberOfBlocks -= 1;
                     return true;
                     
                 default:
@@ -626,6 +635,7 @@ public class Factory extends Thread
         
         // gets the memory indexes of the conveyor in front of the block
         String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
+
         
         // stores the value of both sensors
         char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
@@ -729,8 +739,37 @@ public class Factory extends Thread
         {
             // adds a block to the hashtable
             this.blocksInFactory.put(newBlock.ID, newBlock);
+            updateNumberOfBlocks("+");
             return true;
         }
+    }
+    
+    /**
+     * removes a block from the virtual Factory
+     * @param deleteBlock
+     * @return 
+     */
+    public boolean removeBlock(Block deleteBlock)
+    {
+        // if no block was given
+        if(null == deleteBlock)
+        {
+            System.out.println("block to remove not given");
+            return false;
+        }
+        else
+            {
+            // error removing Block from the Hashtable
+            if(null == blocksInFactory.remove(deleteBlock.ID))
+            {
+                System.out.println("cannot remove block because it does not exist in the factory");
+                return false;
+            }
+            
+            else
+                return updateNumberOfBlocks("-");
+            }
+        
     }
     
     /**

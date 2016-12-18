@@ -33,6 +33,9 @@ public class Monitor extends Thread
             this.readSensors();
             this.readActuators();
             
+            
+            
+            
         }
         
     }
@@ -54,6 +57,16 @@ public class Monitor extends Thread
         }
         
     }
+    
+    /**
+     * 
+     * @return 
+     */
+    public Modbus getProtocol()
+    {
+        return protocolToPLC;
+    }
+    
     
     /**
      * gets inputData

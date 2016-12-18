@@ -60,17 +60,29 @@ public class systemManager
        // runs Monitor thread
        //factoryMonitor.start();
        
-       
+       /*DESCOMENTAR
        // initializing factory
-       virtualFactory.initFactory();
+       //virtualFactory.initFactory();
        
        // runs Database thread
-       db.start();
+       //db.start();
 
 
-       decisionUnit.makeDecision();
+       //decisionUnit.makeDecision();
         
+       */
        
+       
+       short test1 = 3;
+       
+       byte[] ret = new byte[1];
+       ret[0] = (byte)(test1 & 0xff);
+       
+       System.out.println(ret[0]);
+       
+       BitVector test2 = BitVector.createBitVector(ret);
+       
+       System.out.println(test2);
        
        
         /*     
