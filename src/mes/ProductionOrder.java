@@ -19,17 +19,6 @@ public class ProductionOrder
      private String orderStatus;
      
      /**
-      * Converts received order from UDP to ProductionOrder
-      * @param receivedOrder
-      * @return 
-      */
-     public ProductionOrder convertToOrder(String receivedOrder)
-     {
-         ProductionOrder newOrder = new ProductionOrder();
-         return newOrder;
-     }
-     
-     /**
       * Gets order ID
       * @return 
       */
