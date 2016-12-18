@@ -27,6 +27,7 @@ public class Factory extends Thread
     private int numberOfBlocks;
     private String factoryData;
     private Monitor factoryMonitor;
+    private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
     
     private volatile boolean killThread;
@@ -39,8 +40,6 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
-            this.readFactory();
-            
             String position;
         
             for (String i : blocksInFactory.keySet())
@@ -82,11 +81,12 @@ public class Factory extends Thread
     
     /**
      * 
-     * @param receivedMonitor 
+     * @param protocol 
      */
-    public Factory(Monitor receivedMonitor)
+    public Factory(Modbus protocol)
     {
-        factoryMonitor = receivedMonitor;
+        protocolToPLC = protocol;
+        factoryMonitor = new Monitor(protocol, this);
     }
     
     /**
@@ -146,7 +146,6 @@ public class Factory extends Thread
          // concerning each transport conveyor
          this.generateTransportMemoryIndexes();
          
-        
         // adds a transport unit to the factory
         if(this.addTransport(this))
         {
@@ -155,6 +154,8 @@ public class Factory extends Thread
                 if (this.addCells("serial", 2, this))
                 {
                     status = true;
+                    // starts reading factory;
+                    this.startFactoryMonitor();
                     return true;
                 }
                 else
@@ -601,26 +602,10 @@ public class Factory extends Thread
      * Reads factory sensors and actuators
      * @return 
      */
-    public boolean readFactory()
+    public boolean startFactoryMonitor()
     {
-        if(factoryMonitor.readSensors())
-            if (factoryMonitor.readActuators())
-            {
-                // updates factory data
-                factoryData = factoryMonitor.getInputData() + 
-                factoryMonitor.getOutputData();
-                return true;
-            }
-            else
-            {
-                System.out.println("Error reading actuators.\n");
-                return false;
-            }
-        else
-        {
-            System.out.println("Error reading sensors.\n");
-            return false;
-        }
+       factoryMonitor.start();
+       return true;
     }
     
     /**
@@ -665,10 +650,7 @@ public class Factory extends Thread
         
         // stores conveyor index of the conveyor in front of the block
         int nextConveyor = pastConveyor + 1;
-        
-        
-        // reads the factory and stores it in factoryDataArray
-        readFactory();
+  
         char[] factoryDataArray = factoryData.toCharArray();
         
         // gets the memory indexes of the conveyor the block was in
@@ -858,6 +840,34 @@ public class Factory extends Thread
     {
         return outputTransport;
     }
+    
+    public boolean updateConveyorStatus(String factoryData)
+    {
+        //"Ready", "Sending", "receiving"
+        
+        // TO DO
+        return true;
+    }
+    
+    public boolean updateBlockStatus(String factoryData)
+    {
+        // "Waiting", "Transporting", "Transforming", "Ready"
+        
+        // TO DO
+        return true;
+    }
+    
+    public boolean updateMachineStatus(String factoryData)
+    {
+        
+        //"Working", "Shifting", "Ready"
+        
+        // TO DO
+        return true;
+    }
+    
+    
+    
     
 }
 
