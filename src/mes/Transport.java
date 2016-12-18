@@ -30,6 +30,8 @@ public class Transport extends Thread  {
      * Constructor that creates his own conveyors
      * @param transportType 
      * @param currentFactory
+     * @param protocol
+     * @throws mes.graph.exception.InvalidConstructionException
      */
     public Transport(String transportType, Factory currentFactory, Modbus protocol) throws InvalidConstructionException
     {
@@ -61,7 +63,6 @@ public class Transport extends Thread  {
                     
                 }
                     
-
                 case "output":
                 {
                     type = transportType;
@@ -70,8 +71,7 @@ public class Transport extends Thread  {
                     break;
                     
                 }
-                    
-
+                   
                 default:
                     System.out.println("Transport type not recognized.\n");
                     System.exit(-1);
@@ -79,60 +79,60 @@ public class Transport extends Thread  {
     }
     
     
-    
+    /**
+     * 
+     */
     public void generateHashTable()
     {
         // creates the hashtable
         blockVector = new Hashtable<>();
         
         // creates bitvector to insert in hastable
-        BitVector iterationVector = new BitVector(8);
+        BitVector blockBitVector = new BitVector(8);
         
         // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, true);
-        this.blockVector.put("P1", iterationVector);
+        blockBitVector.setBit(0, true);
+        this.blockVector.put("P1", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, false);
-        iterationVector.setBit(1, true);
-        blockVector.put("P2", iterationVector);
+        // inserting P2 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1, true);
+        blockVector.put("P2", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, true);
-        blockVector.put("P3", iterationVector);
+        // inserting P3 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P3", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, false);
-        iterationVector.setBit(1,false);
-        iterationVector.setBit(2,true);
-        blockVector.put("P4", iterationVector);
+        // inserting P4 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1,false);
+        blockBitVector.setBit(2,true);
+        blockVector.put("P4", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, true);
-        blockVector.put("P5", iterationVector);
+        // inserting P5 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P5", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, false);
-        iterationVector.setBit(1, true);
-        blockVector.put("P6", iterationVector);
+        // inserting P6 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1, true);
+        blockVector.put("P6", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, true);
-        blockVector.put("P7", iterationVector);
+        // inserting P7 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P7", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, false);
-        iterationVector.setBit(1,false);
-        iterationVector.setBit(2,false);
-        iterationVector.setBit(3,true);
-        blockVector.put("P8", iterationVector);
+        // inserting P8 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1,false);
+        blockBitVector.setBit(2,false);
+        blockBitVector.setBit(3,true);
+        blockVector.put("P8", blockBitVector);
 
-        // inserting P1 and corresponding BitVector
-        iterationVector.setBit(0, true);
-        blockVector.put("P9", iterationVector);
-
+        // inserting P9 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P9", blockBitVector);
     }
-    
     
     /**
      * 
