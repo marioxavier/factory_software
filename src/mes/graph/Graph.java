@@ -43,7 +43,7 @@ public class Graph<T> {
 		return v;
 	}
 
-	public Edge<T> addEdge(T elm1, T elm2) throws InvalidConstructionException{
+	public Edge<T> addEdge(T elm1, T elm2, int edgeWeight) throws InvalidConstructionException{
 		if (elm1 == null || elm2 == null)
 			throw new NullPointerException();
 
@@ -55,7 +55,9 @@ public class Graph<T> {
 		if (v == null)
 			v = _addVertex(elm2);
 
-		Edge<T> edge = new Edge<T>(u, v);
+		Edge<T> edge = new Edge<>(u, v);
+                
+                edge.setWeight(edgeWeight);
 
 		ArrayList<Edge<T>> list = adjacencyList.get(u);
 		list.add(edge);

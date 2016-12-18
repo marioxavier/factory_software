@@ -40,6 +40,7 @@ public class TesteGrafos {
 					String[] tokens = null;
 					String first;
 					String second;
+                                        String third;
 
 					/* Create graph */
 					graph = new Graph<>();
@@ -47,7 +48,7 @@ public class TesteGrafos {
 					/* Process the file */
 					while ((line = br.readLine()) != null) {
 						tokens = line.split(" ");
-						if (tokens.length != 2) {
+						if (tokens.length != 3) {
 							System.out.println("Invalid file format");
 							br.close();
 							graph = null;
@@ -55,9 +56,11 @@ public class TesteGrafos {
 						}
 						first = tokens[0];
 						second = tokens[1];
+                                                third = tokens[2];
+                                                        
 
 						System.out.println("Adding: (" + first + "," + second + ")");
-						graph.addEdge(first, second);
+						graph.addEdge(first, second, Integer.parseInt(third));
 					} 
 					br.close();
 				}	 catch (NoSuchElementException e) {
