@@ -53,33 +53,63 @@ public class DecisionMaker {
         // Creating Block in MES
             
             //Creating Block Object with type P8 and position 0.0 and destination 0.5 and ID "Teste"
-            Block testBlock = new Block("P8", "0.5", "Teste");
+            Block testBlock = new Block("P8", "0.2", "Teste");
         
             // Adding the block to the virtual factory
-            virtualFactory.addBlock(testBlock);
-        
-          
-            // creating a bit vector of size 16
-            BitVector settingAllToZero = new BitVector(16);
+            if(!virtualFactory.addBlock(testBlock))
+            {
+                System.out.println("No block was created\n");
+                System.exit(-1);
+            }
+                  
+            // creating a bit vector of size 16 to set orders to "enter cell" 
+            // and "keep going" orders to zero
+            BitVector settingEverythingToZero = new BitVector(16);
                 
-            System.out.println(settingAllToZero);
+            System.out.println(settingEverythingToZero);
+            
+            protocolToPLC.writeModbus(0, settingEverythingToZero);
             
             
-            protocolToPLC.writeModbus(0, settingAllToZero);
             
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
             
+
+            // Setting "Blocks to add in factory" to zero
             
-        // Creating the block in the factory
-        
-            // creating a bit vector of size 8
             BitVector setBlock = new BitVector(8);
-            
-            // resets the memory
-            System.out.println(setBlock);
             
             System.out.println(protocolToPLC.writeModbus(144, setBlock));
             
             
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            
+            
+            // Creating the block in the factory
+        
+            // creating a bit vector of size 8
+
+            // putting a P8 block in factory
+            setBlock.setBit(3, true);
+            
+            System.out.println(protocolToPLC.writeModbus(144, setBlock));
             
             // Needs to wait 2 seconds before sending the byte with block type
             try
@@ -91,30 +121,30 @@ public class DecisionMaker {
                 System.out.println("error in sleep");
             }
             
-            // Sends the byte with information about block type to add 
-            
-            setBlock.setBit(1, true);
-            
-            System.out.println(setBlock);
-            
-            System.out.println(protocolToPLC.writeModbus(144, setBlock));
 
-        boolean permissao=true;    
-            
+        boolean permissao = true;    
+       
         //TO DO
         while(!testBlock.isDestination())
-        {
+        {  
            String newPosition = virtualFactory.getNewPosition(testBlock);
            testBlock.setPosition(newPosition);
            System.out.println(testBlock.getPosition());
            
-           if (testBlock.getPosition().equals("0.2") && permissao==true)
+           if (testBlock.getPosition().equals("0.2") && permissao == true)
            {
-               permissao=false;
-               System.out.println("Digo para não entrar na C1");
+               permissao = false;
+               System.out.println("Digo para entrar na C1");
+               
                BitVector keepGoingC1 = new BitVector(8);
                keepGoingC1.setBit(0, true);
-               protocolToPLC.writeModbus(8, keepGoingC1);
+               
+               
+               BitVector enterC1 = new BitVector(8);
+               enterC1.setBit(0, true);
+               
+               
+               protocolToPLC.writeModbus(0, enterC1);
            }
            
            
