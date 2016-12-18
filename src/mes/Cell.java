@@ -32,28 +32,28 @@ public class Cell {
             {
                 type = cellType;
                 // creates cells in the current factory
-                currentFactory.addConveyors("cell", "linear", 3);
-                currentFactory.addMachines("A", 1);
-                
+                currentFactory.addConveyors("cell", "linear", 2);
+                currentFactory.addConveyors("cell", "slide", 2);
+                currentFactory.addMachines("B", 1);
+                currentFactory.addMachines("C", 1);
                 break;
             }
                 
-
             case "serial":
             {
                 type = cellType;
                 // creates cells in the current factory
-                currentFactory.addCells(cellType, 4, currentFactory);
-                break; 
-                
+                currentFactory.addConveyors("cell", "linear", 3);
+                currentFactory.addMachines("A", 1);
+                currentFactory.addMachines("B", 1); 
+                break;
             }
                 
-            
             default:
                 System.out.println("Cell type not recognized.\n");
+                System.exit(-1);
          }
     }
-    
 }
 
 

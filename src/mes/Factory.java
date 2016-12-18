@@ -386,6 +386,7 @@ public class Factory extends Thread
      * @param numberOfCells
      * @param currentFactory
      * @return 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
     public boolean addCells(String cellType, int numberOfCells, Factory
             currentFactory) throws InvalidConstructionException
@@ -404,7 +405,7 @@ public class Factory extends Thread
             return false;
         }
         
-        // if a given number of cells was given
+        // if all parameters are OK
         else
             switch(cellType)
             {

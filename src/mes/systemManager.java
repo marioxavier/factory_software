@@ -12,7 +12,6 @@ import net.wimpi.modbus.util.BitVector;
 
 
 import java.util.*;
-import edu.uci.ics.jung.graph.Graph;
 import mes.graph.exception.InvalidConstructionException;
 
 
