@@ -20,39 +20,44 @@ public class Cell {
      * Constructor
      * @param cellType 
      * @param currentFactory
+     * @throws mes.graph.exception.InvalidConstructionException
      */
-    public Cell(String cellType, Factory currentFactory) throws InvalidConstructionException
+    public Cell(String cellType, Factory currentFactory) 
+            throws InvalidConstructionException
     {
          if (null == cellType)
-            System.out.println("No conveyor type given.\n");
-         else
-         switch(cellType)
          {
-            case "parallel":
-            {
-                type = cellType;
-                // creates cells in the current factory
-                currentFactory.addConveyors("cell", "linear", 2);
-                currentFactory.addConveyors("cell", "slide", 2);
-                currentFactory.addMachines("B", 1);
-                currentFactory.addMachines("C", 1);
-                break;
-            }
-                
-            case "serial":
-            {
-                type = cellType;
-                // creates cells in the current factory
-                currentFactory.addConveyors("cell", "linear", 3);
-                currentFactory.addMachines("A", 1);
-                currentFactory.addMachines("B", 1); 
-                break;
-            }
-                
-            default:
-                System.out.println("Cell type not recognized.\n");
-                System.exit(-1);
+            System.out.println("No conveyor type given.\n");
+            System.exit(-1);
          }
+         else
+            switch(cellType)
+            {
+               case "parallel":
+               {
+                   type = cellType;
+                   // creates cells in the current factory
+                   currentFactory.addConveyors("cell", "linear", 2);
+                   currentFactory.addConveyors("cell", "slide", 2);
+                   currentFactory.addMachines("B", 1);
+                   currentFactory.addMachines("C", 1);
+                   break;
+               }
+
+               case "serial":
+               {
+                   type = cellType;
+                   // creates cells in the current factory
+                   currentFactory.addConveyors("cell", "linear", 3);
+                   currentFactory.addMachines("A", 1);
+                   currentFactory.addMachines("B", 1); 
+                   break;
+               }
+
+               default:
+                   System.out.println("Cell type not recognized.\n");
+                   System.exit(-1);
+            }
     }
 }
 

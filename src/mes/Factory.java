@@ -28,8 +28,6 @@ public class Factory extends Thread
     private Monitor factoryMonitor;
     private String[] transportMemoryIndexes;
     
-    
-    
     @Override
     public void run()
     {
@@ -53,6 +51,7 @@ public class Factory extends Thread
     /**
      * Initizes factory
      * @return 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
     @SuppressWarnings("UseOfObsoleteCollectionType")
     public boolean initFactory() throws InvalidConstructionException
@@ -70,20 +69,19 @@ public class Factory extends Thread
         // TO DO
         
         // creates Hashtable to store all the incoming blocks 
-         blocksInFactory = new Hashtable<>();
+        blocksInFactory = new Hashtable<>();
+        
+        // creates graph to store all the transport conveyors
+        transportConveyors = new Graph<>();
          
+        // creates graph to store all cell Conveyors
+        cellConveyors = new Graph<>();
          
-         // creates graph to store all the conveyors
-         transportConveyors = new Graph<>();
+        // creates Cell array containing all parallel cells
+        parallelCells = new Cell[2];
          
-         // creates graph to store all cell Conveyors
-         cellConveyors = new Graph<>();
-         
-         // creates Cell array containing all parallel cells
-         parallelCells = new Cell[2];
-         
-         // creates Cell array containing all serial cells
-         serialCells = new Cell[2];
+        // creates Cell array containing all serial cells
+        serialCells = new Cell[2];
          
          // creates the machine array containing all the machines
          machines = new Machine[8];
@@ -259,8 +257,10 @@ public class Factory extends Thread
      * @param conveyorType
      * @param numberOfConveyors 
      * @return
+     * @throws mes.graph.exception.InvalidConstructionException
      */
-    public boolean addConveyors(String conveyorGroup, String conveyorType, int numberOfConveyors) throws InvalidConstructionException
+    public boolean addConveyors(String conveyorGroup, String conveyorType,
+            int numberOfConveyors) throws InvalidConstructionException
     {
         // no conveyor type was given
         if (null == conveyorType)
@@ -439,6 +439,7 @@ public class Factory extends Thread
      * Adds transport to factory
      * @param currentFactory
      * @return 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
     public boolean addTransport(Factory currentFactory) throws InvalidConstructionException
     {
