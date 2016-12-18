@@ -299,7 +299,7 @@ public class Transport extends Thread  {
                 System.out.println(blockToControl.getPosition());
                 
                 // decision not to enter in first Cell
-                if (newBlock.getPosition().equals("0.2") && !(newBlock.isDestination()) && conditionEnterFlag == 0)
+                if (blockToControl.getPosition().equals("0.2") && !(blockToControl.isDestination()) && conditionEnterFlag == 0)
                 {
                     conditionEnterFlag +=1;
                     keepGoingDecision.setBit(0, true);
@@ -307,7 +307,7 @@ public class Transport extends Thread  {
 
                 }
                 // decision not to enter in second Cell
-                else if (newBlock.getPosition().equals("0.5") && !(newBlock.isDestination()) && conditionEnterFlag == 1)
+                else if (blockToControl.getPosition().equals("0.5") && !(blockToControl.isDestination()) && conditionEnterFlag == 1)
                 {
                     conditionEnterFlag+=1;
                     keepGoingDecision.setBit(0, false);
@@ -315,7 +315,7 @@ public class Transport extends Thread  {
                     protocolToPLC.writeModbus(8, keepGoingDecision);
                 }
                 // decision not to enter in third Cell
-                else if (newBlock.getPosition().equals("0.7") && !(newBlock.isDestination()) && conditionEnterFlag == 2)
+                else if (blockToControl.getPosition().equals("0.7") && !(blockToControl.isDestination()) && conditionEnterFlag == 2)
                 {
                     conditionEnterFlag += 1;
                     keepGoingDecision.setBit(1, false);
@@ -323,7 +323,7 @@ public class Transport extends Thread  {
                     protocolToPLC.writeModbus(8, keepGoingDecision);
                 }
                 // decision not to enter in fourth Cell
-                else if (newBlock.getPosition().equals("0.10") && !(newBlock.isDestination()) && conditionEnterFlag == 3)
+                else if (blockToControl.getPosition().equals("0.10") && !(blockToControl.isDestination()) && conditionEnterFlag == 3)
                 {
                     conditionEnterFlag += 1;
                     keepGoingDecision.setBit(2, false);

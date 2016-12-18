@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import mes.graph.exception.InvalidConstructionException;
+import net.wimpi.modbus.util.BitVector;
 
 
 /**
@@ -48,6 +49,22 @@ public class systemManager
         
         protocolToPLC.openConnection();
         
+        
+        
+        // creating new Modbus Object for Transport
+        Modbus transportProtocol = new Modbus();
+        
+        // setting the Modbus Connection   
+        if (transportProtocol.setModbusConnection())
+            System.out.println("Modbus connection on.\n");
+        else
+            System.out.println("Modbus connection failed.\n");
+        
+        transportProtocol.openConnection();
+        
+        
+        
+        
        // runs Monitor thread
        //factoryMonitor.start();
        
@@ -55,25 +72,27 @@ public class systemManager
        // initializing factory
        virtualFactory.initFactory();
        
+       
+       Block block1 = new Block("P1","0.2","1");
+       virtualFactory.addBlock(block1);
+       
        // starts factory Thread
        virtualFactory.start();
        
        // runs Database thread
        db.start();
        
-       
-       
-       Block block1 = new Block("P1","0.2","1");
-       
-       Block block2 = new Block("P3","0.7","1");
-
-       Block block3 = new Block("P6","0.5","1");
-       
-       Transport inputTransport = virtualFactory.getInputTransport();
+  
+       Transport inputTransport = new Transport("input", virtualFactory, transportProtocol);
        
        inputTransport.addBlockToControl(block1);
+       
        inputTransport.start();
        
+
+       
+       
+       /*
             try
             {
                 TimeUnit.SECONDS.sleep(2);
@@ -82,7 +101,12 @@ public class systemManager
             {
                 System.out.println("error in sleep");
             }
+       */
        
+       
+       
+       
+       /*
        inputTransport.addBlockToControl(block2);
        inputTransport.start();
        
@@ -98,6 +122,7 @@ public class systemManager
        inputTransport.addBlockToControl(block3);
        inputTransport.start();
 
+            */
        
        //decisionUnit.makeDecision();
         

@@ -1,6 +1,7 @@
 package mes;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import mes.graph.*;
 import mes.graph.exception.InvalidConstructionException;
@@ -47,6 +48,16 @@ public class Factory extends Thread
                 Block blockToUpdate = blocksInFactory.get(i);
                 position = this.getNewPosition(blockToUpdate);
                 blockToUpdate.setPosition(position);
+                System.out.println(blockToUpdate.getPosition());
+                
+                try
+                {
+                TimeUnit.SECONDS.sleep(2);
+                }
+                catch(Exception Ex)
+                {
+                System.out.println("error in sleep");
+                }
             }
         }
         
