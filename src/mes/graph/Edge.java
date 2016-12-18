@@ -6,6 +6,7 @@ public class Edge<T> {
 
 	private Vertex<T> v1;
 	private Vertex<T> v2;
+        private int weight;
 	
 	public Edge(Vertex<T> v1, Vertex<T> v2) throws NullPointerException {
 		if (v1 == null || v2 == null)
@@ -44,4 +45,29 @@ public class Edge<T> {
 	public String toString() {
 		return v1.toString() + "," + v2.toString();
 	}
+        
+        /**
+         * Sets the edge weight
+         * @param edgeWeight
+         * @return 
+         */
+        public boolean setWeight(int edgeWeight)
+        {
+            if (edgeWeight != 0)
+            {
+                weight = edgeWeight;
+                return true;
+            }
+            else
+                return false;
+        }
+        
+        /**
+         * 
+         * @return 
+         */
+        public int getWeight()
+        {
+            return weight;
+        }
 }

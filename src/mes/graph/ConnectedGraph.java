@@ -34,7 +34,7 @@ public class ConnectedGraph<T> extends Graph<T> {
 					"adding edge (" + elm1 + "," + elm2 + ")" + " creates a disconnected graph");
 		}
 		
-		return super.addEdge(elm1, elm2);
+		return super.addEdge(elm1, elm2, 1);
 	}
 	
 }

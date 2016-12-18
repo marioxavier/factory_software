@@ -5,31 +5,37 @@
  */
 package mes;
 
+import mes.graph.exception.InvalidConstructionException;
 import net.wimpi.modbus.util.BitVector;
 
 /**
  *
  * @author Mário Xavier
  */
-public class Machine {
+public final class Machine 
+{
     
     public int ID;
     private String type;
     private String status;
     private String currentTool;
-    private String[] tools;
+    private String nextTool;
     
     /**
      * 
      * @param machineType 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
-    public Machine(String machineType)
+    public Machine(String machineType) throws InvalidConstructionException
     {
         if (null == machineType)
             System.out.println("Machine type not given.\n");
         else
         {
             type = machineType;
+            this.checkTools();
+            this.currentTool = "T1";
+            this.nextTool = "T1";
         }
     }
     
@@ -95,24 +101,23 @@ public class Machine {
     }
     
     /**
-     * Adds a tool to a machine
-     * @param toolType
+     * Adds a tool to a machine (returns "left" or "right")
      * @return 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
-    public boolean addTool(String toolType)
-    {
-        // if no tool type was given
-        if (null == toolType)
-        {
-            System.out.println("No tool type was given.\n");
-            return false;
-        }
-        // if a tool type was given
+    public String checkTools() throws InvalidConstructionException
+    {      
+        if ("T1".equals(currentTool) && "T2".equals(nextTool))
+            return "right";
+        else if ("T1".equals(currentTool) && "T3".equals(nextTool))
+            return "left";
+        else if ("T2".equals(currentTool) && "T1".equals(nextTool))
+            return "left";
+        else if ("T2".equals(currentTool) && "T3".equals(nextTool))
+            return "right";
+        else if ("T3".equals(currentTool) && "T1".equals(nextTool))
+            return "right";
         else
-        {
-            tools[tools.length + 1] = toolType;
-            return true;
-        }
+            return "left";
     }
-    
 }

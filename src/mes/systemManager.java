@@ -7,16 +7,7 @@ package mes;
 
 import java.sql.SQLException;
 import java.util.*;
-import javax.swing.JOptionPane;
-import net.wimpi.modbus.util.BitVector;
-
-
-import java.util.*;
 import mes.graph.exception.InvalidConstructionException;
-
-
-
-
 
 
 /**
@@ -36,8 +27,7 @@ public class systemManager
         
         // creates UDP protocol object
         //UDP protocolToERP = new UDP();
-        
-        
+          
         // creates a factory monitor
         Monitor factoryMonitor = new Monitor(protocolToPLC);
         // creates a virtual factory
@@ -70,21 +60,6 @@ public class systemManager
 
        //decisionUnit.makeDecision();
         
-       */
-       
-       
-       short test1 = 3;
-       
-       byte[] ret = new byte[1];
-       ret[0] = (byte)(test1 & 0xff);
-       
-       System.out.println(ret[0]);
-       
-       BitVector test2 = BitVector.createBitVector(ret);
-       
-       System.out.println(test2);
-       
-       
         /*     
        // if database is initialized
        if(db.initDatabase("org.postgresql.Driver", 

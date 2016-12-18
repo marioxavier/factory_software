@@ -349,7 +349,7 @@ public class Factory extends Thread
      * @param numberOfMachines 
      * @return
      */
-    public boolean addMachines(String machineType, int numberOfMachines)
+    public boolean addMachines(String machineType, int numberOfMachines) throws InvalidConstructionException
     {        
         // no machine type was given
         if (null == machineType)
