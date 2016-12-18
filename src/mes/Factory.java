@@ -44,8 +44,8 @@ public class Factory extends Thread
         {
             if(this.isReady())
             {
-                systemManager.orderQueue.element();
-                //this.addBlock(newBlock);
+               // this.addBlock(systemManager.orderQueue.element().originalType,
+                 //       systemManager.orderQueue.element().finalType);
             }
         }
         

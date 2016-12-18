@@ -15,6 +15,8 @@ import java.util.*;
 public class ProductionOrder 
 {
      private String orderID;
+     public String originalType;
+     public String finalType;
      private Date orderDate;
      private String orderStatus;
      
