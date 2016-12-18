@@ -42,8 +42,9 @@ public class Monitor extends Thread
     
     
     /**
-     * Constructor
-     * @param protocol 
+     * 
+     * @param protocol
+     * @param currentFactory 
      */
     public Monitor(Modbus protocol, Factory currentFactory)
     {

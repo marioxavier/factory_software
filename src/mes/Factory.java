@@ -32,6 +32,7 @@ public class Factory extends Thread
     
     private volatile boolean killThread;
     
+    
     /**
      * Thread to run
      */
