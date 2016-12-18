@@ -22,14 +22,12 @@ public class Database extends Thread
     private Connection databaseConnection;
     private Statement databaseStatement;
     private ResultSet dataSet;
-    
-    
+     
     @Override
     public void run()
     {
         
     }
-    
     
     /**
      * Gets the username
