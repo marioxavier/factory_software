@@ -27,8 +27,7 @@ public class systemManager
         // creates Modbus protocol object 
         Modbus protocolToPLC = new Modbus();
         
-        // creates UDP protocol object
-        //UDP protocolToERP = new UDP();
+        
           
         // creates a virtual factory
         Factory virtualFactory = new Factory(protocolToPLC);
@@ -36,6 +35,23 @@ public class systemManager
         DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
         // creates a database object
         Database db = new Database();
+        
+        
+        ProductionOrder productionOrder = new ProductionOrder();
+        
+        
+        // TO DO
+        // creates UDP protocol object
+        //UDP protocolToERP = new UDP(this, productionOrder);
+        
+        //protocolToERP.init();
+        
+        // starts protocol to ERP thread
+        //protocolToERP.start();
+        
+        
+        
+        
         
         
               
@@ -55,8 +71,7 @@ public class systemManager
        virtualFactory.initFactory();
        
        
-       Block block1 = new Block("P1","0.2","1");
-       virtualFactory.addBlock(block1);
+
        
        // starts factory Thread
       // virtualFactory.start();
@@ -127,6 +142,7 @@ public class systemManager
       */
      public boolean addToQueue(ProductionOrder newOrder)
      {
+         
          return orderQueue.add(newOrder);
      }
      

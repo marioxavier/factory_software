@@ -43,8 +43,15 @@ class Transporter implements Runnable
                 Block blockToTransport = transportUnit.blocksInFactory.get(i);
                 // if the block arrived destination
                 if(blockToTransport.isDestination())
+                {
                     // writes in the buffer
                     transportUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+                    
+                    // updates block status
+                    blockToTransport.updateStatus("waiting");
+                    
+                }
+                    
             }
         }         
     }
@@ -54,7 +61,8 @@ class Transporter implements Runnable
  *
  * @author Mário Xavier
  */
-public class Transport extends Thread  {
+public class Transport extends Thread  
+{
     
     private int ID;
     private String type;

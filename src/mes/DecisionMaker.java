@@ -48,8 +48,13 @@ public class DecisionMaker {
      * 
      * @return 
      */
+    
+    
+    /*
     public boolean makeDecision()
     {
+ 
+        
         // Creating Block in MES
             
             //Creating Block Object with type P8 and position 0.0 and destination 0.5 and ID "Teste"
@@ -159,6 +164,6 @@ public class DecisionMaker {
 
         return true;
     }
-   
-    
+
+    */
 }

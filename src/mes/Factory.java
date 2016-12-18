@@ -181,12 +181,16 @@ public class Factory extends Thread
         }
     }
    
+    
+    
     /**
      * Gets factory status
      * @return 
      */
+
     public boolean isReady()
     {
+        
         return status;
     }
 
@@ -485,14 +489,14 @@ public class Factory extends Thread
                     // creates parallel cells
                      for(int i = 0; i < numberOfCells; i++)
                      {
-                         parallelCells[i] = new Cell(cellType, currentFactory);
+                         parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol());
                      }
                     break;
 
                 case "serial":
                     // creates serial cells
                     for(int i = 0; i < numberOfCells; i++)
-                        serialCells[i] = new Cell(cellType, currentFactory);
+                        serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol());
                     break; 
 
                 default:
@@ -969,18 +973,53 @@ public class Factory extends Thread
         memoryMap = new Hashtable<>();
         
         
-        /*
+        
         for (String i : transportConveyorsTable.keySet())
         {
             switch(transportConveyorsTable.get(i).ID)
             {
-                case 
+                case "0.0":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "0,146,147");
+                case "0.1":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "2,151,152");
+                case "0.2":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                case "0.3":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "6,7,157,158");
+                case "0.4":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "32,193,194");
+                case "0.5":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "33,34,35,195,196,197,198");
+                case "0.6":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "53,225,226");
+                case "0.7":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "54,55,56,227,228,229,230");
+                case "0.8":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "57,58,231,232");
+                case "0.9":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "83,267,268");
+                case "0.10":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "84,85,86,269,270,271,272");
+                case "0.11":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "104,299,300");
+                case "0.12":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "105,106,107,301,302,303,304");
+                case "0.13":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "128,322,323");
+                case "0.14":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                case "0.15":
+                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "132,328,329");
             }
             
             
             
         }
-        */
+        
+        
+
+        
+        
         
         // while aqui? 
         
@@ -1072,5 +1111,9 @@ public class Factory extends Thread
        }
        
    }
+   
+   
+   
+   
 }
 
