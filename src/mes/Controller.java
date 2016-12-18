@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import net.wimpi.modbus.util.BitVector;
 
+/**
+ * Implements a buffer between MES and PLC
+ * @author Mário
+ */
 class WriteModbus
 {
     private BitVector mesOrder;
@@ -79,18 +83,21 @@ public class Controller extends Thread
      */
     public boolean updateBuffer(String dataToUpdate, String classType)
     {
+        // if no data to update was given
         if (null == dataToUpdate)
         {
             System.out.println("No data to update.\n");
             return false;
         }
+        // if no class type was given
         else if (null == classType)
         {
             System.out.println("No class type given.\n");
             return false;
         }
         
-        if ("block".equals(classType))
+        // if the object to update is a block
+        else if ("block".equals(classType))
         {
             switch(dataToUpdate)
             {
@@ -107,8 +114,7 @@ public class Controller extends Thread
                 default:
                     System.out.println("Data type not recognized.\n");
                     return false;         
-            }
-             
+            }  
         }
         return true;
     }

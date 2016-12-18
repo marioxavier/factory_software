@@ -149,6 +149,18 @@ public class systemManager
          return orderQueue.remove(orderToRemove);
      }  
 }
+
+
+
+
+
+
+
+
+
+
+
+
         /*
         if(virtualFactory.addConveyors("transport", "linear", 2))
             System.out.println("ok");
