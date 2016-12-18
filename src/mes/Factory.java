@@ -29,6 +29,8 @@ public class Factory extends Thread
     private Monitor factoryMonitor;
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
+    private Hashtable<Integer, String> memoryMap;
+   
     
     private volatile boolean killThread;
     
@@ -154,6 +156,7 @@ public class Factory extends Thread
                 if (this.addCells("serial", 2, this))
                 {
                     status = true;
+                    this.mapObjectsToMemory();
                     // starts reading factory;
                     this.startFactoryMonitor();
                     return true;
@@ -869,7 +872,64 @@ public class Factory extends Thread
         return true;
     }
     
-    
+    public void mapObjectsToMemory()
+    {
+        // percorrer todos os objectos
+        
+        memoryMap = new Hashtable<>();
+        
+        // while aqui? 
+        
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+        memoryMap.put(machines[0].hashCode(), "1,2,7");
+         
+    }
     
     
 }

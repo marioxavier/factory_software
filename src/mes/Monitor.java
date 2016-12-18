@@ -36,8 +36,6 @@ public class Monitor extends Thread
             virtualFactory.updateConveyorStatus(inputData + outputData);
             virtualFactory.updateBlockStatus(inputData + outputData);
             virtualFactory.updateMachineStatus(inputData + outputData);
-            
-            
         }   
     }
     
