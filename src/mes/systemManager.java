@@ -39,6 +39,23 @@ public class systemManager
         Database db = new Database();
         
         
+        ProductionOrder productionOrder = new ProductionOrder();
+        
+        
+        // TO DO
+        // creates UDP protocol object
+        //UDP protocolToERP = new UDP(this, productionOrder);
+        
+        //protocolToERP.init();
+        
+        // starts protocol to ERP thread
+        //protocolToERP.start();
+        
+        
+        
+        
+        
+        
               
         // setting the Modbus Connection   
         if (protocolToPLC.setModbusConnection())
@@ -56,8 +73,7 @@ public class systemManager
        virtualFactory.initFactory();
        
        
-       Block block1 = new Block("P1","0.2","1");
-       virtualFactory.addBlock(block1);
+
        
        // starts factory Thread
       // virtualFactory.start();
@@ -128,6 +144,7 @@ public class systemManager
       */
      public boolean addToQueue(ProductionOrder newOrder)
      {
+         
          return orderQueue.add(newOrder);
      }
      

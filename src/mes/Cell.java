@@ -6,15 +6,72 @@
 package mes;
 
 import mes.graph.exception.InvalidConstructionException;
+import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
+import mes.graph.exception.InvalidConstructionException;
+import net.wimpi.modbus.util.BitVector;
+
+
+class Producer implements Runnable
+{
+
+    Cell cellUnit;
+    
+    public Producer(Cell cellObject)
+    {
+        // if no transport object was given
+        if (null == cellObject)
+        {
+            System.out.println("No cell object given.\n");
+            System.exit(-1);
+        }
+        else
+            cellUnit = cellObject;
+    }
+    
+    /**
+     * Thread 
+     */
+    @Override
+    @SuppressWarnings("empty-statement")
+    public void run()
+    {
+        // loops forever
+        while(true)
+        {
+           
+            // loops all blocks
+            for (String i : cellUnit.blocksInFactory.keySet())
+            {
+                Block blockToTransport = cellUnit.blocksInFactory.get(i);
+                // if the block arrived destination
+                if(blockToTransport.isDestination())
+                    // writes in the buffer
+                    cellUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+            }
+        }         
+        
+    }
+
+    
+    
+}
+
 
 /**
  *
  * @author Utilizador
  */
-public class Cell {
+public class Cell extends Thread{
     
     public int ID;
     private String type;
+    private Factory virtualFactory;
+    private Modbus protocolToPLC;
+    public Hashtable<String, Block> blocksInFactory;
+    public Controller controlUnit;
+    
+    
     
     /**
      * Constructor
@@ -22,7 +79,7 @@ public class Cell {
      * @param currentFactory
      * @throws mes.graph.exception.InvalidConstructionException
      */
-    public Cell(String cellType, Factory currentFactory) 
+    public Cell(String cellType, Factory currentFactory, Modbus protocol) 
             throws InvalidConstructionException
     {
          if (null == cellType)
@@ -31,6 +88,10 @@ public class Cell {
             System.exit(-1);
          }
          else
+            virtualFactory = currentFactory;
+            protocolToPLC = protocol;
+            blocksInFactory = currentFactory.getBlocksInFactory();
+            controlUnit = currentFactory.getControlUnit();
             switch(cellType)
             {
                case "parallel":

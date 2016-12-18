@@ -13,6 +13,9 @@ public class Block {
     
     public String ID;
     private String type;
+    
+    private String finalType;
+    
     private String position;
     private String status;
     private String destination;
@@ -23,7 +26,7 @@ public class Block {
      * @param blockDestination
      * @param blockID 
      */
-    public Block(String blockType, String blockDestination, String blockID)
+    public Block(String blockType, String finalBlockType, String blockDestination, String blockID)
     {
         // if block type was not given
         if (null == blockType)
@@ -48,11 +51,12 @@ public class Block {
         // all input arguments OK
         else
         {
+            this.finalType = finalBlockType;
             this.type = blockType;
             this.destination = blockDestination;
             this.ID = blockID;
             // initial position
-            this.position = "0.0";
+            this.position = "x.x";
         }
     }
     
