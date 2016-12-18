@@ -5,7 +5,6 @@
  */
 package mes;
 
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 import mes.graph.exception.InvalidConstructionException;
@@ -29,7 +28,7 @@ public class Transport extends Thread  {
     
     
     /**
-     * 
+     * Constructor
      * @param transportType
      * @param currentFactory
      * @param protocol
@@ -53,7 +52,7 @@ public class Transport extends Thread  {
         else
             virtualFactory = currentFactory;
             protocolToPLC = protocol;
-            this.generateHashTable();
+            this.createHashTable();
             switch(transportType)
             {
                 case "input":
@@ -78,6 +77,87 @@ public class Transport extends Thread  {
             }
     }
     
+    /**
+     * Gets transport ID
+     * @return 
+     */
+    public int getID()
+    {
+        return ID;
+    }
+    
+    /**
+     * Set the transport ID
+     * @param transportID
+     * @return 
+     */
+    public boolean setID(int transportID)
+    {
+        ID = transportID;
+        return true;
+    }
+    
+    /**
+     *Gets transport type 
+     * @return 
+     */
+    public String getType()
+    {
+        return type;
+    }
+    
+    /**
+     * Sets transport type
+     * @param transportType
+     * @return 
+     */
+    public boolean setType(String transportType)
+    {
+        if (null == transportType)
+        {
+            System.out.println("Transport type not given.\n");
+            return false;
+        }
+        else
+        {
+            type = transportType;
+            return true;
+        } 
+    }
+    
+    /**
+     * Gets factory status
+     * @return 
+     */
+    public String getStatus()
+    {
+        return status;
+    }
+    
+    /**
+     * Sets status
+     * @param transportStatus
+     * @return 
+     */
+    public boolean setStatus(String transportStatus)
+    {
+        if (null == transportStatus)
+        {
+            System.out.println("Transport status not given.\n");
+            return false;
+        }
+        else
+        {
+            status = transportStatus;
+            return false;
+        }  
+    }
+    
+    /**
+     * 
+     * @param block
+     * @return 
+     */
     public boolean addBlockToControl(Block block)
     {
         blockToControl = block;
@@ -85,7 +165,10 @@ public class Transport extends Thread  {
         
     }
     
-    public void generateHashTable()
+    /**
+     * Creates a hashtable to store the block type 
+     */
+    public void createHashTable()
     {
         // creates the hashtable
         blockVector = new Hashtable<>();
@@ -138,7 +221,7 @@ public class Transport extends Thread  {
     }
     
     /**
-     * 
+     * Gets factory
      * @return 
      */
     public Factory getFactory()
@@ -147,7 +230,7 @@ public class Transport extends Thread  {
     }
     
     /**
-     * 
+     * Gets modbus protocol
      * @return 
      */
     public Modbus getProtocol()
@@ -158,10 +241,9 @@ public class Transport extends Thread  {
     
 
     /**
-     * 
-     * @param newBlock
-     * @param destination 
+     * Thread 
      */
+    @Override
     public void run()
     {
         

@@ -24,6 +24,11 @@ public class UDP extends Thread
     systemManager manager;
     ProductionOrder newOrder;
     
+    /**
+     * Constructor
+     * @param systemManager
+     * @param newProductionOrder 
+     */
     public UDP(systemManager systemManager, ProductionOrder newProductionOrder)
     {
         // no manager was given
