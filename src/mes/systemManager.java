@@ -7,13 +7,6 @@ package mes;
 
 import java.sql.SQLException;
 import java.util.*;
-import javax.swing.JOptionPane;
-import net.wimpi.modbus.util.BitVector;
-
-
-import java.util.*;
-import mes.graph.Graph;
-import mes.graph.Tree;
 import mes.graph.exception.InvalidConstructionException;
 
 
