@@ -11,7 +11,6 @@ package mes;
  */
 public class Monitor extends Thread
 {
-    
     private String inputData;
     private String outputData;
     private Modbus protocolToPLC;
