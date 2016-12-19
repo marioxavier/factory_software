@@ -39,7 +39,6 @@ class Producer implements Runnable
         // loops forever
         while(true)
         {
-           
             // loops all blocks
             for (String i : cellUnit.blocksInFactory.keySet())
             {
