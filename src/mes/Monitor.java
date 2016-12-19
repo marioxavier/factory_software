@@ -34,6 +34,9 @@ public class Monitor extends Thread
             this.readActuators();
             //virtualFactory.updateConveyorStatus(inputData + outputData);
             virtualFactory.updateBlockPositions(inputData + outputData);
+            
+            virtualFactory.isReady(inputData+outputData);
+            
             //virtualFactory.updateMachineStatus(inputData + outputData);
         }   
     }

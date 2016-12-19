@@ -33,6 +33,10 @@ public class Factory extends Thread
     private Controller controlUnit;
     private volatile boolean killThread;
     
+    private boolean firstConveyorReady;
+    
+    
+    
     
     /**
      * Thread to run
@@ -42,11 +46,11 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
-            if(this.isReady())
+            if(firstConveyorReady)
             {
-                this.addBlock(systemManager.orderQueue.element().originalType,
-                        systemManager.orderQueue.element().finalType, "0.15", "1",
-                        systemManager.orderQueue.element().blockOperation);
+                this.addBlock(this.systemManager.orderQueue.element().originalType,
+                        this.systemManager.orderQueue.element().finalType, "0.15", "1",
+                        this.systemManager.orderQueue.element().blockOperation);
             }
         }
         
@@ -136,6 +140,8 @@ public class Factory extends Thread
          // creates the machine array containing all the machines
          machines = new Machine[8];
          
+         firstConveyorReady=false;
+         
          // creates the array containing the memory index of sensors/actuators
          // concerning each transport conveyor
          this.generateTransportMemoryIndexes();
@@ -178,13 +184,19 @@ public class Factory extends Thread
      * @return 
      */
 
-    public boolean isReady()
+    public void isReady(String data)
     {
         
-        String[] factoryDataArray = factoryData.split(",");
+        String[] factoryDataArray = data.split(",");
         
         // if the conveyor 0 is full returns false
-        return !factoryDataArray[0].equals("1");
+         if(factoryDataArray[0].equals("1"))
+             firstConveyorReady = false;
+         else
+             firstConveyorReady = true;
+         
+         
+         
     }
 
     /**
@@ -364,7 +376,10 @@ public class Factory extends Thread
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
                             ID = "0."+Integer.toString(i);
-                            this.transportConveyorsTable.put(ID, new Conveyor(conveyorGroup, "rotator"));
+                            Conveyor rotatingConveyor = new Conveyor(conveyorGroup, "rotator");
+                            rotatingConveyor.setID(ID);
+                            this.transportConveyorsTable.put(ID, rotatingConveyor);
+                            
                         }
                             
 
@@ -372,7 +387,9 @@ public class Factory extends Thread
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
                             ID = "0."+Integer.toString(i);
-                            this.transportConveyorsTable.put(ID, new Conveyor(conveyorGroup, conveyorType));
+                            Conveyor linearConveyor = new Conveyor(conveyorGroup, conveyorType);
+                            linearConveyor.setID(ID);
+                            this.transportConveyorsTable.put(ID, linearConveyor);
                         }
                             
                     }
@@ -629,6 +646,7 @@ public class Factory extends Thread
      */
     public boolean generateTransportConveyorID()
     {
+        
         //****************** TO DO   -      SUPER IMPORTANTE   *******************//
         
         String conveyorID;
