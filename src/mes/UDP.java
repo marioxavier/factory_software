@@ -58,7 +58,7 @@ public class UDP extends Thread
                 serverSocket.receive(receivePacket);
             } 
             catch (IOException ex) 
-            {
+            {       
                 Logger.getLogger(UDP.class.getName()).log(Level.SEVERE, null, ex);
             }
             

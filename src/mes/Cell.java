@@ -39,15 +39,15 @@ class Producer implements Runnable
         // loops forever
         while(true)
         {
-           
             // loops all blocks
             for (String i : cellUnit.blocksInFactory.keySet())
             {
                 Block blockToTransport = cellUnit.blocksInFactory.get(i);
                 // if the block arrived destination
-                if(blockToTransport.isDestination())
+                if("waiting".equals(blockToTransport.getStatus())){
                     // writes in the buffer
                     cellUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+                }
             }
         }         
         
