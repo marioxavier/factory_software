@@ -33,7 +33,7 @@ public final class Machine
         else
         {
             type = machineType;
-            this.checkTools();
+            //this.checkTools();
             this.currentTool = "T1";
             this.nextTool = "T1";
         }
@@ -105,7 +105,7 @@ public final class Machine
      * @return 
      * @throws mes.graph.exception.InvalidConstructionException 
      */
-    public String checkTools() throws InvalidConstructionException
+    public String checkToolMovement() throws InvalidConstructionException
     {      
         if ("T1".equals(currentTool) && "T2".equals(nextTool))
             return "right";
@@ -119,5 +119,10 @@ public final class Machine
             return "right";
         else
             return "left";
+    }
+    
+    public String updateTool(String nextTool)
+    {
+        return null;
     }
 }

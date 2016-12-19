@@ -50,13 +50,13 @@ class Producer implements Runnable
                     
                     // writes in the buffer
                     cellUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
-                    
                 }
-                    
-                
+                else if(blockToTransport.updateStatus("producing"));
+                {
+                    //TO DO escrever em máquina
+                }   
             }
         }         
-        
     }
 
     

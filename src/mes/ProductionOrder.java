@@ -22,7 +22,6 @@ public class ProductionOrder
      public String blockOperation;
      private int quantity; 
      
-     
      public ProductionOrder(String datagram)
      {
          String[] datagramTokens = datagram.split(":");
