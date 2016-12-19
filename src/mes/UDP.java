@@ -63,6 +63,7 @@ public class UDP extends Thread
             }
             
                 manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
+                manager.printQueue(manager.orderQueue);
                 //manager.systemDatabase.executeQuery(query);
                 
  

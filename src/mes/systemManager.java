@@ -31,18 +31,8 @@ public class systemManager
             systemDatabase = DB;
     }
     
-    
-    
      public static void main (String[] args) throws SQLException, InvalidConstructionException
-     {  
-        
-         
-         
-        
-         
-         
-         
-         
+     { 
          // creates a database object
         Database db = new Database();
         
@@ -61,16 +51,22 @@ public class systemManager
               }
           }
        }
-        
-       
-        
+        // creates an instance of manager
         systemManager manager = new systemManager(db);
-        
+        // initializes a linked list to implement the queue
         manager.orderQueue = new LinkedList<>();
         
         Controller controlUnit = new Controller();
         
+          // creates UDP protocol object
+        UDP protocolToERP = new UDP(manager);
+        // initializes UDP
+        protocolToERP.initUDP();
+        // starts UDP thread
+        protocolToERP.start();
         
+     }     
+        /*
         // creates Modbus protocol object 
         Modbus protocolToPLC = new Modbus(controlUnit);
         
@@ -80,102 +76,28 @@ public class systemManager
         else
             System.out.println("Modbus connection failed.\n");
         
-        protocolToPLC.openConnection();
+        if(protocolToPLC.openConnection())
+            System.out.println("Connection not opened.\n");
+        else
+            System.out.println("Connection opened.\n");
         
         
         // creates UDP protocol object
         UDP protocolToERP = new UDP(manager);
-        
+        // initializes UDP
         protocolToERP.initUDP();
-        
+        // starts UDP thread
         protocolToERP.start();
           
         // creates a virtual factory
         Factory virtualFactory = new Factory(protocolToPLC, manager);
-        
+        // initializes factory
         virtualFactory.initFactory();
-        
         // starting factory thread
         virtualFactory.start();
         
         // creates a decision unit
-        //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
-        
-        
-        
-        // TO DO
-        // creates UDP protocol object
-        //UDP protocolToERP = new UDP(this, productionOrder);
-        
-        //protocolToERP.init();
-        
-        // starts protocol to ERP thread
-        //protocolToERP.start();
-        
-        
-
-       
-       // starts factory Thread
-      // virtualFactory.start();
-       
-       // runs Database thread
-       db.start();
-       
-  
-
-       /*
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-       */
-
-       /*
-       inputTransport.addBlockToControl(block2);
-       inputTransport.start();
-       
-       try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-       
-       inputTransport.addBlockToControl(block3);
-       inputTransport.start();
-
-            
-       
-       //decisionUnit.makeDecision();
-        
-       
-       // if database is initialized
-       if(db.initDatabase("org.postgresql.Driver", 
-                "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
-       {
-          // if credentials are right
-          if(db.setCredentials("sinf16g67","manueljoaofraga"))
-           {
-               // if a databased connection is opened
-               if(db.openConnection())
-               {
-                   // executes a query
-                   //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
-              }
-          }
-       }
-       
-       */
-       
-       
-       
-       
+        //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory    
     }
      
      /**
@@ -207,6 +129,13 @@ public class systemManager
      {
          ProductionOrder newOrder = new ProductionOrder(receivedOrder);
          return newOrder;
+     }
+     
+     public boolean printQueue(LinkedList<ProductionOrder> orderQueue)
+     {
+             while(orderQueue.descendingIterator().hasNext())
+                System.out.println(orderQueue.descendingIterator().next().finalType);
+             return true;
      }
 }
 
