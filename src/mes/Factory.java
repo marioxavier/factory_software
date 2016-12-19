@@ -44,8 +44,9 @@ public class Factory extends Thread
         {
             if(this.isReady())
             {
-               // this.addBlock(systemManager.orderQueue.element().originalType,
-                 //       systemManager.orderQueue.element().finalType);
+                this.addBlock(systemManager.orderQueue.element().originalType,
+                        systemManager.orderQueue.element().finalType, "0.15", "1",
+                        systemManager.orderQueue.element().blockOperation);
             }
         }
         
@@ -180,7 +181,10 @@ public class Factory extends Thread
     public boolean isReady()
     {
         
-        return status;
+        String[] factoryDataArray = factoryData.split(",");
+        
+        // if the conveyor 0 is full returns false
+        return !factoryDataArray[0].equals("1");
     }
 
     /**
@@ -625,7 +629,8 @@ public class Factory extends Thread
      */
     public boolean generateTransportConveyorID()
     {
-        // TO DO - tapetes duplos
+        //****************** TO DO   -      SUPER IMPORTANTE   *******************//
+        
         String conveyorID;
         
         for (int i = 0; i < transportConveyorsTable.size(); i++)
@@ -746,11 +751,11 @@ public class Factory extends Thread
 
     /**
      * 
-     * @param newBlock
      * @return 
      */
-    public boolean addBlock(Block newBlock)
+    public boolean addBlock(String blockType, String finalBlockType, String blockDestination, String blockID, String operation)
     {
+        Block newBlock = new Block(blockType, finalBlockType, blockDestination, blockID, operation);
         
         // if no block was given
         if (null == newBlock)
@@ -1005,12 +1010,6 @@ public class Factory extends Thread
             
         }
         
-        
-
-        
-        
-        
-        // while aqui? 
         
         memoryMap.put(machines[0].hashCode(), "1,2,7");
         memoryMap.put(machines[0].hashCode(), "1,2,7");

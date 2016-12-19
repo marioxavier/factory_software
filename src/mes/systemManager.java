@@ -21,25 +21,82 @@ public class systemManager
     private String ID;
     public PriorityQueue<ProductionOrder> orderQueue;
     private int status;
+    public Database systemDatabase;
+    
+    public systemManager(Database DB)
+    {
+        if (null == DB)
+            System.exit(-1);
+        else
+            systemDatabase = DB;
+    }
+    
+    
     
      public static void main (String[] args) throws SQLException, InvalidConstructionException
      {  
-        systemManager manager = new systemManager();
+         
+         
+         // creates a database object
+        Database db = new Database();
+        
+        // if database is initialized
+       if(db.initDatabase("org.postgresql.Driver", 
+                "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
+       {
+          // if credentials are right
+          if(db.setCredentials("sinf16g67","manueljoaofraga"))
+           {
+               // if a databased connection is opened
+               if(db.openConnection())
+               {
+                   // executes a query
+                   //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
+              }
+          }
+       }
+        
+       
+        
+        systemManager manager = new systemManager(db);
+        
+        
+        Controller controlUnit = new Controller();
+        
+        
         // creates Modbus protocol object 
-        Modbus protocolToPLC = new Modbus();
+        Modbus protocolToPLC = new Modbus(controlUnit);
+        
+        // setting the Modbus Connection   
+        if (protocolToPLC.setModbusConnection())
+            System.out.println("Modbus connection on.\n");
+        else
+            System.out.println("Modbus connection failed.\n");
+        
+        protocolToPLC.openConnection();
+        
         
         // creates UDP protocol object
         UDP protocolToERP = new UDP(manager);
+        
+        protocolToERP.initUDP();
+        
+        protocolToERP.start();
           
         // creates a virtual factory
         Factory virtualFactory = new Factory(protocolToPLC, manager);
+        
+        virtualFactory.initFactory();
+        
+        // starting factory thread
+        virtualFactory.start();
+        
         // creates a decision unit
-        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
-        // creates a database object
-        Database db = new Database();
+        //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
         
         
-        ProductionOrder productionOrder = new ProductionOrder();
+        
+
         
         
         // TO DO
@@ -52,25 +109,10 @@ public class systemManager
         //protocolToERP.start();
         
         
-        
-        
-        
-        
-              
-        // setting the Modbus Connection   
-        if (protocolToPLC.setModbusConnection())
-            System.out.println("Modbus connection on.\n");
-        else
-            System.out.println("Modbus connection failed.\n");
-        
-        protocolToPLC.openConnection();
-        
-        
-       // runs Monitor thread
-       //factoryMonitor.start();
+
+
        
-       // initializing factory
-       virtualFactory.initFactory();
+       
        
        
 
@@ -117,7 +159,7 @@ public class systemManager
        
        //decisionUnit.makeDecision();
         
-       /*
+       
        // if database is initialized
        if(db.initDatabase("org.postgresql.Driver", 
                 "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
@@ -129,12 +171,12 @@ public class systemManager
                if(db.openConnection())
                {
                    // executes a query
-                   db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
+                   //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
               }
           }
        }
        
-       */ 
+       
     }
      
      /**
@@ -165,7 +207,7 @@ public class systemManager
       */
      public ProductionOrder convertToOrder(String receivedOrder)
      {
-         ProductionOrder newOrder = new ProductionOrder();
+         ProductionOrder newOrder = new ProductionOrder(receivedOrder);
          return newOrder;
      }
 }
