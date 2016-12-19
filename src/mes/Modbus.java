@@ -76,6 +76,13 @@ public final class Modbus extends Thread
         
     }
     
+    
+    public Modbus() 
+    {
+        this.initModbus();
+
+    }
+    
     @Override
     public void run()
     {
@@ -254,11 +261,13 @@ public final class Modbus extends Thread
 
             // sets connection port
             modbusConnection.setPort(port);
+            
+            System.out.println("set connection");
         }
         catch (Exception ex) 
         {
             ex.printStackTrace();
-            System.exit(1);
+            System.exit(-1);
             return false;
         }
         // if a modbus connection was created
@@ -315,6 +324,7 @@ public final class Modbus extends Thread
                     // if type is 2 we set up a Transaction to Write Multiple Coils
                     case "write":
                     {
+                        System.out.println("cria transaction write");
                         modbusTransaction.setRequest(modbusWriteRequest);
                         break;
                         
@@ -426,7 +436,7 @@ public final class Modbus extends Thread
         catch (Exception ex) 
         {   
             ex.printStackTrace();
-            System.exit(1);
+            System.exit(-1);
         }
         // returns true if connection is on
         return modbusConnection.isConnected();
@@ -461,10 +471,7 @@ public final class Modbus extends Thread
                     
                     // executes a reading
                     modbusTransaction.execute();
-                    
-                    
-                    
-                    
+            
                 }
                 catch (Exception ex) 
                 {
@@ -511,7 +518,7 @@ public final class Modbus extends Thread
             {
                 try
                 {
-                    // executes a reading
+                    // executes a write
                     modbusTransaction.execute();
                 }          
                 catch(Exception ex)

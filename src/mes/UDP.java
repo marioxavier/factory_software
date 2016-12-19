@@ -64,6 +64,8 @@ public class UDP extends Thread
             
                 manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
                 //manager.systemDatabase.executeQuery(query);
+                
+ 
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);

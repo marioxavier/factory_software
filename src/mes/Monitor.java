@@ -30,10 +30,19 @@ public class Monitor extends Thread
     {
         while (!killThread)
         {
-            this.readSensors();
-            this.readActuators();
-            //virtualFactory.updateConveyorStatus(inputData + outputData);
-            virtualFactory.updateBlockPositions(inputData + outputData);
+            try
+            {
+                this.readSensors();
+                this.readActuators();
+                //virtualFactory.updateConveyorStatus(inputData + outputData);
+                virtualFactory.updateBlockPositions(inputData + outputData);
+                virtualFactory.isReady(inputData+outputData);
+            }
+            catch(Exception s)
+            {
+            }
+            
+            
             //virtualFactory.updateMachineStatus(inputData + outputData);
         }   
     }

@@ -20,7 +20,7 @@ public class ProductionOrder
      private Date orderDate;
      private String orderStatus;
      public String blockOperation;
-     private int quantity; 
+     private String quantity; 
      
      public ProductionOrder(String datagram)
      {
@@ -30,9 +30,15 @@ public class ProductionOrder
          this.orderID = datagramTokens[1];
          this.originalType = datagramTokens[2];
          this.finalType = datagramTokens[3];
-         this.quantity = Integer.parseInt(datagramTokens[4]);
+         this.quantity = datagramTokens[4];
          
          //this.orderDate = today();
+     }
+     
+     
+     public ProductionOrder()
+     {
+         
      }
      
      
