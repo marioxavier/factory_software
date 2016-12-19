@@ -45,9 +45,16 @@ class Producer implements Runnable
             {
                 Block blockToTransport = cellUnit.blocksInFactory.get(i);
                 // if the block arrived destination
-                if(blockToTransport.isDestination())
+                if("waiting".equals(blockToTransport.getStatus()))
+                {
+                    blockToTransport.updateStatus("producing");
+                    
                     // writes in the buffer
                     cellUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+                    
+                }
+                    
+                
             }
         }         
         

@@ -19,6 +19,24 @@ public class ProductionOrder
      public String finalType;
      private Date orderDate;
      private String orderStatus;
+     public String blockOperation;
+     private int quantity; 
+     
+     
+     public ProductionOrder(String datagram)
+     {
+         String[] datagramTokens = datagram.split(":");
+         
+         this.blockOperation = datagramTokens[0];
+         this.orderID = datagramTokens[1];
+         this.originalType = datagramTokens[2];
+         this.finalType = datagramTokens[3];
+         this.quantity = Integer.parseInt(datagramTokens[4]);
+         
+         //this.orderDate = today();
+     }
+     
+     
      
      /**
       * Gets order ID

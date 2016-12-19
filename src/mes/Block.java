@@ -20,6 +20,8 @@ public class Block {
     private String status;
     private String destination;
     
+    public String operation;
+    
     /**
      * Constructor
      * @param blockType
@@ -56,9 +58,48 @@ public class Block {
             this.destination = blockDestination;
             this.ID = blockID;
             // initial position
-            this.position = "x.x";
+            this.position = "0.0";
+            this.status="transporting";
         }
     }
+    
+    public Block(String blockType, String finalBlockType, String blockDestination, String blockID, String blockOperation)
+    {
+        // if block type was not given
+        if (null == blockType)
+        {
+                System.out.println("Block type not sepcified.\n");
+                System.exit(-1);
+        }
+           
+        // if block destination was not given
+        else if (null == blockDestination)
+        {
+            System.out.println("Block destination not specified.\n");
+            System.exit(-1);
+        }
+        
+        else if(null == blockID)
+        {
+            System.out.println("Block ID not specified.\n");
+            System.exit(-1);
+        }
+        
+        // all input arguments OK
+        else
+        {
+            this.operation = blockOperation;
+            this.finalType = finalBlockType;
+            this.type = blockType;
+            this.destination = blockDestination;
+            this.ID = blockID;
+            // initial position
+            this.position = "0.0";
+            this.status="transporting";
+        }
+    }
+    
+    
     
     /**
      * Gets block type

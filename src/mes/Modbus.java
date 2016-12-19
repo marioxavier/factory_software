@@ -5,7 +5,12 @@
  */
 package mes;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
 import net.wimpi.modbus.msg.*;
@@ -17,7 +22,8 @@ import net.wimpi.modbus.util.BitVector;
  *This class extends Protocol
  * @author Mário Xavier
  */
-public final class Modbus {
+public final class Modbus extends Thread
+{
     
     
     public String ID;
@@ -48,11 +54,52 @@ public final class Modbus {
     // Bit Vector to Write in PLC
     private BitVector bitsToWrite;
     
+    public Controller controlUnit;
     
-    public Modbus() {
-        // initializes modbus protocol
-        initModbus();
+    
+    public Modbus(Controller controlObject) 
+    {
+        if (null == controlObject)
+        {
+            System.out.println("no controller given");
+            System.exit(-1);
+        }
+            
+        else
+        {
+            controlUnit = controlObject;
+            
+            // initializes modbus protocol
+            this.initModbus();
+            
+        }
+        
     }
+    
+    @Override
+    public void run()
+    {
+        //WriteModbus aux = new WriteModbus();
+        while(true)
+        {
+            for(WriteModbus aux : controlUnit.factoryBuffer)
+            {
+                this.writeModbus(aux.getOffset(), aux.getMesOrder());
+                
+                try
+                {
+                TimeUnit.SECONDS.sleep(1);
+                }
+                catch(Exception Ex)
+                {
+                System.out.println("error in sleep");
+                }   
+               
+            }
+            
+        }
+    }
+    
     
     /**
      * Gets number of bits to read/write

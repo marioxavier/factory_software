@@ -63,6 +63,7 @@ public class UDP extends Thread
             }
             
                 manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
+                //manager.systemDatabase.executeQuery(query);
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);
@@ -78,7 +79,7 @@ public class UDP extends Thread
         try
         {
             // creates new datagram socket (Port: 54321)  
-            serverSocket = new DatagramSocket(port);
+            serverSocket = new DatagramSocket(54321);
             // creates array of bytes (receiveData)
             receivedData = new byte[1024]; 
             return true;
