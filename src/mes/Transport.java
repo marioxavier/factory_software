@@ -72,7 +72,7 @@ public class Transport extends Thread
     public Hashtable<String, Block> blocksInFactory;
     public Controller controlUnit;
     
-    private Hashtable<String, BitVector> blockVector;
+    
     
     /**
      * Constructor
@@ -101,7 +101,7 @@ public class Transport extends Thread
             protocolToPLC = protocol;
             blocksInFactory = currentFactory.getBlocksInFactory();
             controlUnit = currentFactory.getControlUnit();
-            this.createBlockMap();
+            
             switch(transportType)
             {
                 case "input":
@@ -390,60 +390,7 @@ public class Transport extends Thread
         }  
     }
     
-    /**
-     * Creates a hashtable to store the block type 
-     */
-    public void createBlockMap()
-    {
-        // creates the hashtable
-        blockVector = new Hashtable<>();
-        
-        // creates bitvector to insert in hastable
-        BitVector blockBitVector = new BitVector(8);
-        
-        // inserting P1 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        this.blockVector.put("P1", blockBitVector);
-
-        // inserting P2 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1, true);
-        blockVector.put("P2", blockBitVector);
-
-        // inserting P3 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockVector.put("P3", blockBitVector);
-
-        // inserting P4 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1,false);
-        blockBitVector.setBit(2,true);
-        blockVector.put("P4", blockBitVector);
-
-        // inserting P5 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockVector.put("P5", blockBitVector);
-
-        // inserting P6 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1, true);
-        blockVector.put("P6", blockBitVector);
-
-        // inserting P7 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockVector.put("P7", blockBitVector);
-
-        // inserting P8 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1,false);
-        blockBitVector.setBit(2,false);
-        blockBitVector.setBit(3,true);
-        blockVector.put("P8", blockBitVector);
-
-        // inserting P9 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockVector.put("P9", blockBitVector);
-    }
+    
     
     /**
      * Gets factory

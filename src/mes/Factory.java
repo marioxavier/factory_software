@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import mes.graph.*;
 import mes.graph.exception.InvalidConstructionException;
+import net.wimpi.modbus.util.BitVector;
 
 
 /**
@@ -35,6 +36,8 @@ public class Factory extends Thread
     
     private boolean firstConveyorReady;
     
+    private Hashtable<String, BitVector> blockVector;
+    
     
     
     
@@ -48,9 +51,20 @@ public class Factory extends Thread
         {
             if(firstConveyorReady)
             {
-                this.addBlock(this.systemManager.orderQueue.element().originalType,
-                        this.systemManager.orderQueue.element().finalType, "0.15", "1",
-                        this.systemManager.orderQueue.element().blockOperation);
+                try
+                {
+                    ProductionOrder aux = this.systemManager.orderQueue.pollLast();
+                    
+                    this.addBlock(aux.originalType,aux.finalType, "0.15", "1",
+                            aux.blockOperation);
+                    
+                    
+                    
+                }
+                catch(Exception s)
+                {
+                }
+                
             }
         }
         
@@ -142,6 +156,10 @@ public class Factory extends Thread
          
          firstConveyorReady=false;
          
+         
+         BitVector b = new BitVector(8);
+         protocolToPLC.writeModbus(144, b);
+         
          // creates the array containing the memory index of sensors/actuators
          // concerning each transport conveyor
          this.generateTransportMemoryIndexes();
@@ -155,6 +173,7 @@ public class Factory extends Thread
                 {
                     status = true;
                     this.mapObjectsToMemory();
+                    this.createBlockTypeMap();
                     // starts reading factory;
                     this.startFactoryMonitor();
                     return true;
@@ -773,7 +792,52 @@ public class Factory extends Thread
      */
     public boolean addBlock(String blockType, String finalBlockType, String blockDestination, String blockID, String operation)
     {
+            System.out.println("entrou no addBlock");
+
+            //System.out.println(blockVector.get(newBlock.getType()));
+
+            BitVector b = new BitVector(8);
+            protocolToPLC.writeModbus(144, b);
+
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            b.setBit(0,true);
+            protocolToPLC.writeModbus(144, b);
+            
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            b.setBit(0, false);
+            protocolToPLC.writeModbus(144, b);
+            
+            // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(2);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+        
         Block newBlock = new Block(blockType, finalBlockType, blockDestination, blockID, operation);
+        
+
         
         // if no block was given
         if (null == newBlock)
@@ -892,6 +956,8 @@ public class Factory extends Thread
     
     public boolean updateBlockPositions(String factoryData)
     {
+        
+        
         String position="";
         
         String newPosition="";
@@ -992,43 +1058,59 @@ public class Factory extends Thread
             {
                 case "0.0":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "0,146,147");
+                    break;
                 case "0.1":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "2,151,152");
+                    break;
                 case "0.2":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                    break;
                 case "0.3":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "6,7,157,158");
+                    break;
                 case "0.4":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "32,193,194");
+                    break;
                 case "0.5":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "33,34,35,195,196,197,198");
+                    break;
                 case "0.6":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "53,225,226");
+                    break;
                 case "0.7":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "54,55,56,227,228,229,230");
+                    break;
                 case "0.8":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "57,58,231,232");
+                    break;
                 case "0.9":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "83,267,268");
+                    break;
                 case "0.10":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "84,85,86,269,270,271,272");
+                    break;
                 case "0.11":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "104,299,300");
+                    break;
                 case "0.12":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "105,106,107,301,302,303,304");
+                    break;
                 case "0.13":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "128,322,323");
+                    break;
                 case "0.14":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                    break;
                 case "0.15":
                     memoryMap.put(transportConveyorsTable.get(i).hashCode(), "132,328,329");
+                    break;
             }
             
             
             
         }
         
-        
+        /*
         memoryMap.put(machines[0].hashCode(), "1,2,7");
         memoryMap.put(machines[0].hashCode(), "1,2,7");
         memoryMap.put(machines[0].hashCode(), "1,2,7");
@@ -1077,7 +1159,7 @@ public class Factory extends Thread
         memoryMap.put(machines[0].hashCode(), "1,2,7");
         memoryMap.put(machines[0].hashCode(), "1,2,7");
         memoryMap.put(machines[0].hashCode(), "1,2,7");
-         
+         */
     }
     
    /**
@@ -1117,6 +1199,64 @@ public class Factory extends Thread
        }
        
    }
+   
+   
+   /**
+     * Creates a hashtable to store the block type 
+     */
+    public void createBlockTypeMap()
+    {
+        // creates the hashtable
+        blockVector = new Hashtable<>();
+        
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector = new BitVector(8);
+        
+        // inserting P1 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        this.blockVector.put("P1", blockBitVector);
+
+        // inserting P2 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1, true);
+        blockVector.put("P2", blockBitVector);
+
+        // inserting P3 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P3", blockBitVector);
+
+        // inserting P4 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1,false);
+        blockBitVector.setBit(2,true);
+        blockVector.put("P4", blockBitVector);
+
+        // inserting P5 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P5", blockBitVector);
+
+        // inserting P6 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1, true);
+        blockVector.put("P6", blockBitVector);
+
+        // inserting P7 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P7", blockBitVector);
+
+        // inserting P8 and corresponding BitVector
+        blockBitVector.setBit(0, false);
+        blockBitVector.setBit(1,false);
+        blockBitVector.setBit(2,false);
+        blockBitVector.setBit(3,true);
+        blockVector.put("P8", blockBitVector);
+
+        // inserting P9 and corresponding BitVector
+        blockBitVector.setBit(0, true);
+        blockVector.put("P9", blockBitVector);
+    }
+   
+   
    
    
    
