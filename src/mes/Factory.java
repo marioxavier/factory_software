@@ -1171,21 +1171,17 @@ public class Factory extends Thread
                 
                 // stores the conveyor index that the block was in
                 int pastConveyor = Integer.parseInt(position.split("\\.")[1]);
-
                 // stores conveyor index of the conveyor in front of the block
                 int nextConveyor = pastConveyor + 1;
-                
-                // 
-                char[] factoryDataArray = factoryData.toCharArray();
-                
+   
                 Conveyor presentConveyor = conveyorsTable.get("0."+Integer.toString(pastConveyor));
                 Conveyor futureConveyor = conveyorsTable.get("0."+Integer.toString(nextConveyor));
                 
-
-                String[] memoryOfPastConveyor = memoryMap.get(presentConveyor.hashCode()).split(",");
-                String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.hashCode()).split(",");
+                String[] memoryOfPastConveyor = memoryMap.get(presentConveyor.ID).split(",");
+                String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.ID).split(",");
                 
-                
+                // we need to check the bits
+                char[] factoryDataArray = factoryData.toCharArray();
                 // stores the value of both sensors
                 char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
                 char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
@@ -1193,36 +1189,14 @@ public class Factory extends Thread
                 // if block changed position
                 if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
                 {
+                    blockToUpdate.setPosition(futureConveyor.ID); 
+                }
+                else
+                {
                     System.out.println("Unreadeble position.\n");
                     System.exit(-1);
                     return false;
                 }
-                // if position was read
-                else
-                {
-                    //System.out.println("DEBUG:: Leio posição do bloco.\n");
-                    // stores the conveyor index that the block was in
-                    int currentConveyor = Integer.parseInt(position.split("\\.")[1]);
-                    // stores conveyor index of the conveyor in front of the block
-                    int nextConveyor = currentConveyor + 1;
-                    
-                    // retrieves the conveyors from the hashtable
-                    Conveyor presentConveyor = transportConveyorsTable.get("0." + Integer.toString(currentConveyor));
-                    Conveyor futureConveyor = transportConveyorsTable.get("0." + Integer.toString(nextConveyor));
-                
-                    // retrieves from the hashtable the memory of conveyors 
-                    String[] memoryOfCurrentConveyor = memoryMap.get(presentConveyor.ID).split(",");
-                    String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.ID).split(",");
-               
-                    // the factory data is splitted in chars
-                    char[] factoryDataArray = factoryData.toCharArray();
-                    // stores the value of both sensors
-                    char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfCurrentConveyor[0])];
-                    char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
-                
-                    // checks if block changed position
-                    if (Character.getNumericValue(pastConveyorSensor) == 0 && Character.getNumericValue(nextConveyorSensor) == 1)
-                        blockToUpdate.setPosition(futureConveyor.ID);
 
                     try
                     {
