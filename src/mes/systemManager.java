@@ -36,13 +36,6 @@ public class systemManager
      public static void main (String[] args) throws SQLException, InvalidConstructionException
      {  
         
-         
-         
-        
-         
-         
-         
-         
          // creates a database object
         Database db = new Database();
         
