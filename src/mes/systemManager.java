@@ -33,69 +33,64 @@ public class systemManager
     
      public static void main (String[] args) throws SQLException, InvalidConstructionException
      { 
-         // creates a database object
-        Database db = new Database();
-        
-        // if database is initialized
-       if(db.initDatabase("org.postgresql.Driver", 
-                "jdbc:postgresql://dbm.fe.up.pt/sinf16g67"))
+       // creates new instance of database 
+       Database systemDatabase = new Database();
+       // initializes database
+       if(systemDatabase.initDatabase("org.postgresql.Driver", 
+                "jdbc:postgresql://dbm.fe.up.pt/sinf15g44"))
        {
-          // if credentials are right
-          if(db.setCredentials("sinf16g67","manueljoaofraga"))
-           {
-               // if a databased connection is opened
-               if(db.openConnection())
-               {
-                   // executes a query
-                   //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
-              }
-          }
+            // sets database credentials
+            if(systemDatabase.setCredentials("sinf45g44", "123"))
+            {
+                // opens a connection with the database
+                if(systemDatabase.openConnection())
+                {
+                    // executes a query
+                    //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
+                }
+            }
        }
-        // creates an instance of manager
-        systemManager manager = new systemManager(db);
-        // initializes a linked list to implement the queue
-        manager.orderQueue = new LinkedList<>();
-        
+        // creates new instance of system manager
+        systemManager manager = new systemManager(systemDatabase);
         Controller controlUnit = new Controller();
         
-          // creates UDP protocol object
-        UDP protocolToERP = new UDP(manager);
-        // initializes UDP
-        protocolToERP.initUDP();
-        // starts UDP thread
-        protocolToERP.start();
-        
-     }     
-        /*
-        // creates Modbus protocol object 
+        // creates new protocol to PLC
         Modbus protocolToPLC = new Modbus(controlUnit);
-        
-        // setting the Modbus Connection   
+        // sets the Modbus connection   
         if (protocolToPLC.setModbusConnection())
+        {
             System.out.println("Modbus connection on.\n");
+            // opens the modbus connection
+            if(protocolToPLC.openConnection())
+            {
+                System.out.println("Connection with factory opened.\n");
+                
+                /*It only makes sense to keep running if modbus conection is done*/
+                
+                // creates an instance of the factory
+                Factory virtualFactory = new Factory(protocolToPLC, manager);
+                // starts the factory thread
+                virtualFactory.start();                   
+            }
+            else
+                System.out.println("Connection with factory not opened.\n");
+        }
         else
+        {
             System.out.println("Modbus connection failed.\n");
+            System.exit(-1);
+        }
+     }
+       
         
-        if(protocolToPLC.openConnection())
-            System.out.println("Connection not opened.\n");
-        else
-            System.out.println("Connection opened.\n");
-        
-        
+       /* 
         // creates UDP protocol object
         UDP protocolToERP = new UDP(manager);
         // initializes UDP
         protocolToERP.initUDP();
         // starts UDP thread
         protocolToERP.start();
-          
-        // creates a virtual factory
-        Factory virtualFactory = new Factory(protocolToPLC, manager);
-        // initializes factory
-        virtualFactory.initFactory();
-        // starting factory thread
-        virtualFactory.start();
-        
+         
         // creates a decision unit
         //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory    
     }

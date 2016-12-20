@@ -22,6 +22,8 @@ public class Factory extends Thread
     private Cell[] parallelCells, serialCells;
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Hashtable<String, Block> blocksInFactory;
+    private Hashtable<String, String> memoryMap;
+    private Hashtable<String, BitVector> blockVector;
     private int numberOfConveyors;
     private int activeSensors;
     private int numberOfBlocks;
@@ -30,17 +32,11 @@ public class Factory extends Thread
     private systemManager systemManager;
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
-    private Hashtable<Integer, String> memoryMap;
     private Controller controlUnit;
     private volatile boolean killThread;
-    
     private boolean firstConveyorReady;
-    
-    private Hashtable<String, BitVector> blockVector;
-    
-    
-    
-    
+  
+   
     /**
      * Thread to run
      */
@@ -53,18 +49,14 @@ public class Factory extends Thread
             {
                 try
                 {
-                    ProductionOrder aux = this.systemManager.orderQueue.pollLast();
+                    ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     
-                    this.addBlock(aux.originalType,aux.finalType, "0.15", "1",
-                            aux.blockOperation);
-                    
-                    
-                    
+                    this.addBlock(nextOrder.originalType,nextOrder.finalType,
+                            "0.15", "1", nextOrder.blockOperation);
                 }
                 catch(Exception s)
                 {
-                }
-                
+                }                
             }
         }
         
@@ -88,13 +80,33 @@ public class Factory extends Thread
     
     /**
      * 
-     * @param protocol 
+     * @param modbusProtocol
+     * @param manager 
      */
-    public Factory(Modbus protocol, systemManager manager)
+    public Factory(Modbus modbusProtocol, systemManager manager)
     {
-        protocolToPLC = protocol;
-        systemManager = manager;
-        factoryMonitor = new Monitor(protocol, this);
+        // if no modbus protocol was given
+        if (null == modbusProtocol)
+        {
+            System.out.println("No modbus protocol was given.\n");
+            System.exit(-1);
+        }
+        // if no manager was given
+        else if (null == manager)
+        {
+            System.out.println("No manager was given.\n");
+            System.exit(-1);
+        }
+        // if all parameters are OK
+        else
+        {
+            protocolToPLC = modbusProtocol;
+            systemManager = manager;
+            // creates an instance of a monitor
+            factoryMonitor = new Monitor(modbusProtocol, this);
+            // starts the factory monitor thread
+            factoryMonitor.start();
+        } 
     }
     
     /**
@@ -114,18 +126,14 @@ public class Factory extends Thread
     @SuppressWarnings("UseOfObsoleteCollectionType")
     public boolean initFactory() throws InvalidConstructionException
     {   
-        // initial status
+        // initial factory status
         status = false;
-        
         // initalizes variable that kills the thread as false
         killThread = false;
-        
         // resets the number of conveyors
         numberOfConveyors = 0;
-        
         // resets the number of active conveyors
         activeSensors = 0;
-        
         // initializes number of Blocks
         numberOfBlocks = 0;
 
@@ -134,33 +142,33 @@ public class Factory extends Thread
         
         // creates Hashtable to store all the incoming blocks 
         blocksInFactory = new Hashtable<>();
-        
         // creates graph to store all the transport conveyors
         transportConveyors = new Graph<>();
-         
         // creates graph to store all cell Conveyors
         cellConveyors = new Graph<>();
-        
         // creates conveyors tables
         transportConveyorsTable = new Hashtable<>();
         cellConveyorsTable = new Hashtable<>();
          
         // creates Cell array containing all parallel cells
         parallelCells = new Cell[2];
-         
         // creates Cell array containing all serial cells
-        serialCells = new Cell[2];
+        serialCells = new Cell[2];         
+        // creates the machine array containing all the machines
+        machines = new Machine[8];
+            
+        // creates the array containing the memory index of sensors/actuators
+        this.mapObjectsToMemory();
+        this.createBlockTypeMap();
+        // starts reading factory;
+        this.startFactoryMonitor();
          
-         // creates the machine array containing all the machines
-         machines = new Machine[8];
+        // resets the first conveyor
+        BitVector b = new BitVector(8);
+        protocolToPLC.writeModbus(144, b);
+        // resets the status of the first conveyor
+        firstConveyorReady = false;
          
-         firstConveyorReady=false;
-         
-         
-         BitVector b = new BitVector(8);
-         protocolToPLC.writeModbus(144, b);
-         
-         // creates the array containing the memory index of sensors/actuators
          // concerning each transport conveyor
          this.generateTransportMemoryIndexes();
          
@@ -172,10 +180,6 @@ public class Factory extends Thread
                 if (this.addCells("serial", 2, this))
                 {
                     status = true;
-                    this.mapObjectsToMemory();
-                    this.createBlockTypeMap();
-                    // starts reading factory;
-                    this.startFactoryMonitor();
                     return true;
                 }
                 else
@@ -200,22 +204,25 @@ public class Factory extends Thread
     
     /**
      * Gets factory status
-     * @return 
+     * @param factoryData
      */
-
-    public void isReady(String data)
+    public void isReady(String factoryData)
     {
+        //System.out.println("DEBUG:: Entro no isReady (Factory).\n");
         
-        String[] factoryDataArray = data.split(",");
-        
-        // if the conveyor 0 is full returns false
-         if(factoryDataArray[0].equals("1"))
-             firstConveyorReady = false;
-         else
-             firstConveyorReady = true;
-         
-         
-         
+        // if factory data was not given
+        if (null == factoryData)
+        {
+            System.out.println("No factory data was given.\n");
+            System.exit(-1);
+        }
+        // if factory data was given        
+        else
+        {
+            String[] factoryDataArray = factoryData.split(",");        
+            // if the conveyor 0 is full returns false
+            this.firstConveyorReady = !factoryDataArray[0].equals("1"); 
+        }        
     }
 
     /**
@@ -952,83 +959,91 @@ public class Factory extends Thread
         return true;
     }
     
-    
-    
+    /**
+     * Updates block position
+     * @param factoryData
+     * @return 
+     */
     public boolean updateBlockPositions(String factoryData)
     {
+        //System.out.println("DEBUG:: Entro no updateBlockPositions.\n");
         
+        // if factory data is empty
+        if (null == factoryData)
+        {
+            System.out.println("Factory data is empty.\n");
+            System.exit(-1);
+            return false;
+        }
+        // if factory data was given
+        else
+        {
+            // create auxiliar variables;
+            String position;
         
-        String position="";
-        
-        String newPosition="";
-        
-        for (String i : blocksInFactory.keySet())
+            // runs for all blocks in factory
+            for (String i : blocksInFactory.keySet())
             {
-                
                 // gets the block to update
                 Block blockToUpdate = blocksInFactory.get(i);
-
                 // reads the block position 
                 position = blockToUpdate.getPosition();
                 
-                // stores the conveyor index that the block was in
-                int pastConveyor = Integer.parseInt(position.split("\\.")[1]);
-
-                // stores conveyor index of the conveyor in front of the block
-                int nextConveyor = pastConveyor + 1;
-                
-                // 
-                char[] factoryDataArray = factoryData.toCharArray();
-                
-                Conveyor presentConveyor = transportConveyorsTable.get("0."+Integer.toString(pastConveyor));
-                Conveyor futureConveyor = transportConveyorsTable.get("0."+Integer.toString(nextConveyor));
-                
-
-                String[] memoryOfPastConveyor = memoryMap.get(presentConveyor.hashCode()).split(",");
-                String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.hashCode()).split(",");
-                
-                
-                // stores the value of both sensors
-                char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
-                char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
-                
-                // if block changed position
-                if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
+                // if position was not read
+                if (null == position)
                 {
-                    newPosition = futureConveyor.ID;
-                    blockToUpdate.setPosition(newPosition);
+                    System.out.println("Unreadeble position.\n");
+                    System.exit(-1);
+                    return false;
                 }
-
-                // if block didn't change position
+                // if position was read
                 else
                 {
-                   newPosition = presentConveyor.ID;
-                   blockToUpdate.setPosition(newPosition);
-                }
+                    //System.out.println("DEBUG:: Leio posição do bloco.\n");
+                    // stores the conveyor index that the block was in
+                    int currentConveyor = Integer.parseInt(position.split("\\.")[1]);
+                    // stores conveyor index of the conveyor in front of the block
+                    int nextConveyor = currentConveyor + 1;
+                    
+                    // retrieves the conveyors from the hashtable
+                    Conveyor presentConveyor = transportConveyorsTable.get("0." + Integer.toString(currentConveyor));
+                    Conveyor futureConveyor = transportConveyorsTable.get("0." + Integer.toString(nextConveyor));
+                
+                    // retrieves from the hashtable the memory of conveyors 
+                    String[] memoryOfCurrentConveyor = memoryMap.get(presentConveyor.ID).split(",");
+                    String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.ID).split(",");
+               
+                    // the factory data is splitted in chars
+                    char[] factoryDataArray = factoryData.toCharArray();
+                    // stores the value of both sensors
+                    char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfCurrentConveyor[0])];
+                    char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                
+                    // checks if block changed position
+                    if (Character.getNumericValue(pastConveyorSensor) == 0 && Character.getNumericValue(nextConveyorSensor) == 1)
+                        blockToUpdate.setPosition(futureConveyor.ID);
 
-                try
-                {
-                TimeUnit.SECONDS.sleep(2);
-                }
-                catch(Exception Ex)
-                {
-                System.out.println("error in sleep");
+                    try
+                    {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    catch(Exception Ex)
+                    {
+                        System.out.println("UpdateBlock:: Error in sleep.\n");
+                        return false;
+                    }
                 }
             }
-        
-
-        
-         // percorrer todos os blocos
-        // ler esses valores e atualizar as variáveis abaixo
-        
-        //status =  "Waiting", "Transporting", "Transforming", "Ready"
-        // // position, type
-        
-        
-        // TO DO
-        return true;
+        //System.out.println("DEBUG:: Retorno true no updateBlockPositions.\n");
+        return true;     
+        }
     }
     
+    /**
+     * 
+     * @param factoryData
+     * @return 
+     */
     public boolean updateMachineStatus(String factoryData)
     {
          // percorrer todas as máquinas
@@ -1044,122 +1059,69 @@ public class Factory extends Thread
         return true;
     }
     
+    /**
+     * 
+     */
     public void mapObjectsToMemory()
     {
         // percorrer todos os objectos
         
         memoryMap = new Hashtable<>();
         
-        
-        
         for (String i : transportConveyorsTable.keySet())
         {
             switch(transportConveyorsTable.get(i).ID)
             {
                 case "0.0":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "0,146,147");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "0,146,147");
                     break;
                 case "0.1":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "2,151,152");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "2,151,152");
                     break;
                 case "0.2":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "3,4,5,153,154,155");
                     break;
                 case "0.3":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "6,7,157,158");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "6,7,157,158");
                     break;
                 case "0.4":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "32,193,194");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "32,193,194");
                     break;
                 case "0.5":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "33,34,35,195,196,197,198");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "33,34,35,195,196,197,198");
                     break;
                 case "0.6":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "53,225,226");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "53,225,226");
                     break;
                 case "0.7":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "54,55,56,227,228,229,230");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "54,55,56,227,228,229,230");
                     break;
                 case "0.8":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "57,58,231,232");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "57,58,231,232");
                     break;
                 case "0.9":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "83,267,268");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "83,267,268");
                     break;
                 case "0.10":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "84,85,86,269,270,271,272");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "84,85,86,269,270,271,272");
                     break;
                 case "0.11":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "104,299,300");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "104,299,300");
                     break;
                 case "0.12":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "105,106,107,301,302,303,304");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "105,106,107,301,302,303,304");
                     break;
                 case "0.13":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "128,322,323");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "128,322,323");
                     break;
                 case "0.14":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "3,4,5,153,154,155");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "3,4,5,153,154,155");
                     break;
                 case "0.15":
-                    memoryMap.put(transportConveyorsTable.get(i).hashCode(), "132,328,329");
+                    memoryMap.put(transportConveyorsTable.get(i).ID, "132,328,329");
                     break;
             }
-            
-            
-            
         }
-        
-        /*
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-        memoryMap.put(machines[0].hashCode(), "1,2,7");
-         */
     }
     
    /**

@@ -53,30 +53,35 @@ public final class Modbus extends Thread
     private int startWritingReference = 0;
     // Bit Vector to Write in PLC
     private BitVector bitsToWrite;
+    private Controller controlUnit;
     
-    public Controller controlUnit;
-    
-    
+    /**
+     * Constructor
+     * @param controlObject 
+     */
     public Modbus(Controller controlObject) 
     {
+        // if no conrol object was given
         if (null == controlObject)
         {
-            System.out.println("no controller given");
+            System.out.println("no controller given.\n");
             System.exit(-1);
         }
             
+        // if all inut arguments are OK
         else
         {
             controlUnit = controlObject;
             
             // initializes modbus protocol
             this.initModbus();
-            
         }
         
     }
     
-    
+    /**
+     * Constructor
+     */
     public Modbus() 
     {
         this.initModbus();
@@ -290,44 +295,43 @@ public final class Modbus extends Thread
      */
     public boolean setModbusTransaction(String transactionType)
     {
-        // creates a new transaction
-        modbusTransaction = new ModbusTCPTransaction(modbusConnection);
-      
-        // if error occured while creating modbusTransaction
-        if (modbusTransaction == null)
+        // if no transaction type was given
+        if (null == transactionType)
         {
-            System.out.println("Error creating new transaction.\n");
-                return false;
+            System.out.println("No transaction type given.\n");
+            return false;
         }
-        
-        // no errors creating new transaction
-        else 
+        // if all input arguments are OK
+        else
         {
-            // if no type of transaction was given
-            if (null == transactionType)
+            // creates a new transaction
+            modbusTransaction = new ModbusTCPTransaction(modbusConnection);
+      
+            // if error occured while creating modbusTransaction
+            if (modbusTransaction == null)
             {
-                System.out.println("No transaction type was given\n");
+                System.out.println("Error creating new transaction.\n");
                 return false;
             }
-            // if a transaction type was given
-            else
+        
+            // no errors creating new transaction
+            else 
+            {
                 switch(transactionType)
                 {
-                    // if type is 1 we set up a Transaction to Read Discrete Inputs
+                    // if type read 1 we set up a Transaction to Read Discrete Inputs
                     case "read":
                     {
                         modbusTransaction.setRequest(modbusReadRequest);
                         break;
-                        
                     }
 
-                    // if type is 2 we set up a Transaction to Write Multiple Coils
+                    // if type is write we set up a Transaction to Write Multiple Coils
                     case "write":
                     {
-                        System.out.println("cria transaction write");
+                        //System.out.println("DEBUG:: cria transaction write");
                         modbusTransaction.setRequest(modbusWriteRequest);
                         break;
-                        
                     } 
 
                     default: 
@@ -338,6 +342,7 @@ public final class Modbus extends Thread
                }
             // if transaction was created
             return true;
+            }
         }  
     }
     
@@ -407,12 +412,12 @@ public final class Modbus extends Thread
      */
     public boolean initModbus() 
     {
-        // error setting the port
+        // sets the port
         if(setModbusPort() == false) {
             System.out.println("Error inserting port.\n");
             return false;
         } 
-        // error setting the address
+        // sets the address
         else if (setModbusAddress() == false)
         {
             System.out.println("Error inserting address.\n");
@@ -434,8 +439,8 @@ public final class Modbus extends Thread
             modbusConnection.connect();
         }
         catch (Exception ex) 
-        {   
-            ex.printStackTrace();
+        {  
+            System.out.println(ex);
             System.exit(-1);
         }
         // returns true if connection is on
@@ -462,34 +467,36 @@ public final class Modbus extends Thread
         // if read request was created succsessfully
         if(setModbusReadRequest())
         {
-
             // if read transaction was read successfully
             if(setModbusTransaction("read"))
             {
                 try
-                {
-                    
+                {   
                     // executes a reading
                     modbusTransaction.execute();
-            
                 }
                 catch (Exception ex) 
                 {
-                    ex.printStackTrace();
+                    System.out.println(ex);
                     System.exit(1);
                 }
-               
                 // receives a reading
                 modbusReadResponse = (ReadInputDiscretesResponse) modbusTransaction.getResponse();
                 return modbusReadResponse.getDiscretes().toString();
             }
             // if some error occured setting transaction;
             else
+            {
+                System.out.println("Error setting modbus transaction to read.\n");
                 return null;
+            }
         }
         // if some error occured setting the request;
         else
+        {
+            System.out.println("Error setting modbus request to read.\n");
             return null;
+        }            
     }   
     
     /**

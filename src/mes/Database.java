@@ -155,7 +155,7 @@ public class Database extends Thread
       } catch (SQLException e) 
         {
             // if there was some exception
-            System.out.println("Connection Failed! Check output console");
+            System.out.println("Connection Failed! Check output console"+e);
             return false;
         }
       

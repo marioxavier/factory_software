@@ -17,7 +17,7 @@ public final class Machine
     
     public int ID;
     private String type;
-    private String status;
+    private String status; //rotating, 
     private String currentTool;
     private String nextTool;
     
