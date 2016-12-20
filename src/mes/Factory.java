@@ -32,7 +32,6 @@ public class Factory extends Thread
     private systemManager systemManager;
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
-    private Hashtable<String, String> memoryMap;
     private Controller controlUnit;
     private volatile boolean killThread;
     private boolean firstConveyorReady;
@@ -1212,8 +1211,7 @@ public class Factory extends Thread
         //System.out.println("DEBUG:: Retorno true no updateBlockPositions.\n");
         return true;     
         }
-    }
-    
+       
     /**
      * 
      * @param factoryData
