@@ -16,7 +16,7 @@ public class Factory extends Thread
     public Integer ID;
     private boolean status;
     private Graph<Conveyor> cellConveyors, transportConveyors;
-    private Hashtable<String, Conveyor> cellConveyorsTable, transportConveyorsTable;
+    private Hashtable<String, Conveyor> conveyorsTable;
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
@@ -32,6 +32,7 @@ public class Factory extends Thread
     private systemManager systemManager;
     private Modbus protocolToPLC;
     private String[] transportMemoryIndexes;
+    private Hashtable<String, String> memoryMap;
     private Controller controlUnit;
     private volatile boolean killThread;
     private boolean firstConveyorReady;
@@ -147,8 +148,8 @@ public class Factory extends Thread
         // creates graph to store all cell Conveyors
         cellConveyors = new Graph<>();
         // creates conveyors tables
-        transportConveyorsTable = new Hashtable<>();
-        cellConveyorsTable = new Hashtable<>();
+        conveyorsTable = new Hashtable<>();
+
          
         // creates Cell array containing all parallel cells
         parallelCells = new Cell[2];
@@ -353,15 +354,14 @@ public class Factory extends Thread
         }
     }
   
-    /**
-     * Adds conveyors of a given type
-     * @param conveyorGroup
-     * @param conveyorType
-     * @param numberOfConveyors 
-     * @return
-     * @throws mes.graph.exception.InvalidConstructionException
-     */
-    public boolean addConveyors(String conveyorGroup, String conveyorType,
+/**
+ * 
+ * @param conveyorType
+ * @param numberOfConveyors
+ * @return
+ * @throws InvalidConstructionException 
+ */
+    public boolean addTransportConveyors(String conveyorType,
             int numberOfConveyors) throws InvalidConstructionException
     {
         // no conveyor type was given
@@ -378,23 +378,13 @@ public class Factory extends Thread
             return false;
         }
         
-        // no conveyor group given
-        else if (null == conveyorGroup)
-        {
-            System.out.println("No conveyor group given\n");
-            return false;
-        }
-        
         
         // if the input arguments are OK
         else
-            switch(conveyorGroup)
-            {
-                // creates transport conveyors
-                case "transport":
-                {
+        {
                     String ID ="";
                     // creates conveyors
+                    
                     for(int i = 0; i < numberOfConveyors; i++)
                     {
                          // adds the cell entrance conveyor
@@ -402,9 +392,9 @@ public class Factory extends Thread
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
                             ID = "0."+Integer.toString(i);
-                            Conveyor rotatingConveyor = new Conveyor(conveyorGroup, "rotator");
+                            Conveyor rotatingConveyor = new Conveyor("transport", "rotator");
                             rotatingConveyor.setID(ID);
-                            this.transportConveyorsTable.put(ID, rotatingConveyor);
+                            this.conveyorsTable.put(ID, rotatingConveyor);
                             
                         }
                             
@@ -413,33 +403,197 @@ public class Factory extends Thread
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
                             ID = "0."+Integer.toString(i);
-                            Conveyor linearConveyor = new Conveyor(conveyorGroup, conveyorType);
+                            Conveyor linearConveyor = new Conveyor("transport", conveyorType);
                             linearConveyor.setID(ID);
-                            this.transportConveyorsTable.put(ID, linearConveyor);
+                            this.conveyorsTable.put(ID, linearConveyor);
                         }
                             
                     }
-                    
-                    break;
-                }
-                
 
-                // creates cell conveyors
-                case "cell":
-                {
-                    // creates conveyors
-                    for(int i = 0; i < numberOfConveyors; i++)
-                        this.cellConveyors.addVertex(new Conveyor(conveyorGroup,conveyorType));
-                    break; 
-                }
-                
-                default:
-                {
-                    System.out.println("Conveyor type not recognized.\n");
-                    return false;
-                }
-            }  
+        }
         return true;
+    }
+                
+    
+    public boolean addCellConveyors(String conveyorType, String cellID, int numberOfConveyors )
+    {
+        // no conveyor type was given
+            if(null == conveyorType)
+            {
+                System.out.println("No conveyor type given\n");
+                return false;
+            }
+            
+            // no cell id was given
+            else if (null == cellID)
+            {
+                System.out.println("No cell ID given\n");
+                return false;
+            }
+            
+            else
+            {
+                switch(conveyorType)
+                {
+                    case "linear":
+                    {
+                        for (int i=0; i < numberOfConveyors; i++)
+                        {
+                            Conveyor linearConveyor = new Conveyor("cell", conveyorType);
+                            
+                            // atributing ID conveyor
+                            switch(cellID)
+                            {
+                                case "1":
+                                {
+                                    // if its first cell and first linear conveyor
+                                    if (i==0)
+                                    {
+                                        linearConveyor.setID("2.2");
+                                        this.conveyorsTable.put("2.2", linearConveyor);
+                                    }
+                                    
+                                    // if its first cell and second linear conveyor
+                                    else
+                                    {
+                                        linearConveyor.setID("2.3");
+                                        this.conveyorsTable.put("2.3", linearConveyor);
+                                    }
+                                break;
+                                }
+                                case "2":
+                                {
+                                    // if its second cell and first linear conveyor
+                                    if(i==0)
+                                    {
+                                        linearConveyor.setID("1.5");
+                                        this.conveyorsTable.put("1.5", linearConveyor);
+                                    }
+                                        
+                                    // if its second cell and second linear conveyor
+                                    else if (i==1)
+                                    {
+                                        linearConveyor.setID("2.5");
+                                        this.conveyorsTable.put("2.5", linearConveyor);
+                                    }
+                                        
+                                    // if its second cell and third linear conveyor
+                                    else
+                                    {
+                                        linearConveyor.setID("3.5");
+                                        this.conveyorsTable.put("3.5", linearConveyor);
+                                    }
+                                break;
+                                        
+                                }
+                                case "3":
+                                {
+                                    // if its third cell and first linear conveyor
+                                    if (i==0)
+                                    {
+                                        linearConveyor.setID("2.7");
+                                        this.conveyorsTable.put("2.7", linearConveyor);
+                                    }
+
+                                    // if its third cell and second linear conveyor
+                                    else
+                                    {
+                                        linearConveyor.setID("2.8");
+                                        this.conveyorsTable.put("2.8", linearConveyor);
+                                    }
+                                break;
+                                }
+                                case "4":
+                                {
+                                    // if its fourth cell and first linear conveyor
+                                    if(i==0)
+                                    {
+                                        linearConveyor.setID("1.10");
+                                        this.conveyorsTable.put("1.10", linearConveyor);
+                                    }
+                                        
+                                    
+                                    // if its fourth cell and second linear conveyor
+                                    else if (i==1)
+                                    {
+                                        linearConveyor.setID("2.10");
+                                        this.conveyorsTable.put("2.10", linearConveyor);
+                                    }
+                                        
+                                    
+                                    // if its fourth cell and third linear conveyor
+                                    else
+                                    {
+                                        linearConveyor.setID("3.10");
+                                        this.conveyorsTable.put("3.10", linearConveyor);
+                                    }
+                                break;
+                                        
+                                }
+                                default:
+                                    System.out.println("Wrong Cell ID");
+                                    System.exit(-1);
+                            }
+                            
+                        }
+                    break;
+                    }
+                        
+                    case "slide":
+                    {
+                        for(int i = 0; i < numberOfConveyors; i++)
+                        {
+                        
+                        Conveyor slideConveyor = new Conveyor("cell", conveyorType);
+                        
+                        // attributing conveyor id
+                        switch (cellID)
+                        {
+                            case "1":
+                            {
+                                if (i==0)
+                                {
+                                    slideConveyor.setID("1.2");
+                                    this.conveyorsTable.put("1.2", slideConveyor);
+                                }
+                                    
+                                else
+                                {
+                                    slideConveyor.setID("3.2");
+                                    this.conveyorsTable.put("3.2", slideConveyor);
+                                }
+                            break;
+                            }
+                            case "3":
+                            {
+                                if (i==0)
+                                {
+                                    slideConveyor.setID("1.7");
+                                    this.conveyorsTable.put("1.7", slideConveyor);
+                                }
+                                    
+                                else
+                                {
+                                    slideConveyor.setID("3.7");
+                                    this.conveyorsTable.put("3.7", slideConveyor);
+                                }
+                            break;
+                            }
+                            default:
+                            {
+                                System.out.println("Wrong Cell ID");
+                                System.exit(-1);
+                            }
+                        }
+                        }
+                        
+                        break;
+                    }
+                
+                }
+            }    
+
+            return true;
     }
     
     /**
@@ -525,14 +679,44 @@ public class Factory extends Thread
                     // creates parallel cells
                      for(int i = 0; i < numberOfCells; i++)
                      {
-                         parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol());
+                         // if we are adding first parallel Cell, ID is 1
+                         if (i==0)
+                         {
+                             parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "1");
+                         }
+                            //parallelCells[i].setID("1");
+                         
+                         // if we are adding second parallel Cell, ID is 3
+                         else  
+                         {
+                              parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "3");   
+                         }
+                             //parallelCells[i].setID("3");
+                         
+                         
                      }
                     break;
 
                 case "serial":
                     // creates serial cells
                     for(int i = 0; i < numberOfCells; i++)
-                        serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol());
+                    {
+                        // if we are adding first serial Cell ID is 2
+                        if (i==0)
+                        {
+                            serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "2");
+                        }
+                            //serialCells[i].setID("2");
+                        
+                        // if we are adding second serial Cell ID is 4
+                        else
+                        {
+                            serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(),"4");
+                        }
+                            //serialCells[i].setID("4");
+                        
+                    }
+                        
                     break; 
 
                 default:
@@ -572,6 +756,8 @@ public class Factory extends Thread
             else
             {
                 // creates output transport
+                
+                // ***************************** May create an ERROR ******************************
                 outputTransport = new Transport("output", currentFactory, factoryMonitor.getProtocol());
             }
              
@@ -664,16 +850,12 @@ public class Factory extends Thread
        return true;
     }
     
-    /**
-     * Generates an ID in the following format - "0.xx"
-     * @return 
-     * true - if the ID's were generated
-     * false - if the ID's were not generated
-     */
+
+/*
     public boolean generateTransportConveyorID()
     {
         
-        //****************** TO DO   -      SUPER IMPORTANTE   *******************//
+        
         
         String conveyorID;
         
@@ -686,13 +868,11 @@ public class Factory extends Thread
         
         // Mudar return
         return true;
+        
     }
+
+ */
     
-    /**
-     * Updates the position of a given Block
-     * @param blockToUpdate
-     * @return 
-     */
     public String getNewPosition(Block blockToUpdate)
     {
         
@@ -989,8 +1169,29 @@ public class Factory extends Thread
                 // reads the block position 
                 position = blockToUpdate.getPosition();
                 
-                // if position was not read
-                if (null == position)
+                // stores the conveyor index that the block was in
+                int pastConveyor = Integer.parseInt(position.split("\\.")[1]);
+
+                // stores conveyor index of the conveyor in front of the block
+                int nextConveyor = pastConveyor + 1;
+                
+                // 
+                char[] factoryDataArray = factoryData.toCharArray();
+                
+                Conveyor presentConveyor = conveyorsTable.get("0."+Integer.toString(pastConveyor));
+                Conveyor futureConveyor = conveyorsTable.get("0."+Integer.toString(nextConveyor));
+                
+
+                String[] memoryOfPastConveyor = memoryMap.get(presentConveyor.hashCode()).split(",");
+                String[] memoryOfNextConveyor = memoryMap.get(futureConveyor.hashCode()).split(",");
+                
+                
+                // stores the value of both sensors
+                char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+                char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
+                
+                // if block changed position
+                if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
                 {
                     System.out.println("Unreadeble position.\n");
                     System.exit(-1);
@@ -1059,67 +1260,108 @@ public class Factory extends Thread
         return true;
     }
     
-    /**
-     * 
-     */
+    
     public void mapObjectsToMemory()
     {
         // percorrer todos os objectos
         
         memoryMap = new Hashtable<>();
-        
-        for (String i : transportConveyorsTable.keySet())
+
+        for (String i : conveyorsTable.keySet())
         {
-            switch(transportConveyorsTable.get(i).ID)
+            switch(conveyorsTable.get(i).ID)
             {
                 case "0.0":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "0,146,147");
+                    memoryMap.put(conveyorsTable.get(i).ID, "0,146,147");
                     break;
                 case "0.1":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "2,151,152");
+                    memoryMap.put(conveyorsTable.get(i).ID, "2,151,152");
                     break;
                 case "0.2":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "3,4,5,153,154,155");
+                    memoryMap.put(conveyorsTable.get(i).ID, "3,4,5,153,154,155");
                     break;
                 case "0.3":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "6,7,157,158");
+                    memoryMap.put(conveyorsTable.get(i).ID, "6,7,157,158");
                     break;
                 case "0.4":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "32,193,194");
+                    memoryMap.put(conveyorsTable.get(i).ID, "32,193,194");
                     break;
                 case "0.5":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "33,34,35,195,196,197,198");
+                    memoryMap.put(conveyorsTable.get(i).ID, "33,34,35,195,196,197,198");
                     break;
                 case "0.6":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "53,225,226");
+                    memoryMap.put(conveyorsTable.get(i).ID, "53,225,226");
                     break;
                 case "0.7":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "54,55,56,227,228,229,230");
+                    memoryMap.put(conveyorsTable.get(i).ID, "54,55,56,227,228,229,230");
                     break;
                 case "0.8":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "57,58,231,232");
+                    memoryMap.put(conveyorsTable.get(i).ID, "57,58,231,232");
                     break;
                 case "0.9":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "83,267,268");
+                    memoryMap.put(conveyorsTable.get(i).ID, "83,267,268");
                     break;
                 case "0.10":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "84,85,86,269,270,271,272");
+                    memoryMap.put(conveyorsTable.get(i).ID, "84,85,86,269,270,271,272");
                     break;
                 case "0.11":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "104,299,300");
+                    memoryMap.put(conveyorsTable.get(i).ID, "104,299,300");
                     break;
                 case "0.12":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "105,106,107,301,302,303,304");
+                    memoryMap.put(conveyorsTable.get(i).ID, "105,106,107,301,302,303,304");
                     break;
                 case "0.13":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "128,322,323");
+                    memoryMap.put(conveyorsTable.get(i).ID, "128,322,323");
                     break;
                 case "0.14":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "3,4,5,153,154,155");
+                    memoryMap.put(conveyorsTable.get(i).ID, "3,4,5,153,154,155");
                     break;
                 case "0.15":
-                    memoryMap.put(transportConveyorsTable.get(i).ID, "132,328,329");
+                    memoryMap.put(conveyorsTable.get(i).ID, "132,328,329");
                     break;
+                case "1.2":
+                    memoryMap.put(conveyorsTable.get(i).ID, "8,9,10,159,160,161,162");
+                    break;
+                case "2.2":
+                    memoryMap.put(conveyorsTable.get(i).ID, "11,12,13,14,15,16,163,164,165,166,167,168,169,170,171");
+                    break;
+                case "2.3":
+                    memoryMap.put(conveyorsTable.get(i).ID, "17,18,19,20,21,22,172,173,174,175,176,177,178,179,180");
+                    break;
+                case "3.2":
+                    memoryMap.put(conveyorsTable.get(i).ID, "23,24,25,181,182,183,184");
+                    break;
+                case "1.5":
+                    memoryMap.put(conveyorsTable.get(i).ID, "36,37,38,39,40,41,199,200,201,202,203,204,205,206,207");
+                    break;
+                case "2.5":
+                    memoryMap.put(conveyorsTable.get(i).ID, "42,208,209");
+                    break;
+                case "3.5":
+                    memoryMap.put(conveyorsTable.get(i).ID, "43,44,45,46,47,48,210,211,212,213,214,215,216,217,218");
+                    break;
+                case "1.7":
+                    memoryMap.put(conveyorsTable.get(i).ID, "59,60,61,233,234,235,236");
+                    break;
+                case "2.7":
+                    memoryMap.put(conveyorsTable.get(i).ID, "62,63,64,65,66,67,237,238,239,240,241,242,243,244,245");
+                    break;
+                case "2.8":
+                    memoryMap.put(conveyorsTable.get(i).ID, "68,69,70,71,72,73,246,247,248,249,250,251,252,253,254");
+                    break;
+                case "3.7":
+                    memoryMap.put(conveyorsTable.get(i).ID, "74,75,76,255,256,257,258");
+                    break;
+                case "1.10":
+                    memoryMap.put(conveyorsTable.get(i).ID, "87,88,89,90,91,92,273,274,275,276,277,278,279,280,281");
+                    break;
+                case "2.10":
+                    memoryMap.put(conveyorsTable.get(i).ID, "93,282,283");
+                    break;
+                case "3.10":
+                    memoryMap.put(conveyorsTable.get(i).ID, "94,95,96,97,98,99,284,285,286,287,288,289,290,291,292");
+                    break;
+
             }
         }
     }

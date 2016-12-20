@@ -101,14 +101,13 @@ public class Transport extends Thread
             protocolToPLC = protocol;
             blocksInFactory = currentFactory.getBlocksInFactory();
             controlUnit = currentFactory.getControlUnit();
-            
             switch(transportType)
             {
                 case "input":
                 {
                     type = transportType;
                     // creates transport conveyors in the curreny factory
-                    currentFactory.addConveyors("transport", "linear", 30);
+                    currentFactory.addTransportConveyors("linear", 16);
                     break;
                 }
                     
@@ -116,7 +115,7 @@ public class Transport extends Thread
                 {
                     type = transportType;
                     //creates transport conveyors in the current factory
-                    currentFactory.addConveyors("transport", "linear", 30);
+                    currentFactory.addTransportConveyors("linear", 16);
                     break; 
                 }
                    

@@ -70,7 +70,7 @@ class Producer implements Runnable
  */
 public class Cell extends Thread{
     
-    public int ID;
+    public String ID;
     private String type;
     private Factory virtualFactory;
     private Modbus protocolToPLC;
@@ -85,7 +85,7 @@ public class Cell extends Thread{
      * @param currentFactory
      * @throws mes.graph.exception.InvalidConstructionException
      */
-    public Cell(String cellType, Factory currentFactory, Modbus protocol) 
+    public Cell(String cellType, Factory currentFactory, Modbus protocol, String id) 
             throws InvalidConstructionException
     {
          if (null == cellType)
@@ -98,14 +98,15 @@ public class Cell extends Thread{
             protocolToPLC = protocol;
             blocksInFactory = currentFactory.getBlocksInFactory();
             controlUnit = currentFactory.getControlUnit();
+            ID = id;
             switch(cellType)
             {
                case "parallel":
                {
                    type = cellType;
                    // creates cells in the current factory
-                   currentFactory.addConveyors("cell", "linear", 2);
-                   currentFactory.addConveyors("cell", "slide", 2);
+                   currentFactory.addCellConveyors("linear", ID, 2);
+                   currentFactory.addCellConveyors("slide", ID, 2);
                    currentFactory.addMachines("B", 1);
                    currentFactory.addMachines("C", 1);
                    break;
@@ -115,7 +116,7 @@ public class Cell extends Thread{
                {
                    type = cellType;
                    // creates cells in the current factory
-                   currentFactory.addConveyors("cell", "linear", 3);
+                   currentFactory.addCellConveyors("linear", ID, 3);
                    currentFactory.addMachines("A", 1);
                    currentFactory.addMachines("B", 1); 
                    break;
@@ -126,6 +127,14 @@ public class Cell extends Thread{
                    System.exit(-1);
             }
     }
+    
+    
+    
+    public void setID(String idToSet)
+    {
+        ID = idToSet;
+    }
+    
 }
 
 
