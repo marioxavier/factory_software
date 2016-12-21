@@ -1160,9 +1160,15 @@ public class Factory extends Thread
             // create auxiliar variables;
             String position;
         
+            System.out.println(factoryData);
+            
+            //*******************   BUG *****************************
+            
             // runs for all blocks in factory
             for (String i : blocksInFactory.keySet())
             {
+                
+                
                 // gets the block to update
                 Block blockToUpdate = blocksInFactory.get(i);
                 // reads the block position 
@@ -1208,7 +1214,7 @@ public class Factory extends Thread
                     }
                 }
             }
-        //System.out.println("DEBUG:: Retorno true no updateBlockPositions.\n");
+        System.out.println("DEBUG:: Retorno true no updateBlockPositions.\n");
         return true;     
         }
        

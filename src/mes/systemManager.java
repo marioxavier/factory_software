@@ -50,6 +50,7 @@ public class systemManager
                 }
             }
        }
+       
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
         Controller controlUnit = new Controller();
