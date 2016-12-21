@@ -158,11 +158,7 @@ public class Factory extends Thread
         serialCells = new Cell[2];         
         // creates the machine array containing all the machines
         machines = new Machine[8];
-            
-        // creates the array containing the memory index of sensors/actuators
-        this.mapObjectsToMemory();
-        this.createBlockTypeMap();
-         
+             
         // resets the first conveyor
         BitVector b = new BitVector(8);
         protocolToPLC.writeModbus(144, b);
@@ -179,6 +175,9 @@ public class Factory extends Thread
             if(this.addCells("parallel", 2))
                 if (this.addCells("serial", 2))
                 {
+                    // creates the array containing the memory index of sensors/actuators
+                    this.mapObjectsToMemory();
+                    this.createBlockTypeMap();
                     status = true;
                     return true;
                 }
@@ -1431,25 +1430,28 @@ public class Factory extends Thread
         char[] dataFromFactory = factoryData.toCharArray();
         Conveyor auxConveyor;
         // checks all conveyors in the hashtable
-        for (Map.Entry<String, Conveyor> entry : conveyorsTable.entrySet()) 
+        for (String i : conveyorsTable.keySet()) 
         { 
-            auxConveyor = conveyorsTable.get(entry.getKey());
+            auxConveyor = conveyorsTable.get(i);
             // gets the memory indexes relative to the auxConveyor ("1,20,56")
             String[] memoryToRead = memoryMap.get(auxConveyor.ID).split(",");
             
             int conveyorSensor = Integer.parseInt(memoryToRead[0]);
             int conveyorActuator = Integer.parseInt(memoryToRead[2]);
-            auxConveyor.updateSensor(true);
-            auxConveyor.updateActuator("1".equals(dataFromFactory[conveyorActuator]));
+        
+            auxConveyor.updateSensor(dataFromFactory[conveyorSensor] == '1');
+            auxConveyor.updateActuator(dataFromFactory[conveyorActuator] == '1');
         }
     }
     
     public void printConveyorStatus()
     {
         Conveyor auxConveyor;
-        for (Map.Entry<String, Conveyor> entry : conveyorsTable.entrySet()) 
+        for (int conveyorCounter = 0; conveyorCounter < 15; conveyorCounter++) 
         {
-            auxConveyor = conveyorsTable.get(entry.getKey());
+            String tableKey = "0." + conveyorCounter;
+            auxConveyor = this.conveyorsTable.get(tableKey);
+            if(null != auxConveyor)
             System.out.print("[" + auxConveyor.getSensor() + "]" + "" + "----");
         }
         
@@ -1458,7 +1460,7 @@ public class Factory extends Thread
         // Needs to wait before sending consecutive packets to PLC
             try
             {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(500);
             }
             catch(Exception Ex)
             {
