@@ -100,15 +100,13 @@ public final class Modbus extends Thread
                 
                 try
                 {
-                TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.SECONDS.sleep(1);
                 }
-                catch(Exception Ex)
+                    catch(Exception Ex)
                 {
-                System.out.println("error in sleep");
+                    System.out.println("error in sleep" + Ex);
                 }   
-               
-            }
-            
+            }  
         }
     }
     

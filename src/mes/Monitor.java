@@ -64,20 +64,20 @@ public class Monitor extends Thread
             {
 
                 // reads sensors from the factory
-                if(!this.readSensors())
+                if (!this.readSensors())
                 {
                     System.out.println("MONITOR_THREAD:: Error reading sensors.\n");
                     System.exit(-1);
                 }
                 // reads actuators from the factory
-                if(!this.readActuators())
+                if (!this.readActuators())
                 {
                     System.out.println("MONITOR_THREAD:: Error reading actuators.\n");
                     System.exit(-1);
                 }
-                   
+                virtualFactory.updateConveyors(inputData + outputData);  
                 // updates block position
-                if(!this.virtualFactory.updateBlockPositions(inputData + outputData))
+                if (!this.virtualFactory.updateBlockPositions(inputData + outputData))
                 {
                     System.out.println("MONITOR_THREAD:: Error updating block position.\n");
                     System.exit(-1);
@@ -91,7 +91,7 @@ public class Monitor extends Thread
             }
             catch(Exception s)
             {
-                //System.out.println(s);
+               //TO DO
             }
         }   
     }

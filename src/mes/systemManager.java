@@ -31,8 +31,8 @@ public class systemManager
             systemDatabase = DB;
     }
     
-     public static void main (String[] args) throws SQLException, InvalidConstructionException
-     { 
+    public static void main (String[] args) throws SQLException, InvalidConstructionException
+    { 
        // creates new instance of database 
        Database systemDatabase = new Database();
        // initializes database
@@ -53,7 +53,7 @@ public class systemManager
        
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
-        Controller controlUnit = new Controller();
+        Controller controlUnit = new Controller(30);
         
         // creates new protocol to PLC
         Modbus protocolToPLC = new Modbus(controlUnit);
@@ -80,7 +80,7 @@ public class systemManager
         {
             System.out.println("Modbus connection failed.\n");
             System.exit(-1);
-        }
+        }      
      }
        
         
