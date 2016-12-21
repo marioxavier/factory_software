@@ -23,7 +23,7 @@ public class Factory extends Thread
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Hashtable<String, Block> blocksInFactory;
     private Hashtable<String, String> memoryMap;
-    private Hashtable<String, BitVector> blockVector;
+    private Hashtable<String, BitVector> blockBitvectorTable;
     private int numberOfConveyors;
     private int activeSensors;
     private int numberOfBlocks;
@@ -45,11 +45,13 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
+            printConveyorStatus();
+            
             if(firstConveyorReady)
             {
                 try
                 {
-                    ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
+                   ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     
                     this.addBlock(nextOrder.originalType,nextOrder.finalType,
                             "0.15", "1", nextOrder.blockOperation);
@@ -83,7 +85,7 @@ public class Factory extends Thread
      * @param modbusProtocol
      * @param manager 
      */
-    public Factory(Modbus modbusProtocol, systemManager manager)
+    public Factory(Modbus modbusProtocol, systemManager manager) throws InvalidConstructionException
     {
         // if no modbus protocol was given
         if (null == modbusProtocol)
@@ -102,10 +104,11 @@ public class Factory extends Thread
         {
             protocolToPLC = modbusProtocol;
             systemManager = manager;
+            this.initFactory();           
             // creates an instance of a monitor
             factoryMonitor = new Monitor(modbusProtocol, this);
-            // starts the factory monitor thread
-            factoryMonitor.start();
+            // starts reading factory;
+            this.startFactoryMonitor();
         } 
     }
     
@@ -149,7 +152,6 @@ public class Factory extends Thread
         // creates conveyors tables
         conveyorsTable = new Hashtable<>();
 
-         
         // creates Cell array containing all parallel cells
         parallelCells = new Cell[2];
         // creates Cell array containing all serial cells
@@ -160,8 +162,6 @@ public class Factory extends Thread
         // creates the array containing the memory index of sensors/actuators
         this.mapObjectsToMemory();
         this.createBlockTypeMap();
-        // starts reading factory;
-        this.startFactoryMonitor();
          
         // resets the first conveyor
         BitVector b = new BitVector(8);
@@ -173,11 +173,11 @@ public class Factory extends Thread
          this.generateTransportMemoryIndexes();
          
         // adds a transport unit to the factory
-        if(this.addTransport(this))
+        if(this.addTransport())
         {
             // adds parallel cell units to the factory
-            if(this.addCells("parallel", 2, this))
-                if (this.addCells("serial", 2, this))
+            if(this.addCells("parallel", 2))
+                if (this.addCells("serial", 2))
                 {
                     status = true;
                     return true;
@@ -199,9 +199,7 @@ public class Factory extends Thread
             return false;
         }
     }
-   
-    
-    
+
     /**
      * Gets factory status
      * @param factoryData
@@ -381,176 +379,178 @@ public class Factory extends Thread
         // if the input arguments are OK
         else
         {
-                    String ID ="";
+                    String ID;
                     // creates conveyors
-                    
                     for(int i = 0; i < numberOfConveyors; i++)
                     {
-                         // adds the cell entrance conveyor
+                        // adds the cell entrance conveyor
                         if (i == 2 || i == 5 || i == 7 || i == 10)
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
-                            ID = "0."+Integer.toString(i);
+                            ID = "0." + Integer.toString(i);
                             Conveyor rotatingConveyor = new Conveyor("transport", "rotator");
                             rotatingConveyor.setID(ID);
                             this.conveyorsTable.put(ID, rotatingConveyor);
                             
-                        }
-                            
-
+                        }                            
                         else
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, conveyorType));
-                            ID = "0."+Integer.toString(i);
+                            ID = "0." + Integer.toString(i);
                             Conveyor linearConveyor = new Conveyor("transport", conveyorType);
                             linearConveyor.setID(ID);
                             this.conveyorsTable.put(ID, linearConveyor);
-                        }
-                            
+                        }     
                     }
-
         }
         return true;
     }
                 
-    
+    /**
+     * Adds cell conveyors
+     * @param conveyorType
+     * @param cellID
+     * @param numberOfConveyors
+     * @return 
+     */
     public boolean addCellConveyors(String conveyorType, String cellID, int numberOfConveyors )
     {
         // no conveyor type was given
-            if(null == conveyorType)
-            {
-                System.out.println("No conveyor type given\n");
-                return false;
-            }
+        if(null == conveyorType)
+        {
+            System.out.println("No conveyor type given\n");
+            return false;
+        }
             
-            // no cell id was given
-            else if (null == cellID)
+        // no cell id was given
+        else if (null == cellID)
+        {
+            System.out.println("No cell ID given\n");
+            return false;
+        }
+           
+        // if all input arguments are OK
+        else
+        {
+            switch(conveyorType)
             {
-                System.out.println("No cell ID given\n");
-                return false;
-            }
-            
-            else
-            {
-                switch(conveyorType)
+                case "linear":
                 {
-                    case "linear":
+                    for (int conveyorCount = 0; conveyorCount < numberOfConveyors; conveyorCount++)
                     {
-                        for (int i=0; i < numberOfConveyors; i++)
-                        {
-                            Conveyor linearConveyor = new Conveyor("cell", conveyorType);
+                        Conveyor linearConveyor = new Conveyor("cell", conveyorType);
                             
-                            // atributing ID conveyor
-                            switch(cellID)
+                        // atributing ID conveyor
+                        switch(cellID)
+                        {
+                            // first cell
+                            case "1":
                             {
-                                case "1":
+                                // if its first cell and first linear conveyor
+                                if (conveyorCount == 0)
                                 {
-                                    // if its first cell and first linear conveyor
-                                    if (i==0)
-                                    {
-                                        linearConveyor.setID("2.2");
-                                        this.conveyorsTable.put("2.2", linearConveyor);
-                                    }
+                                    linearConveyor.setID("2.2");
+                                    this.conveyorsTable.put("2.2", linearConveyor);
+                                }
                                     
-                                    // if its first cell and second linear conveyor
-                                    else
-                                    {
-                                        linearConveyor.setID("2.3");
-                                        this.conveyorsTable.put("2.3", linearConveyor);
-                                    }
-                                break;
-                                }
-                                case "2":
+                                // if its first cell and second linear conveyor
+                                else
                                 {
-                                    // if its second cell and first linear conveyor
-                                    if(i==0)
-                                    {
-                                        linearConveyor.setID("1.5");
-                                        this.conveyorsTable.put("1.5", linearConveyor);
-                                    }
-                                        
-                                    // if its second cell and second linear conveyor
-                                    else if (i==1)
-                                    {
-                                        linearConveyor.setID("2.5");
-                                        this.conveyorsTable.put("2.5", linearConveyor);
-                                    }
-                                        
-                                    // if its second cell and third linear conveyor
-                                    else
-                                    {
-                                        linearConveyor.setID("3.5");
-                                        this.conveyorsTable.put("3.5", linearConveyor);
-                                    }
-                                break;
-                                        
+                                    linearConveyor.setID("2.3");
+                                    this.conveyorsTable.put("2.3", linearConveyor);
                                 }
-                                case "3":
-                                {
-                                    // if its third cell and first linear conveyor
-                                    if (i==0)
-                                    {
-                                        linearConveyor.setID("2.7");
-                                        this.conveyorsTable.put("2.7", linearConveyor);
-                                    }
-
-                                    // if its third cell and second linear conveyor
-                                    else
-                                    {
-                                        linearConveyor.setID("2.8");
-                                        this.conveyorsTable.put("2.8", linearConveyor);
-                                    }
                                 break;
-                                }
-                                case "4":
-                                {
-                                    // if its fourth cell and first linear conveyor
-                                    if(i==0)
-                                    {
-                                        linearConveyor.setID("1.10");
-                                        this.conveyorsTable.put("1.10", linearConveyor);
-                                    }
-                                        
-                                    
-                                    // if its fourth cell and second linear conveyor
-                                    else if (i==1)
-                                    {
-                                        linearConveyor.setID("2.10");
-                                        this.conveyorsTable.put("2.10", linearConveyor);
-                                    }
-                                        
-                                    
-                                    // if its fourth cell and third linear conveyor
-                                    else
-                                    {
-                                        linearConveyor.setID("3.10");
-                                        this.conveyorsTable.put("3.10", linearConveyor);
-                                    }
-                                break;
-                                        
-                                }
-                                default:
-                                    System.out.println("Wrong Cell ID");
-                                    System.exit(-1);
                             }
                             
-                        }
-                    break;
-                    }
+                            // second cell
+                            case "2":
+                            {
+                                switch (conveyorCount) 
+                                {
+                                    // if its second cell and second linear conveyor
+                                    case 0:
+                                        linearConveyor.setID("1.5");
+                                        this.conveyorsTable.put("1.5", linearConveyor);
+                                        break;
+
+                                    // if its second cell and third linear conveyor
+                                    case 1:
+                                        linearConveyor.setID("2.5");
+                                        this.conveyorsTable.put("2.5", linearConveyor);
+                                        break;
+
+                                    default:
+                                        linearConveyor.setID("3.5");
+                                        this.conveyorsTable.put("3.5", linearConveyor);
+                                     break;
+                                }
+                            break;
+                            }
+                            // third cell
+                            case "3":
+                            {
+                                // if its third cell and first linear conveyor
+                                if (conveyorCount == 0)
+                                {
+                                    linearConveyor.setID("2.7");
+                                    this.conveyorsTable.put("2.7", linearConveyor);
+                                }
+
+                                // if its third cell and second linear conveyor
+                                else
+                                {
+                                    linearConveyor.setID("2.8");
+                                    this.conveyorsTable.put("2.8", linearConveyor);
+                                }
+                            break;
+                            }
+                            // fourth cell
+                            case "4":
+                            {
+                                // if its fourth cell and first linear conveyor
+                                switch (conveyorCount) 
+                                {
+                                    // if its fourth cell and second linear conveyor
+                                    case 0:
+                                        linearConveyor.setID("1.10");
+                                        this.conveyorsTable.put("1.10", linearConveyor);
+                                        break;
+
+                                    // if its fourth cell and third linear conveyor
+                                    case 1:
+                                        linearConveyor.setID("2.10");
+                                        this.conveyorsTable.put("2.10", linearConveyor);
+                                        break;
+
+                                    default:
+                                        linearConveyor.setID("3.10");
+                                        this.conveyorsTable.put("3.10", linearConveyor);
+                                        break;
+                                }
+                            break;
+                            }
+                            
+                            default:
+                                System.out.println("Wrong Cell ID");
+                                System.exit(-1);
+                        }       
+                    }// end for
+                break;
+                }// ends linear case
                         
-                    case "slide":
+                case "slide":
+                {
+                    for(int conveyorCount = 0; conveyorCount < numberOfConveyors; conveyorCount++)
                     {
-                        for(int i = 0; i < numberOfConveyors; i++)
-                        {
-                        
                         Conveyor slideConveyor = new Conveyor("cell", conveyorType);
                         
                         // attributing conveyor id
                         switch (cellID)
                         {
+                            // first cell
                             case "1":
                             {
-                                if (i==0)
+                                if (conveyorCount == 0)
                                 {
                                     slideConveyor.setID("1.2");
                                     this.conveyorsTable.put("1.2", slideConveyor);
@@ -561,38 +561,37 @@ public class Factory extends Thread
                                     slideConveyor.setID("3.2");
                                     this.conveyorsTable.put("3.2", slideConveyor);
                                 }
-                            break;
+                                break;
                             }
+                            // third cell
                             case "3":
                             {
-                                if (i==0)
+                                if (conveyorCount == 0)
                                 {
                                     slideConveyor.setID("1.7");
                                     this.conveyorsTable.put("1.7", slideConveyor);
                                 }
-                                    
+
                                 else
                                 {
                                     slideConveyor.setID("3.7");
                                     this.conveyorsTable.put("3.7", slideConveyor);
                                 }
-                            break;
+                                break;
                             }
+                            
                             default:
                             {
                                 System.out.println("Wrong Cell ID");
                                 System.exit(-1);
                             }
                         }
-                        }
-                        
-                        break;
-                    }
-                
+                    }//end for  
+                    break;// end slide case
                 }
-            }    
-
-            return true;
+            }
+        }    
+        return true;
     }
     
     /**
@@ -600,6 +599,7 @@ public class Factory extends Thread
      * @param machineType
      * @param numberOfMachines 
      * @return
+     * @throws mes.graph.exception.InvalidConstructionException
      */
     public boolean addMachines(String machineType, int numberOfMachines) throws InvalidConstructionException
     {        
@@ -649,12 +649,10 @@ public class Factory extends Thread
      * Adds cells of a given type
      * @param cellType
      * @param numberOfCells
-     * @param currentFactory
      * @return 
      * @throws mes.graph.exception.InvalidConstructionException 
      */
-    public boolean addCells(String cellType, int numberOfCells, Factory
-            currentFactory) throws InvalidConstructionException
+    public boolean addCells(String cellType, int numberOfCells) throws InvalidConstructionException
     {  
         // no cell type was given
         if (null == cellType)
@@ -681,18 +679,16 @@ public class Factory extends Thread
                          // if we are adding first parallel Cell, ID is 1
                          if (i==0)
                          {
-                             parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "1");
+                             parallelCells[i] = new Cell(cellType, this, this.protocolToPLC, "1");
                          }
                             //parallelCells[i].setID("1");
                          
                          // if we are adding second parallel Cell, ID is 3
                          else  
                          {
-                              parallelCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "3");   
+                              parallelCells[i] = new Cell(cellType, this, this.protocolToPLC, "3");   
                          }
                              //parallelCells[i].setID("3");
-                         
-                         
                      }
                     break;
 
@@ -703,17 +699,14 @@ public class Factory extends Thread
                         // if we are adding first serial Cell ID is 2
                         if (i==0)
                         {
-                            serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(), "2");
+                            serialCells[i] = new Cell(cellType, this, this.protocolToPLC, "2");
                         }
-                            //serialCells[i].setID("2");
-                        
+
                         // if we are adding second serial Cell ID is 4
                         else
                         {
-                            serialCells[i] = new Cell(cellType, currentFactory, factoryMonitor.getProtocol(),"4");
+                            serialCells[i] = new Cell(cellType, this, this.protocolToPLC,"4");
                         }
-                            //serialCells[i].setID("4");
-                        
                     }
                         
                     break; 
@@ -722,20 +715,18 @@ public class Factory extends Thread
                     System.out.println("Cell type not recognized.\n");
                     return false;
             }  
-        
         return true;
     }
     
     /**
      * Adds transport to factory
-     * @param currentFactory
      * @return 
      * @throws mes.graph.exception.InvalidConstructionException 
      */
-    public boolean addTransport(Factory currentFactory) throws InvalidConstructionException
+    public boolean addTransport() throws InvalidConstructionException
     {
         // checks if the current factory is null
-        if (null == currentFactory)
+        if (null == this)
         {
             System.out.println("No factory given\n");
             return false;
@@ -744,7 +735,7 @@ public class Factory extends Thread
         else
         {
             // creates input transport
-            inputTransport = new Transport("input", currentFactory, factoryMonitor.getProtocol());
+            inputTransport = new Transport("input", this, this.protocolToPLC);
             
             // error creating input Transport unit
             if (null == inputTransport)
@@ -752,23 +743,21 @@ public class Factory extends Thread
                 System.out.println("Error creating input transport.\n");
                 return false;                    
             }
+            // creates output transport
             else
             {
-                // creates output transport
-                
                 // ***************************** May create an ERROR ******************************
-                outputTransport = new Transport("output", currentFactory, factoryMonitor.getProtocol());
+                outputTransport = new Transport("output", this, this.protocolToPLC);
+                // error creating output Transport unit
+                if (null == outputTransport)
+                {
+                    System.out.println("Error creating output transport.\n");
+                    return false; 
+                }
+                else
+                    return true;
             }
-             
-            // error creating output Transport unit
-            if (null == outputTransport)
-            {
-                System.out.println("Error creating output transport.\n");
-                return false; 
-            }
-            else
-                return true;
-        }
+        }    
     }
    
     /**
@@ -974,11 +963,17 @@ public class Factory extends Thread
 
     /**
      * 
+     * @param blockType
+     * @param finalBlockType
+     * @param blockDestination
+     * @param blockID
+     * @param operation
      * @return 
      */
-    public boolean addBlock(String blockType, String finalBlockType, String blockDestination, String blockID, String operation)
+    public boolean addBlock(String blockType, String finalBlockType, 
+            String blockDestination, String blockID, String operation)
     {
-            System.out.println("entrou no addBlock");
+            //System.out.println("DEBUG:: entrou no addBlock");
 
             //System.out.println(blockVector.get(newBlock.getType()));
 
@@ -1021,18 +1016,10 @@ public class Factory extends Thread
                 System.out.println("error in sleep");
             }
         
-        Block newBlock = new Block(blockType, finalBlockType, blockDestination, blockID, operation);
-        
-
-        
-        // if no block was given
-        if (null == newBlock)
-        {
-            System.out.println("No block given to add.\n");
-            return false;
-        }
-       
-        else if (null == newBlock.ID)
+        Block newBlock = new Block(blockType, finalBlockType, blockDestination,
+                blockID, operation);
+   
+        if (null == newBlock.ID)
         {
             System.out.println("No ID given to this block.\n");
             return false;
@@ -1058,7 +1045,7 @@ public class Factory extends Thread
         // if no block was given
         if(null == deleteBlock)
         {
-            System.out.println("block to remove not given");
+            System.out.println("Block to remove not given.\n");
             return false;
         }
         else
@@ -1066,7 +1053,7 @@ public class Factory extends Thread
             // error removing Block from the Hashtable
             if(null == blocksInFactory.remove(deleteBlock.ID))
             {
-                System.out.println("cannot remove block because it does not exist in the factory");
+                System.out.println("Cannot remove block because it does not exist in the factory.\n");
                 return false;
             }
             
@@ -1124,6 +1111,9 @@ public class Factory extends Thread
     
     public boolean updateConveyorStatus(String factoryData)
     {
+        
+
+
         //status = "Ready", "Sending", "receiving"
         
         // percorrer todos os tapetes
@@ -1383,59 +1373,98 @@ public class Factory extends Thread
     public void createBlockTypeMap()
     {
         // creates the hashtable
-        blockVector = new Hashtable<>();
+        blockBitvectorTable = new Hashtable<>();
         
         // creates bitvector to insert in hastable
         BitVector blockBitVector = new BitVector(8);
         
         // inserting P1 and corresponding BitVector
         blockBitVector.setBit(0, true);
-        this.blockVector.put("P1", blockBitVector);
+        this.blockBitvectorTable.put("P1", blockBitVector);
 
         // inserting P2 and corresponding BitVector
         blockBitVector.setBit(0, false);
         blockBitVector.setBit(1, true);
-        blockVector.put("P2", blockBitVector);
+        blockBitvectorTable.put("P2", blockBitVector);
 
         // inserting P3 and corresponding BitVector
         blockBitVector.setBit(0, true);
-        blockVector.put("P3", blockBitVector);
+        blockBitvectorTable.put("P3", blockBitVector);
 
         // inserting P4 and corresponding BitVector
         blockBitVector.setBit(0, false);
         blockBitVector.setBit(1,false);
         blockBitVector.setBit(2,true);
-        blockVector.put("P4", blockBitVector);
+        blockBitvectorTable.put("P4", blockBitVector);
 
         // inserting P5 and corresponding BitVector
         blockBitVector.setBit(0, true);
-        blockVector.put("P5", blockBitVector);
+        blockBitvectorTable.put("P5", blockBitVector);
 
         // inserting P6 and corresponding BitVector
         blockBitVector.setBit(0, false);
         blockBitVector.setBit(1, true);
-        blockVector.put("P6", blockBitVector);
+        blockBitvectorTable.put("P6", blockBitVector);
 
         // inserting P7 and corresponding BitVector
         blockBitVector.setBit(0, true);
-        blockVector.put("P7", blockBitVector);
+        blockBitvectorTable.put("P7", blockBitVector);
 
         // inserting P8 and corresponding BitVector
         blockBitVector.setBit(0, false);
         blockBitVector.setBit(1,false);
         blockBitVector.setBit(2,false);
         blockBitVector.setBit(3,true);
-        blockVector.put("P8", blockBitVector);
+        blockBitvectorTable.put("P8", blockBitVector);
 
         // inserting P9 and corresponding BitVector
         blockBitVector.setBit(0, true);
-        blockVector.put("P9", blockBitVector);
+        blockBitvectorTable.put("P9", blockBitVector);
     }
    
-   
-   
-   
-   
-   
+   /**
+    * 
+    * @param factoryData
+    */
+    public void updateConveyors(String factoryData)
+    {
+        char[] dataFromFactory = factoryData.toCharArray();
+        Conveyor auxConveyor;
+        // checks all conveyors in the hashtable
+        for (Map.Entry<String, Conveyor> entry : conveyorsTable.entrySet()) 
+        { 
+            auxConveyor = conveyorsTable.get(entry.getKey());
+            // gets the memory indexes relative to the auxConveyor ("1,20,56")
+            String[] memoryToRead = memoryMap.get(auxConveyor.ID).split(",");
+            
+            int conveyorSensor = Integer.parseInt(memoryToRead[0]);
+            int conveyorActuator = Integer.parseInt(memoryToRead[2]);
+            auxConveyor.updateSensor(true);
+            auxConveyor.updateActuator("1".equals(dataFromFactory[conveyorActuator]));
+        }
+    }
+    
+    public void printConveyorStatus()
+    {
+        Conveyor auxConveyor;
+        for (Map.Entry<String, Conveyor> entry : conveyorsTable.entrySet()) 
+        {
+            auxConveyor = conveyorsTable.get(entry.getKey());
+            System.out.print("[" + auxConveyor.getSensor() + "]" + "" + "----");
+        }
+        
+        System.out.println("");
+        
+        // Needs to wait before sending consecutive packets to PLC
+            try
+            {
+                TimeUnit.SECONDS.sleep(1);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+        
+    }
 }
 
