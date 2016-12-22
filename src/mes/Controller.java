@@ -67,6 +67,10 @@ class WriteModbus
     }
 }
 
+
+
+
+
 /**
  *
  * @author Utilizador
@@ -76,12 +80,23 @@ public class Controller extends Thread
     // the buffer with orders
     public int[] factoryBuffer;
     private int capacity;
+    // mutex used to synchronize access to the buffer
+    private final Object mutex = new Object();
+    // data to write to PLC in bitvector form
+    private BitVector dataToWrite;
+    
+    // protocol used to communicate with PLC
+    private Modbus protocolToPLC;
+    
+    // boolean used to kill controller thread
+    private boolean killThread=false;
+    
     
     /**
      * Constructor
      * @param bufferCapacity 
      */
-    public Controller(int bufferCapacity)
+    public Controller(int bufferCapacity, Modbus protocol)
     {
         // if the bufferCapacity is zero
         if (bufferCapacity == 0)
@@ -89,9 +104,17 @@ public class Controller extends Thread
             System.out.println("Buffer created with size zero.\n");
             System.exit(-1);
         }
+        
+        else if (null == protocol)
+        {
+            System.out.println("No protocol given to Controller");
+            System.exit(-1);
+        }
         // if all input arguments are OK
         else
         {
+            protocolToPLC = protocol;
+            dataToWrite = new BitVector(bufferCapacity);
             capacity = bufferCapacity;
             if (!createBuffer(bufferCapacity))
             {
@@ -117,7 +140,7 @@ public class Controller extends Thread
         // if all input arguments are OK
         else
         {
-            this.factoryBuffer = new WriteModbus[bufferCapacity];
+            this.factoryBuffer = new int[bufferCapacity];
             return true;
         }
     }
@@ -128,26 +151,44 @@ public class Controller extends Thread
      * @param classType
      * @return 
      */
-    public boolean updateBuffer(String dataToUpdate, String classType)
+    public boolean updateBuffer(int offset, int dataToUpdate)
     {
-        WriteModbus bufferElement = new WriteModbus();
+        //WriteModbus bufferElement = new WriteModbus();
         BitVector dataToWrite = new BitVector(16);
                 
         // if no data to update was given
-        if (null == dataToUpdate)
+        if (dataToUpdate!=0 || dataToUpdate!=1)
         {
-            System.out.println("No data to update.\n");
+            System.out.println("Wrong data to update.\n");
             return false;
         }
         // if no class type was given
+        /*
         else if (null == classType)
         {
             System.out.println("No class type given.\n");
             return false;
         }
+        */
         
-        else if ("enterCell".equals(classType))
+        else
         {
+            // executes when you hold the mutex
+            synchronized(mutex)
+            {
+                // updates the buffer
+                this.factoryBuffer[offset] = dataToUpdate;
+                
+                
+                
+                
+                
+                return true;
+            }
+
+            
+            
+            /*
             switch(dataToUpdate)
             {
                 // orders to enter in the cell 1
@@ -224,7 +265,11 @@ public class Controller extends Thread
                     System.out.println("Order not recognized.\n");
                     return false;         
             }  
+            */
+            
         }
+        
+        /*
         else if("transform".equals(classType))
         {
             switch(dataToUpdate)
@@ -271,7 +316,7 @@ public class Controller extends Thread
             }
             
         }
-        return true;
+        */
     }
     
     /**
@@ -303,4 +348,31 @@ public class Controller extends Thread
             return true;
         }
     }
+    
+    
+    @Override
+    public void run()
+    {
+        while(!killThread)
+        {
+            synchronized(mutex)
+            {
+                protocolToPLC.writeModbus(0, dataToWrite);
+                
+                /*
+                Might need a Sleep Here !
+                */
+                
+            }
+        }
+    }
+    
+    
+    public void stopThread()
+    {
+        killThread = true;
+    }
+    
+    
+    
 }

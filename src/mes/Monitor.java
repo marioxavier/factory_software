@@ -62,6 +62,7 @@ public class Monitor extends Thread
         {
             try
             {
+
                 // reads sensors from the factory
                 if (!this.readSensors())
                 {
@@ -74,15 +75,21 @@ public class Monitor extends Thread
                     System.out.println("MONITOR_THREAD:: Error reading actuators.\n");
                     System.exit(-1);
                 }
+                
                 virtualFactory.updateConveyors(inputData + outputData);  
+                
                 // updates block position
                 if (!this.virtualFactory.updateBlockPositions(inputData + outputData))
                 {
                     System.out.println("MONITOR_THREAD:: Error updating block position.\n");
                     System.exit(-1);
                 }
+                
+                
+                
                 // checks if factory is ready to receive a new block
                 this.virtualFactory.isReady(inputData + outputData);
+                
             }
             catch(Exception s)
             {
@@ -139,6 +146,7 @@ public class Monitor extends Thread
         // if data was received    
         else
         {
+            
             // splits the received array of bytes 
             String[] invertedByteArray = dataReceived.split(" ");
         
@@ -161,6 +169,7 @@ public class Monitor extends Thread
             // inputData contains an array in which each position has the value 
             //of the corresponding sensor on the PLC
             this.inputData = dataReceived;
+            
             
             // if some error ocurred
             if (null == this.inputData)

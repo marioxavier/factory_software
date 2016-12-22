@@ -20,6 +20,7 @@ public class Factory extends Thread
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
+    
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Hashtable<String, Block> blocksInFactory;
     private Hashtable<String, String> memoryMap;
@@ -45,7 +46,11 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
-            printConveyorStatus();
+            //printConveyorStatus();
+            //System.out.println(conveyorsTable.get("0.0").getSensor());
+            
+            
+            
             
             if(firstConveyorReady)
             {
@@ -1149,6 +1154,10 @@ public class Factory extends Thread
             // create auxiliar variables;
             String position;
         
+            //System.out.println(factoryData);
+            
+            //*******************   BUG *****************************
+            
             // runs for all blocks in factory
             for (String i : blocksInFactory.keySet())
             {
@@ -1195,11 +1204,11 @@ public class Factory extends Thread
                         System.out.println("UpdateBlock:: Error in sleep.\n");
                         return false;
                     }
-                }
             }
+        }
         //System.out.println("DEBUG:: Retorno true no updateBlockPositions.\n");
         return true;     
-        }
+    }
        
     /**
      * 
@@ -1229,6 +1238,7 @@ public class Factory extends Thread
         memoryMap = new Hashtable<>();
 
         for (String i : conveyorsTable.keySet())
+            
         {
             switch(conveyorsTable.get(i).ID)
             {
@@ -1436,12 +1446,16 @@ public class Factory extends Thread
             // gets the memory indexes relative to the auxConveyor ("1,20,56")
             String[] memoryToRead = memoryMap.get(auxConveyor.ID).split(",");
             
+            
+            
             int conveyorSensor = Integer.parseInt(memoryToRead[0]);
             int conveyorActuator = Integer.parseInt(memoryToRead[2]);
         
             auxConveyor.updateSensor(dataFromFactory[conveyorSensor] == '1');
             auxConveyor.updateActuator(dataFromFactory[conveyorActuator] == '1');
         }
+        
+        //System.out.println("\n");
     }
     
     public void printConveyorStatus()
