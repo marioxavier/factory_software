@@ -17,7 +17,7 @@ import mes.graph.exception.InvalidConstructionException;
 public class systemManager 
 {    
     private String ID;
-    public LinkedList<ProductionOrder> orderQueue;
+    public LinkedList<ProductionOrder> orderQueue = new LinkedList<>();;
     private int status;
     public Database systemDatabase;
     
@@ -51,6 +51,12 @@ public class systemManager
        
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
+        // creates UDP protocol object
+        UDP protocolToERP = new UDP(manager);
+        // initializes UDP
+        protocolToERP.initUDP();
+        // starts UDP thread
+        protocolToERP.start();
      
         // creates new protocol to PLC
         Modbus protocolToPLC = new Modbus();
@@ -68,7 +74,15 @@ public class systemManager
                 // creates an instance of the factory
                 Factory virtualFactory = new Factory(protocolToPLC, manager);
                 // starts the factory thread
-                virtualFactory.start();                   
+                virtualFactory.start();  
+                
+                   
+                Controller controlUnit = new Controller(protocolToPLC, virtualFactory);
+                controlUnit.initController();
+                
+                
+                
+                //controlUnit.updateBuffer("KeepGoing C1");
             }
             else
                 System.out.println("Connection with factory not opened.\n");
@@ -79,17 +93,13 @@ public class systemManager
             System.exit(-1);
         }
         
-        Controller controlUnit = new Controller(protocolToPLC);
+        
+        
      }
        
         
        /* 
-        // creates UDP protocol object
-        UDP protocolToERP = new UDP(manager);
-        // initializes UDP
-        protocolToERP.initUDP();
-        // starts UDP thread
-        protocolToERP.start();
+        
          
         // creates a decision unit
         //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory    
@@ -123,6 +133,7 @@ public class systemManager
      public ProductionOrder convertToOrder(String receivedOrder)
      {
          ProductionOrder newOrder = new ProductionOrder(receivedOrder);
+         
          return newOrder;
      }
      

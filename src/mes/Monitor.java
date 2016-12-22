@@ -62,7 +62,7 @@ public class Monitor extends Thread
         {
             try
             {
-
+                
                 // reads sensors from the factory
                 if (!this.readSensors())
                 {

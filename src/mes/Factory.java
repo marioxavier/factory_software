@@ -49,9 +49,6 @@ public class Factory extends Thread
             //printConveyorStatus();
             //System.out.println(conveyorsTable.get("0.0").getSensor());
             
-            
-            
-            
             if(firstConveyorReady)
             {
                 try
@@ -164,9 +161,12 @@ public class Factory extends Thread
         // creates the machine array containing all the machines
         machines = new Machine[8];
              
+        /*
         // resets the first conveyor
         BitVector b = new BitVector(8);
         protocolToPLC.writeModbus(144, b);
+        */
+        
         // resets the status of the first conveyor
         firstConveyorReady = false;
          
@@ -977,7 +977,7 @@ public class Factory extends Thread
     public boolean addBlock(String blockType, String finalBlockType, 
             String blockDestination, String blockID, String operation)
     {
-            //System.out.println("DEBUG:: entrou no addBlock");
+            System.out.println("DEBUG:: entrou no addBlock");
 
             //System.out.println(blockVector.get(newBlock.getType()));
 
@@ -996,6 +996,8 @@ public class Factory extends Thread
             
             b.setBit(0,true);
             protocolToPLC.writeModbus(144, b);
+            
+            System.out.println("DEBUG:: escreve 'true' no bit 0 com offset 144");
             
             // Needs to wait before sending consecutive packets to PLC
             try
@@ -1481,6 +1483,15 @@ public class Factory extends Thread
                 System.out.println("error in sleep");
             }
         
+    }
+    
+    /**
+     * Gets memory type bitvector table
+     * @return 
+     */
+    public Hashtable<String, BitVector> getBlockBitvectorTable()
+    {
+        return blockBitvectorTable;
     }
 }
 
