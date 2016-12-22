@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class ProductionOrder 
 {
-     private String orderID;
+     public String ID;
      public String originalType;
      public String finalType;
      private Date orderDate;
@@ -27,7 +27,7 @@ public class ProductionOrder
          String[] datagramTokens = datagram.split(":");
          
          this.blockOperation = datagramTokens[0];
-         this.orderID = datagramTokens[1];
+         this.ID = datagramTokens[1];
          this.originalType = datagramTokens[2];
          this.finalType = datagramTokens[3];
          this.quantity = datagramTokens[4];
@@ -49,7 +49,7 @@ public class ProductionOrder
       */
      public String getOrderID()
      {
-         return orderID;
+         return ID;
      }
      
      /**

@@ -14,8 +14,9 @@ import net.wimpi.modbus.util.BitVector;
 class Transporter implements Runnable
 {
     Transport transportUnit;
+    Block blockToFollow;
     
-    public Transporter(Transport transportObject)
+    public Transporter(Transport transportObject, Block blockToTransport)
     {
         // if no transport object was given
         if (null == transportObject)
@@ -23,8 +24,16 @@ class Transporter implements Runnable
             System.out.println("No transport object given.\n");
             System.exit(-1);
         }
-        else
+        else if (null == blockToTransport)
+        {
+            System.out.println("No block to transport was given.\n");
+            System.exit(-1);
+        }
+        else 
+        {
             transportUnit = transportObject;
+            blockToFollow = blockToTransport;    
+        }
     }
     
     /**
@@ -37,25 +46,18 @@ class Transporter implements Runnable
         // loops forever
         while(true)
         {
-            // loops all blocks
-            for (String i : transportUnit.blocksInFactory.keySet())
+            if(blockToFollow.isDestination())
             {
-                Block blockToTransport = transportUnit.blocksInFactory.get(i);
-                // if the block arrived destination
-                if(blockToTransport.isDestination())
-                {
-                    // writes in the buffer
-                    transportUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+                // writes in the buffer
+                transportUnit.controlUnit.updateBuffer(blockToFollow.getPosition(), "block");
                     
-                    // updates block status
-                    blockToTransport.updateStatus("waiting");
-                    
-                }
-                    
-            }
-        }         
-    }
+                // updates block status
+                blockToFollow.updateStatus("waiting");                    
+            }                    
+        }
+    }         
 }
+
 
 /**
  *
@@ -126,14 +128,13 @@ public class Transport extends Thread
     }
     
     /**
-     * Thread 
+     * Creates and runs a new transporter
+     * @param blockToTransport 
      */
-    @Override
-    @SuppressWarnings("empty-statement")
-    public void run()
-    {
-        Runnable transporter = new Transporter(this);
-        new Thread(transporter).start();
+    public void startTransport(Block blockToTransport)
+    {        
+        Runnable transporter = new Transporter(this, blockToTransport);
+        new Thread(transporter).start();       
     }
    
     /*
