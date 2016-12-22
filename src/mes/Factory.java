@@ -20,6 +20,7 @@ public class Factory extends Thread
     private Transport inputTransport, outputTransport;
     private Machine[] machines;
     private Cell[] parallelCells, serialCells;
+    
     @SuppressWarnings("UseOfObsoleteCollectionType")
     private Hashtable<String, Block> blocksInFactory;
     private Hashtable<String, String> memoryMap;

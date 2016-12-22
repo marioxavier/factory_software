@@ -75,7 +75,9 @@ public class Monitor extends Thread
                     System.out.println("MONITOR_THREAD:: Error reading actuators.\n");
                     System.exit(-1);
                 }
+                
                 virtualFactory.updateConveyors(inputData + outputData);  
+                
                 // updates block position
                 if (!this.virtualFactory.updateBlockPositions(inputData + outputData))
                 {

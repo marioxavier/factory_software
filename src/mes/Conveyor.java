@@ -15,8 +15,8 @@ public class Conveyor {
     private String type;
     private String group;
     private String status;
-    private int sensor;
-    private int actuator;
+    private boolean sensor;
+    private boolean actuator;
     private boolean orientation;
    
     /**
@@ -207,7 +207,7 @@ public class Conveyor {
      * Updates the sensor of a conveyor
      * @param updateValue
      */
-    public void updateSensor(int updateValue)
+    public void updateSensor(boolean updateValue)
     {
         sensor = updateValue;
     }
@@ -217,7 +217,7 @@ public class Conveyor {
      * 
      * @return 
      */
-    public int getSensor()
+    public boolean getSensor()
     {
         return sensor;
     }
@@ -226,7 +226,7 @@ public class Conveyor {
      * 
      * @param updateValue 
      */
-    public void updateActuator(int updateValue)
+    public void updateActuator(boolean updateValue)
     {
         actuator = updateValue;
     }
@@ -235,7 +235,7 @@ public class Conveyor {
      * 
      * @return 
      */
-    public int getActuator()
+    public boolean getActuator()
     {
         return this.actuator;
     }
