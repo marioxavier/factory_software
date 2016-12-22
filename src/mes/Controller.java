@@ -129,9 +129,80 @@ public class Controller extends Thread
     public boolean initController()
     {
         bufferMap = new Hashtable<String, Integer>();
+
+        bufferMap.put("EnterC1",0);
+        bufferMap.put("EnterC2",0);
+        bufferMap.put("EnterC3",0);
+        bufferMap.put("EnterC4",0);
+        bufferMap.put("EnterC5",0);
+        bufferMap.put("EnterC6",0);
+        bufferMap.put("EnterC7",0);
         
+        bufferMap.put("KeepGoingC1",0);
+        bufferMap.put("KeepGoingC2",0);
+        bufferMap.put("KeepGoingC3",0);
+        bufferMap.put("KeepGoingC4",0);
+        bufferMap.put("KeepGoingC5",0);
+        bufferMap.put("KeepGoingC6",0);
+        bufferMap.put("KeepGoingC7",0);
         
+        bufferMap.put("P1P2@C1",0);
+        bufferMap.put("P1P7@C1",0);
+        bufferMap.put("P2P3@C1",0);
+        bufferMap.put("P3P4@C1",0);
+        bufferMap.put("P3P6@C1",0);
+        bufferMap.put("P4P6@C1",0);
+        bufferMap.put("P4P7@C1",0);
+        bufferMap.put("P5P7@C1",0);
+        bufferMap.put("P6P7@C1",0);
+        bufferMap.put("P1P6@C1",0);
+        bufferMap.put("P3P7@C1",0);
         
+        bufferMap.put("P1P3@C2",0);
+        bufferMap.put("P1P4@C2",0);
+        bufferMap.put("P1P7@C2",0);
+        bufferMap.put("P2P1@C2",0);
+        bufferMap.put("P2P3@C2",0);
+        bufferMap.put("P3P5@C2",0);
+        bufferMap.put("P4P5@C2",0);
+        bufferMap.put("P4P7@C2",0);
+        bufferMap.put("P1P7@C2",0);
+        bufferMap.put("P1P5@C2",0);
+        
+        bufferMap.put("P1P2@C3",0);
+        bufferMap.put("P1P7@C3",0);
+        bufferMap.put("P2P3@C3",0);
+        bufferMap.put("P3P4@C3",0);
+        bufferMap.put("P3P6@C3",0);
+        bufferMap.put("P4P6@C3",0);
+        bufferMap.put("P4P7@C3",0);
+        bufferMap.put("P5P7@C3",0);
+        bufferMap.put("P6P7@C3",0);
+        bufferMap.put("P1P6@C3",0);
+        bufferMap.put("P3P7@C3",0);
+                
+        bufferMap.put("P1P3@C4",0);
+        bufferMap.put("P1P4@C4",0);
+        bufferMap.put("P1P7@C4",0);
+        bufferMap.put("P2P1@C4",0);
+        bufferMap.put("P2P3@C4",0);
+        bufferMap.put("P3P5@C4",0);
+        bufferMap.put("P4P5@C4",0);
+        bufferMap.put("P4P7@C4",0);
+        bufferMap.put("P1P7@C4",0);
+        bufferMap.put("P1P5@C4",0);
+        
+        bufferMap.put("Criar P1",0);
+        bufferMap.put("Criar P2",0);
+        bufferMap.put("Criar P3",0);
+        bufferMap.put("Criar P4",0);
+        bufferMap.put("Criar P5",0);
+        bufferMap.put("Criar P6",0);
+        bufferMap.put("Criar P7",0);
+        bufferMap.put("Criar P8",0);
+        bufferMap.put("Criar P9",0);
+        
+        return true;
     }
     
     
@@ -363,8 +434,8 @@ public class Controller extends Thread
     
     @Override
     public void run()
-    {
-        while(!killThread)
+    { 
+       while(!killThread)
         {
             synchronized(mutex)
             {
