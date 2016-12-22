@@ -51,6 +51,12 @@ public class systemManager
        
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
+        // creates UDP protocol object
+        UDP protocolToERP = new UDP(manager);
+        // initializes UDP
+        protocolToERP.initUDP();
+        // starts UDP thread
+        protocolToERP.start();
      
         // creates new protocol to PLC
         Modbus protocolToPLC = new Modbus();
@@ -68,7 +74,11 @@ public class systemManager
                 // creates an instance of the factory
                 Factory virtualFactory = new Factory(protocolToPLC, manager);
                 // starts the factory thread
-                virtualFactory.start();                   
+                virtualFactory.start();  
+                
+                   
+                Controller controlUnit = new Controller(protocolToPLC, virtualFactory);
+                controlUnit.initController();
             }
             else
                 System.out.println("Connection with factory not opened.\n");
@@ -78,18 +88,11 @@ public class systemManager
             System.out.println("Modbus connection failed.\n");
             System.exit(-1);
         }
-        
-        Controller controlUnit = new Controller(protocolToPLC);
      }
        
         
        /* 
-        // creates UDP protocol object
-        UDP protocolToERP = new UDP(manager);
-        // initializes UDP
-        protocolToERP.initUDP();
-        // starts UDP thread
-        protocolToERP.start();
+        
          
         // creates a decision unit
         //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory    

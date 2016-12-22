@@ -1482,5 +1482,14 @@ public class Factory extends Thread
             }
         
     }
+    
+    /**
+     * Gets memory type bitvector table
+     * @return 
+     */
+    public Hashtable<String, BitVector> getBlockBitvectorTable()
+    {
+        return blockBitvectorTable;
+    }
 }
 
