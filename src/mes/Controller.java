@@ -147,30 +147,19 @@ public class Controller extends Thread
     
     /**
      * Updates orders to give to the PLC
+     * @param offset
      * @param dataToUpdate
-     * @param classType
      * @return 
      */
     public boolean updateBuffer(int offset, int dataToUpdate)
     {
-        //WriteModbus bufferElement = new WriteModbus();
-        BitVector dataToWrite = new BitVector(16);
-                
         // if no data to update was given
-        if (dataToUpdate!=0 || dataToUpdate!=1)
+        if (dataToUpdate != 0 || dataToUpdate != 1)
         {
             System.out.println("Wrong data to update.\n");
             return false;
         }
-        // if no class type was given
-        /*
-        else if (null == classType)
-        {
-            System.out.println("No class type given.\n");
-            return false;
-        }
-        */
-        
+        // if all input arguments are OK
         else
         {
             // executes when you hold the mutex
@@ -178,147 +167,11 @@ public class Controller extends Thread
             {
                 // updates the buffer
                 this.factoryBuffer[offset] = dataToUpdate;
-                
-                
-                
-                
-                
                 return true;
             }
-
-            
-            
-            /*
-            switch(dataToUpdate)
-            {
-                // orders to enter in the cell 1
-                case "0.2":
-                {
-                    dataToWrite.setBit(0, true);
-                    dataToWrite.setBit(8, false);
-                    bufferElement.setMesOrder(dataToWrite);
-                    bufferElement.setOffset(0);
-                    factoryBuffer[0] = bufferElement;
-                    break;
-                }
-                
-                // orders to enter in the cell 2
-                case "0.5":
-                {
-                    dataToWrite.setBit(0, false);
-                    dataToWrite.setBit(1, true);
-                    dataToWrite.setBit(8, true);
-                    dataToWrite.setBit(9, false);
-                    bufferElement.setMesOrder(dataToWrite);
-                    bufferElement.setOffset(0);
-                    factoryBuffer[1] = bufferElement;
-                    break;
-                }
-                
-                // orders to enter in the cell 3
-                case "0.7":
-                {
-                    dataToWrite.setBit(1, false);
-                    dataToWrite.setBit(2, true);
-                    dataToWrite.setBit(9, true);
-                    dataToWrite.setBit(10, false);
-                    bufferElement.setMesOrder(dataToWrite);
-                    bufferElement.setOffset(0);
-                    factoryBuffer[2] = bufferElement;
-                    break;
-                }
-                
-                // orders to enter in the cell 3
-                case "0.10":
-                {
-                    dataToWrite.setBit(2, false);
-                    dataToWrite.setBit(3, true);
-                    dataToWrite.setBit(10, true);
-                    dataToWrite.setBit(11, false);
-                    bufferElement.setMesOrder(dataToWrite);
-                    bufferElement.setOffset(0);
-                    factoryBuffer[3] = bufferElement;
-                    break;
-                }
-                
-                // orders to enter in the cell 4
-                case "0.12":
-                {
-                    dataToWrite.setBit(3, false);
-                    dataToWrite.setBit(4, true);
-                    dataToWrite.setBit(11, true);
-                    dataToWrite.setBit(12, false);
-                    bufferElement.setMesOrder(dataToWrite);
-                    bufferElement.setOffset(0);
-                    factoryBuffer[4] = bufferElement;
-                    break;
-                }
-                
-                // orders to enter in the cell 5
-                case "0.14":
-                {
-                    factoryBuffer[5] = bufferElement;
-                    break;
-                    
-                }
-                default:
-                    System.out.println("Order not recognized.\n");
-                    return false;         
-            }  
-            */
-            
         }
-        
-        /*
-        else if("transform".equals(classType))
-        {
-            switch(dataToUpdate)
-            {
-                case "A":
-                    factoryBuffer[6] = bufferElement;
-                    break;
-                case "B":
-                    factoryBuffer[7] = bufferElement;
-                    break;
-                case "C":
-                    factoryBuffer[8] = bufferElement;
-                    break;
-                case "D":
-                    factoryBuffer[9] = bufferElement;
-                    break;
-                case "E":
-                    factoryBuffer[10] = bufferElement;
-                    break;
-                case "F":
-                    factoryBuffer[11] = bufferElement;
-                    break;
-                case "G":
-                    factoryBuffer[12] = bufferElement;
-                    break;
-                case "H":
-                    factoryBuffer[13] = bufferElement;
-                    break;
-                case "I":
-                    factoryBuffer[14] = bufferElement;
-                    break;
-                case "J":
-                    factoryBuffer[15] = bufferElement;
-                    break;
-                case "K":
-                    factoryBuffer[16] = bufferElement;
-                    break;
-                case "L":
-                    factoryBuffer[17] = bufferElement;
-                    break;
-                case "M":
-                    factoryBuffer[18] = bufferElement;
-                    break;
-            }
-            
-        }
-        */
     }
-    
+        
     /**
      * Gets the biffer capacity
      * @return 

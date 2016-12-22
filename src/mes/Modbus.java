@@ -22,7 +22,7 @@ import net.wimpi.modbus.util.BitVector;
  *This class extends Protocol
  * @author Mário Xavier
  */
-public final class Modbus extends Thread
+public final class Modbus
 {
     
     
@@ -87,29 +87,6 @@ public final class Modbus extends Thread
         this.initModbus();
 
     }
-    
-    @Override
-    public void run()
-    {
-        //WriteModbus aux = new WriteModbus();
-        while(true)
-        {
-            for(WriteModbus aux : controlUnit.factoryBuffer)
-            {
-                this.writeModbus(aux.getOffset(), aux.getMesOrder());
-                
-                try
-                {
-                    TimeUnit.SECONDS.sleep(1);
-                }
-                    catch(Exception Ex)
-                {
-                    System.out.println("error in sleep" + Ex);
-                }   
-            }  
-        }
-    }
-    
     
     /**
      * Gets number of bits to read/write
