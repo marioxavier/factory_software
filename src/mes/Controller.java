@@ -74,7 +74,7 @@ class WriteModbus
 public class Controller extends Thread
 {
     // the buffer with orders
-    public WriteModbus[] factoryBuffer;
+    public int[] factoryBuffer;
     private int capacity;
     
     /**
