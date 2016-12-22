@@ -35,14 +35,6 @@ public class ProductionOrder
          //this.orderDate = today();
      }
      
-     
-     public ProductionOrder()
-     {
-         
-     }
-     
-     
-     
      /**
       * Gets order ID
       * @return 

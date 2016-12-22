@@ -17,7 +17,7 @@ import mes.graph.exception.InvalidConstructionException;
 public class systemManager 
 {    
     private String ID;
-    public LinkedList<ProductionOrder> orderQueue;
+    public LinkedList<ProductionOrder> orderQueue = new LinkedList<>();
     private int status;
     public Database systemDatabase;
     
@@ -98,14 +98,20 @@ public class systemManager
         //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory    
     }
      
-     /**
-      * Adds a new order to the order queue
-      * @param newOrder
-      * @return 
-      */
-     public boolean addToQueue(ProductionOrder newOrder)
-     {
-        return orderQueue.add(newOrder);
+    /**
+     * Adds a new order to the order queue
+     * @param newOrder
+     * @return 
+     */
+    public boolean addToQueue(ProductionOrder newOrder)
+    {
+         
+        if (null == newOrder)
+        {
+            System.out.println("No order given.\n");
+            return false;
+        }
+        return this.orderQueue.add(newOrder);
      }
      
      /**
@@ -115,7 +121,7 @@ public class systemManager
       */
      public boolean removeFromQueue(ProductionOrder orderToRemove)
      {
-         return orderQueue.remove(orderToRemove);
+         return this.orderQueue.remove(orderToRemove);
      }  
      
       /**
@@ -131,9 +137,7 @@ public class systemManager
      
      public boolean printQueue(LinkedList<ProductionOrder> orderQueue)
      {
-             while(orderQueue.descendingIterator().hasNext())
-                System.out.println(orderQueue.descendingIterator().next().finalType);
-             return true;
+       return true;
      }
 }
 

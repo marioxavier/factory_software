@@ -48,18 +48,14 @@ public class Factory extends Thread
         {
             //printConveyorStatus();
             //System.out.println(conveyorsTable.get("0.0").getSensor());
-            
-            
-            
-            
             if(firstConveyorReady)
             {
                 try
                 {
-                   ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
-                    
-                    this.addBlock(nextOrder.originalType,nextOrder.finalType,
-                            "0.15", nextOrder.ID, nextOrder.blockOperation);
+                    ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
+                    if (null != nextOrder)
+                        this.addBlock(nextOrder.originalType,nextOrder.finalType,
+                                "0.15", nextOrder.ID, nextOrder.blockOperation);
                 }
                 catch(Exception s)
                 {
@@ -977,48 +973,47 @@ public class Factory extends Thread
     public boolean addBlock(String blockType, String finalBlockType, 
             String blockDestination, String blockID, String operation)
     {
-            //System.out.println("DEBUG:: entrou no addBlock");
+        //System.out.println("DEBUG:: entrou no addBlock");
+        //System.out.println(blockVector.get(newBlock.getType()));
 
-            //System.out.println(blockVector.get(newBlock.getType()));
+        BitVector blockToAdd = new BitVector(8);
+        protocolToPLC.writeModbus(144, blockToAdd);
 
-            BitVector b = new BitVector(8);
-            protocolToPLC.writeModbus(144, b);
+        // Needs to wait before sending consecutive packets to PLC
+        try
+        {
+            TimeUnit.SECONDS.sleep(2);
+        }
+        catch(Exception Ex)
+        {
+            System.out.println("error in sleep " + Ex);
+        }
 
-            // Needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-            
-            b.setBit(0,true);
-            protocolToPLC.writeModbus(144, b);
-            
-            // Needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-            
-            b.setBit(0, false);
-            protocolToPLC.writeModbus(144, b);
-            
-            // Needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
+        blockToAdd.setBit(0, true);
+        protocolToPLC.writeModbus(144, blockToAdd);
+
+        // Needs to wait before sending consecutive packets to PLC
+        try
+        {
+            TimeUnit.SECONDS.sleep(2);
+        }
+        catch(Exception Ex)
+        {
+            System.out.println("error in sleep");
+        }
+
+        blockToAdd.setBit(0, false);
+        protocolToPLC.writeModbus(144, blockToAdd);
+
+        // Needs to wait before sending consecutive packets to PLC
+        try
+        {
+            TimeUnit.SECONDS.sleep(2);
+        }
+        catch(Exception Ex)
+        {
+            System.out.println("error in sleep");
+        }
         
         Block newBlock = new Block(blockType, finalBlockType, blockDestination,
                 blockID, operation);
@@ -1029,7 +1024,7 @@ public class Factory extends Thread
             return false;
         }
         
-        // if all parameters are 
+        // if all parameters are OK
         else
         {
             // adds a block to the hashtable

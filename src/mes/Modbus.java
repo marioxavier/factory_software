@@ -5,12 +5,7 @@
  */
 package mes;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
 import net.wimpi.modbus.msg.*;
@@ -476,7 +471,7 @@ public final class Modbus
                 }          
                 catch(Exception ex)
                 {
-                    ex.printStackTrace();
+                    System.out.println(ex);
                     System.exit(1);
                 }
                 

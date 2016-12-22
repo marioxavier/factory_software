@@ -19,14 +19,12 @@ import java.util.logging.Logger;
 public class UDP extends Thread
 {
     private DatagramSocket serverSocket;
-    private int port;
     private byte[] receivedData ;
     systemManager manager;
     
     /**
      * Constructor
      * @param systemManager
-     * @param newProductionOrder 
      */
     public UDP(systemManager systemManager)
     {
@@ -54,19 +52,20 @@ public class UDP extends Thread
                     = new DatagramPacket(receivedData, receivedData.length);
             try 
             {
-                // receives a packet from port 54321
+                // waits for and receives a packet from port 54321
                 serverSocket.receive(receivePacket);
             } 
             catch (IOException ex) 
             {       
                 Logger.getLogger(UDP.class.getName()).log(Level.SEVERE, null, ex);
             }
+          
+            manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
+            manager.printQueue(manager.orderQueue);
+            //manager.systemDatabase.executeQuery(query);
             
-                manager.addToQueue(manager.convertToOrder(new String(receivePacket.getData())));
-                manager.printQueue(manager.orderQueue);
-                //manager.systemDatabase.executeQuery(query);
-                
- 
+            // resets the received data
+            receivedData = new byte[1024]; 
             
             // DEBUG - prints the sentence
             //System.out.println("DEBUG:: RECEIVED: " + sentence);
@@ -89,7 +88,7 @@ public class UDP extends Thread
         }
         catch(Exception e)
         {
-            System.out.println("Error in UDP Protocol");
+            System.out.println("Error in UDP Protocol " + e);
             return false;
         }
     }
