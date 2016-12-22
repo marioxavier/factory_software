@@ -204,7 +204,7 @@ public class Controller extends Thread
         
         return true;
     }
-    
+   
     
     
     /**
@@ -251,6 +251,8 @@ public class Controller extends Thread
             {
                 factoryBuffer[bufferOffset] = 1;
                 return true;
+                
+                
             }
         }
     }
