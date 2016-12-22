@@ -54,7 +54,7 @@ public class Factory extends Thread
                    ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     
                     this.addBlock(nextOrder.originalType,nextOrder.finalType,
-                            "0.15", "1", nextOrder.blockOperation);
+                            "0.15", nextOrder.ID, nextOrder.blockOperation);
                 }
                 catch(Exception s)
                 {
