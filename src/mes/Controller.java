@@ -6,6 +6,7 @@
 package mes;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import net.wimpi.modbus.util.BitVector;
 
@@ -91,38 +92,47 @@ public class Controller extends Thread
     // boolean used to kill controller thread
     private boolean killThread=false;
     
+    // Hashtable that maps orders to offset in buffer
+    private Hashtable<String, Integer> bufferMap;
+    
+    
     
     /**
      * Constructor
      * @param bufferCapacity 
      */
-    public Controller(int bufferCapacity, Modbus protocol)
+    public Controller(Modbus protocol)
     {
         // if the bufferCapacity is zero
-        if (bufferCapacity == 0)
-        {
-            System.out.println("Buffer created with size zero.\n");
-            System.exit(-1);
-        }
-        
-        else if (null == protocol)
+
+        if (null == protocol)
         {
             System.out.println("No protocol given to Controller");
             System.exit(-1);
         }
+        
         // if all input arguments are OK
         else
         {
             protocolToPLC = protocol;
-            dataToWrite = new BitVector(bufferCapacity);
-            capacity = bufferCapacity;
-            if (!createBuffer(bufferCapacity))
+            capacity = 65;
+            dataToWrite = new BitVector(capacity);
+            if (!createBuffer(capacity))
             {
                 System.out.println("Buffer not created.\n");
                 System.exit(-1);
             }           
         }
     }
+    
+    
+    public boolean initController()
+    {
+        bufferMap = new Hashtable<String, Integer>();
+        return true;
+    }
+    
+    
     
     /**
      * Creates a buffer to write to PLC
@@ -147,26 +157,26 @@ public class Controller extends Thread
     
     /**
      * Updates orders to give to the PLC
-     * @param offset
-     * @param dataToUpdate
+     * @param order
      * @return 
      */
-    public boolean updateBuffer(int offset, int dataToUpdate)
+    public boolean updateBuffer(String order)
     {
-        // if no data to update was given
-        if (dataToUpdate != 0 || dataToUpdate != 1)
+        // if no order was given
+        if (null == order)
         {
-            System.out.println("Wrong data to update.\n");
+            System.out.println("No order was given.\n");
             return false;
         }
         // if all input arguments are OK
         else
         {
+            int bufferOffset = bufferMap.get(order);
+           
             // executes when you hold the mutex
             synchronized(mutex)
             {
-                // updates the buffer
-                this.factoryBuffer[offset] = dataToUpdate;
+                factoryBuffer[bufferOffset] = 1;
                 return true;
             }
         }

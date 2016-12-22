@@ -24,8 +24,6 @@ import net.wimpi.modbus.util.BitVector;
  */
 public final class Modbus
 {
-    
-    
     public String ID;
     private String address;
     private int port;
@@ -53,41 +51,14 @@ public final class Modbus
     private int startWritingReference = 0;
     // Bit Vector to Write in PLC
     private BitVector bitsToWrite;
-    private Controller controlUnit;
-    
-    /**
-     * Constructor
-     * @param controlObject 
-     */
-    public Modbus(Controller controlObject) 
-    {
-        // if no conrol object was given
-        if (null == controlObject)
-        {
-            System.out.println("no controller given.\n");
-            System.exit(-1);
-        }
-            
-        // if all inut arguments are OK
-        else
-        {
-            controlUnit = controlObject;
-            
-            // initializes modbus protocol
-            this.initModbus();
-        }
-        
-    }
     
     /**
      * Constructor
      */
     public Modbus() 
     {
-        this.initModbus();
-
-    }
-    
+            this.initModbus();
+    } 
     /**
      * Gets number of bits to read/write
      * @return 

@@ -7,9 +7,7 @@ package mes;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import mes.graph.exception.InvalidConstructionException;
-import net.wimpi.modbus.util.BitVector;
 
 
 /**
@@ -53,10 +51,9 @@ public class systemManager
        
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
-        Controller controlUnit = new Controller(30);
-        
+     
         // creates new protocol to PLC
-        Modbus protocolToPLC = new Modbus(controlUnit);
+        Modbus protocolToPLC = new Modbus();
         // sets the Modbus connection   
         if (protocolToPLC.setModbusConnection())
         {
@@ -80,7 +77,9 @@ public class systemManager
         {
             System.out.println("Modbus connection failed.\n");
             System.exit(-1);
-        }      
+        }
+        
+        Controller controlUnit = new Controller(protocolToPLC);
      }
        
         

@@ -13,14 +13,13 @@ public class Block {
     
     public String ID;
     private String type;
-    
     private String finalType;
-    
     private String position;
     private String status;
     private String destination;
     
     public String operation;
+    public String enterOrder;
     
     /**
      * Constructor

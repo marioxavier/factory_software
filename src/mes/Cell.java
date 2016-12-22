@@ -49,7 +49,7 @@ class Producer implements Runnable
                     blockToTransport.updateStatus("producing");
                     
                     // writes in the buffer
-                    cellUnit.controlUnit.updateBuffer(blockToTransport.getPosition(), "block");
+                    cellUnit.controlUnit.updateBuffer(blockToTransport.operation);
                 }
                 else if(blockToTransport.updateStatus("producing"));
                 {

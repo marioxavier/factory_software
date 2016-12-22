@@ -49,7 +49,7 @@ class Transporter implements Runnable
             if(blockToFollow.isDestination())
             {
                 // writes in the buffer
-                transportUnit.controlUnit.updateBuffer(blockToFollow.getPosition(), "block");
+                transportUnit.controlUnit.updateBuffer(blockToFollow.enterOrder);
                     
                 // updates block status
                 blockToFollow.updateStatus("waiting");                    
