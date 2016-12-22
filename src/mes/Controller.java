@@ -6,6 +6,7 @@
 package mes;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import net.wimpi.modbus.util.BitVector;
 
@@ -91,38 +92,49 @@ public class Controller extends Thread
     // boolean used to kill controller thread
     private boolean killThread=false;
     
+    // Hashtable that maps orders to offset in buffer
+    private Hashtable<String, Integer> bufferMap;
+    
+    
     
     /**
      * Constructor
      * @param bufferCapacity 
      */
-    public Controller(int bufferCapacity, Modbus protocol)
+    public Controller(Modbus protocol)
     {
         // if the bufferCapacity is zero
-        if (bufferCapacity == 0)
-        {
-            System.out.println("Buffer created with size zero.\n");
-            System.exit(-1);
-        }
-        
-        else if (null == protocol)
+
+        if (null == protocol)
         {
             System.out.println("No protocol given to Controller");
             System.exit(-1);
         }
+        
         // if all input arguments are OK
         else
         {
             protocolToPLC = protocol;
-            dataToWrite = new BitVector(bufferCapacity);
-            capacity = bufferCapacity;
-            if (!createBuffer(bufferCapacity))
+            capacity = 65;
+            dataToWrite = new BitVector(capacity);
+            if (!createBuffer(capacity))
             {
                 System.out.println("Buffer not created.\n");
                 System.exit(-1);
             }           
         }
     }
+    
+    
+    public boolean initController()
+    {
+        bufferMap = new Hashtable<String, Integer>();
+        
+        
+        
+    }
+    
+    
     
     /**
      * Creates a buffer to write to PLC
@@ -151,10 +163,10 @@ public class Controller extends Thread
      * @param classType
      * @return 
      */
-    public boolean updateBuffer(int offset, int dataToUpdate)
+    public boolean updateBuffer(String order)
     {
         //WriteModbus bufferElement = new WriteModbus();
-        BitVector dataToWrite = new BitVector(16);
+        //BitVector dataToWrite = new BitVector(16);
                 
         // if no data to update was given
         if (dataToUpdate!=0 || dataToUpdate!=1)
@@ -179,10 +191,9 @@ public class Controller extends Thread
                 // updates the buffer
                 this.factoryBuffer[offset] = dataToUpdate;
                 
+                dataToWrite.setBit(offset, dataToUpdate!=0);
                 
-                
-                
-                
+
                 return true;
             }
 
