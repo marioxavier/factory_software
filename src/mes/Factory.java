@@ -163,7 +163,7 @@ public class Factory extends Thread
         
         // creating empty control unit to be set by system Manager
         controlUnit = new Controller();
-             
+        
         /*
         // resets the first conveyor
         BitVector b = new BitVector(8);
