@@ -910,63 +910,7 @@ public class Factory extends Thread
            newPosition = pastBlockPosition;
         }
       
-        return newPosition;
-        
-        
-        /**
-        // loops the block array
-        for (Block pastBlock : blocksInFactory)
-        {
-            // if the block exists in the array
-            if (pastBlock.ID.equals(blockToUpdate.ID))
-            {
-                
-                String pastBlockPosition = pastBlock.getPosition();
-                
-                
-                int pastConveyor = Integer.parseInt(pastBlockPosition.split("\\.")[1]);
-                int nextConveyor = pastConveyor + 1;
-                
-                // reads the factory and stores it in factoryDataArray
-                readFactory();
-                char[] factoryDataArray = factoryData.toCharArray();
-                
-                String[] memoryOfPastConveyor = 
-                        transportMemoryIndexes[pastConveyor].split(",");
-                
-                String[] memoryOfNextConveyor = 
-                        transportMemoryIndexes[nextConveyor].split(",");
-                
-                char pastConveyorSensor = 
-                        factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
-                char nextConveyorSensor = 
-                        factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
-                
-
-                System.out.println(pastConveyorSensor);
-                System.out.println(nextConveyorSensor);
-                
-                // if block changed position
-                if (Character.getNumericValue(pastConveyorSensor)==0 && 
-                        Character.getNumericValue(nextConveyorSensor)==1)
-                {
-                    newPosition = "0."+Integer.toString(nextConveyor);
-                }
-                // if block didn't change position
-                else
-                {
-                    newPosition = pastBlockPosition;
-                    return newPosition;    
-                }
-            }
-            // if the given does not exist
-            else
-            {
-                System.out.println("Couldn't find given block in factory.\n");
-                return null;
-            }
-        }
-        * */
+        return newPosition;        
     }
 
     /**
@@ -991,20 +935,8 @@ public class Factory extends Thread
             protocolToPLC.writeModbus(144, blockToAdd);
             */
             
-            this.controlUnit.updateBuffer("Create "+blockType);
-
-            System.out.println("passou a frente");
+            this.controlUnit.updateBuffer("Create P"+blockType);
             
-            try
-            {
-                TimeUnit.SECONDS.sleep(5);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-
-
         Block newBlock = new Block(blockType, finalBlockType, blockDestination,
                 blockID, operation);
    
@@ -1366,49 +1298,63 @@ public class Factory extends Thread
         
         // creates bitvector to insert in hastable
         BitVector blockBitVector = new BitVector(8);
-        
         // inserting P1 and corresponding BitVector
         blockBitVector.setBit(0, true);
         this.blockBitvectorTable.put("P1", blockBitVector);
-
+        
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector1 = new BitVector(8);
         // inserting P2 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1, true);
-        blockBitvectorTable.put("P2", blockBitVector);
-
+        blockBitVector1.setBit(1, true);
+        blockBitvectorTable.put("P2", blockBitVector1);
+        
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector2 = new BitVector(8);
         // inserting P3 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockBitvectorTable.put("P3", blockBitVector);
+        blockBitVector2.setBit(1, true);
+        blockBitVector2.setBit(0, true);
+        blockBitvectorTable.put("P3", blockBitVector2);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector3 = new BitVector(8);
         // inserting P4 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1,false);
-        blockBitVector.setBit(2,true);
-        blockBitvectorTable.put("P4", blockBitVector);
+        blockBitVector3.setBit(2, true);
+        blockBitvectorTable.put("P4", blockBitVector3);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector4 = new BitVector(8);
         // inserting P5 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockBitvectorTable.put("P5", blockBitVector);
+        blockBitVector4.setBit(0, true);
+        blockBitVector4.setBit(2, true);
+        blockBitvectorTable.put("P5", blockBitVector4);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector5 = new BitVector(8);
         // inserting P6 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1, true);
-        blockBitvectorTable.put("P6", blockBitVector);
+        blockBitVector5.setBit(2, true);
+        blockBitVector5.setBit(1, true);
+        blockBitvectorTable.put("P6", blockBitVector5);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector6 = new BitVector(8);
         // inserting P7 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockBitvectorTable.put("P7", blockBitVector);
+        blockBitVector6.setBit(2, true);
+        blockBitVector6.setBit(1, true);
+        blockBitVector6.setBit(0, true);
+        blockBitvectorTable.put("P7", blockBitVector6);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector7 = new BitVector(8);
         // inserting P8 and corresponding BitVector
-        blockBitVector.setBit(0, false);
-        blockBitVector.setBit(1,false);
-        blockBitVector.setBit(2,false);
-        blockBitVector.setBit(3,true);
-        blockBitvectorTable.put("P8", blockBitVector);
+        blockBitVector7.setBit(3,true);
+        blockBitvectorTable.put("P8", blockBitVector7);
 
+        // creates bitvector to insert in hastable
+        BitVector blockBitVector8 = new BitVector(8);
         // inserting P9 and corresponding BitVector
-        blockBitVector.setBit(0, true);
-        blockBitvectorTable.put("P9", blockBitVector);
+        blockBitVector8.setBit(3,true);
+        blockBitVector8.setBit(0, true);
+        blockBitvectorTable.put("P9", blockBitVector8);
     }
    
    /**
