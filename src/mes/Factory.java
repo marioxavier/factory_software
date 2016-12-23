@@ -49,7 +49,7 @@ public class Factory extends Thread
             //printConveyorStatus();
             //System.out.println(conveyorsTable.get("0.0").getSensor());
 
-            if(firstConveyorReady)
+            if(firstConveyorReady == true)
             {
                 try
                 {
@@ -57,12 +57,30 @@ public class Factory extends Thread
                     if (null != nextOrder)
                         this.addBlock(nextOrder.originalType,nextOrder.finalType,
                                 "0.15", nextOrder.ID, nextOrder.blockOperation);
+                    
                         
                 }
                 catch(Exception s)
                 {
-                }                
+                }
             }
+            
+            else
+            {
+                System.out.println("esta no else");
+                /*
+                try
+                    {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    catch(Exception Ex)
+                    {
+                        System.out.println("UpdateBlock:: Error in sleep.\n");
+                    }
+                */
+            }
+
+            
         }
         
         /*
