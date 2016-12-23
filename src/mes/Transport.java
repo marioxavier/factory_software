@@ -15,8 +15,9 @@ class Transporter implements Runnable
 {
     Transport transportUnit;
     Block blockToFollow;
+    DecisionMaker decisionUnit;
     
-    public Transporter(Transport transportObject, Block blockToTransport)
+    public Transporter(Transport transportObject, Block blockToTransport, DecisionMaker decisionObject)
     {
         // if no transport object was given
         if (null == transportObject)
@@ -32,7 +33,8 @@ class Transporter implements Runnable
         else 
         {
             transportUnit = transportObject;
-            blockToFollow = blockToTransport;    
+            blockToFollow = blockToTransport;
+            decisionUnit = decisionObject;
         }
     }
     
@@ -46,14 +48,22 @@ class Transporter implements Runnable
         // loops forever
         while(true)
         {
-            if(blockToFollow.isDestination())
+            while(!blockToFollow.isDestination())
             {
-                // writes in the buffer
-                transportUnit.controlUnit.updateBuffer(blockToFollow.enterOrder);
+               blockToFollow.setDestination(decisionUnit.decideDestination());
+               
+               switch(blockToFollow.getPosition())
+               {
+                   case "0.2":
+                    transportUnit.controlUnit.updateBuffer();
+                       
+               }
+            }
+            // writes in the buffer
+            transportUnit.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     
-                // updates block status
-                blockToFollow.updateStatus("waiting");                    
-            }                    
+            // updates block status
+            blockToFollow.updateStatus("waiting");  
         }
     }         
 }
@@ -132,8 +142,9 @@ public class Transport extends Thread
      * @param blockToTransport 
      */
     public void startTransport(Block blockToTransport)
-    {        
-        Runnable transporter = new Transporter(this, blockToTransport);
+    {
+        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
+        Runnable transporter = new Transporter(this, blockToTransport, decisionUnit);
         new Thread(transporter).start();       
     }
    
