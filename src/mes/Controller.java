@@ -69,10 +69,6 @@ class WriteModbus
     }
 }
 
-
-
-
-
 /**
  *
  * @author Utilizador
@@ -255,6 +251,7 @@ public class Controller extends Thread
             if ("Create".equals(orderArray[0]))
             {
                 BitVector blockBitvector = this.blockBitvectorTable.get(orderArray[1]);
+                // updates factory buffer
                 factoryBuffer[bufferOffset] = blockBitvector.toString();
                 dataToWrite.setBit(bufferOffset, blockBitvector.getBit(0));
                 dataToWrite.setBit(bufferOffset + 1, blockBitvector.getBit(1));
@@ -277,7 +274,7 @@ public class Controller extends Thread
                 protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.MILLISECONDS.sleep(1500);
                 }
                 catch(Exception Ex)
                 {
