@@ -94,6 +94,10 @@ public class Controller extends Thread
     private Hashtable<String, Integer> bufferMap;
     private Hashtable<String, BitVector> blockBitvectorTable;
     
+    public Controller()
+    {
+        
+    }
     
     /**
      * Constructor
@@ -235,7 +239,7 @@ public class Controller extends Thread
      * @return 
      */
     public boolean updateBuffer(String order)
-    {
+    {        
         // if no order was given
         if (null == order)
         {

@@ -75,11 +75,15 @@ public class systemManager
                 // creates an instance of the factory
                 Factory virtualFactory = new Factory(protocolToPLC, manager);
                 // starts the factory thread
-                virtualFactory.start();  
+                
                 
                    
                 Controller controlUnit = new Controller(protocolToPLC, virtualFactory);
                 controlUnit.initController();
+                
+                virtualFactory.setControlUnit(controlUnit);
+                
+                virtualFactory.start();
                 
                 /*
                 BitVector vectorOfBits = new BitVector(8);

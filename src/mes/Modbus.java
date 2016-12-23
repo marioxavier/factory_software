@@ -450,28 +450,33 @@ public final class Modbus
     {
         if(setStartWritingReference(offset))
         {
-            System.out.println("DEBUG:: set start writing reference");
+            //System.out.println("DEBUG:: set start writing reference");
             //TO DO
         }
         
         if (setBitsToWrite(vectorOfBits))
         {
-            System.out.println("DEBUG:: set bits to write");
+            //System.out.println("DEBUG:: set bits to write");
             //TO DO
         }
         
         // if a write request was created
         if (setModbusWriteRequest())
         {
-            System.out.println("DEBUG:: modbus write request");
+            //System.out.println("DEBUG:: modbus write request");
             // if a write transaction was created
             if (setModbusTransaction("write"))
             {
-                System.out.println("DEBUG:: set modbus transaction");
+                //System.out.println("DEBUG:: set modbus transaction");
                 try
                 {
+                    modbusTransaction.setCheckingValidity(false);
                     // executes a write
-                    modbusTransaction.execute();
+                    synchronized(modbusTransaction)
+                    {
+                        modbusTransaction.execute();
+                    }
+                    
                 }          
                 catch(Exception ex)
                 {
@@ -479,7 +484,7 @@ public final class Modbus
                     System.exit(1);
                 }
                 
-                System.out.println("DEBUG:: depois do transaction execute");
+                //System.out.println("DEBUG:: depois do transaction execute");
                 
                 modbusWriteResponse = (WriteMultipleCoilsResponse) modbusTransaction.getResponse();
                 

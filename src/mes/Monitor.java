@@ -23,16 +23,11 @@ public class Monitor extends Thread
      * @param protocol
      * @param currentFactory 
      */
-    public Monitor(Modbus protocol, Factory currentFactory)
+    public Monitor(Factory currentFactory)
     {
-        // if protocolModbus is empty
-        if (null == protocol)
-        {
-            System.out.println("No protocol was given.\n");
-            System.exit(-1);
-        }
+        
         // if some protocol was given
-        else if (null == currentFactory)
+        if (null == currentFactory)
         {
             System.out.println("No factory was given.\n");
             System.exit(-1);
@@ -42,7 +37,18 @@ public class Monitor extends Thread
         {
             // initializes variables
             virtualFactory = currentFactory;
-            protocolToPLC = protocol;
+            protocolToPLC = new Modbus();
+            
+            if (protocolToPLC.setModbusConnection())
+            {
+                System.out.println("Modbus Monitor connection on.\n");
+                // opens the modbus connection
+                if(protocolToPLC.openConnection())
+                {
+                    System.out.println("Connection with factory opened.\n");
+                }
+            }
+
             inputData = null;
             outputData = null;
         } 
@@ -62,7 +68,7 @@ public class Monitor extends Thread
         {
             try
             {
-                
+
                 // reads sensors from the factory
                 if (!this.readSensors())
                 {
@@ -84,11 +90,11 @@ public class Monitor extends Thread
                     System.out.println("MONITOR_THREAD:: Error updating block position.\n");
                     System.exit(-1);
                 }
-                
-                
+               
                 
                 // checks if factory is ready to receive a new block
-                //this.virtualFactory.isReady(inputData + outputData);
+                this.virtualFactory.isReady(inputData + outputData);
+                
                 
             }
             catch(Exception s)
