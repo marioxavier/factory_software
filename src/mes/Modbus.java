@@ -450,20 +450,24 @@ public final class Modbus
     {
         if(setStartWritingReference(offset))
         {
+            System.out.println("DEBUG:: set start writing reference");
             //TO DO
         }
         
         if (setBitsToWrite(vectorOfBits))
         {
+            System.out.println("DEBUG:: set bits to write");
             //TO DO
         }
         
         // if a write request was created
         if (setModbusWriteRequest())
         {
+            System.out.println("DEBUG:: modbus write request");
             // if a write transaction was created
             if (setModbusTransaction("write"))
             {
+                System.out.println("DEBUG:: set modbus transaction");
                 try
                 {
                     // executes a write
@@ -474,6 +478,8 @@ public final class Modbus
                     System.out.println(ex);
                     System.exit(1);
                 }
+                
+                System.out.println("DEBUG:: depois do transaction execute");
                 
                 modbusWriteResponse = (WriteMultipleCoilsResponse) modbusTransaction.getResponse();
                 

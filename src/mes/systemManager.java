@@ -8,6 +8,7 @@ package mes;
 import java.sql.SQLException;
 import java.util.*;
 import mes.graph.exception.InvalidConstructionException;
+import net.wimpi.modbus.util.BitVector;
 
 
 /**
@@ -80,7 +81,12 @@ public class systemManager
                 Controller controlUnit = new Controller(protocolToPLC, virtualFactory);
                 controlUnit.initController();
                 
+                /*
+                BitVector vectorOfBits = new BitVector(8);
+                vectorOfBits.setBit(0, true);
                 
+                protocolToPLC.writeModbus(144, vectorOfBits);
+                */
                 
                 //controlUnit.updateBuffer("KeepGoing C1");
             }

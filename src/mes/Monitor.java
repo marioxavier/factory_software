@@ -88,7 +88,7 @@ public class Monitor extends Thread
                 
                 
                 // checks if factory is ready to receive a new block
-                this.virtualFactory.isReady(inputData + outputData);
+                //this.virtualFactory.isReady(inputData + outputData);
                 
             }
             catch(Exception s)
