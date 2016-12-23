@@ -57,6 +57,7 @@ public class Factory extends Thread
                     if (null != nextOrder)
                         this.addBlock(nextOrder.originalType,nextOrder.finalType,
                                 "0.15", nextOrder.ID, nextOrder.blockOperation);
+                        
                 }
                 catch(Exception s)
                 {
@@ -925,18 +926,10 @@ public class Factory extends Thread
     public boolean addBlock(String blockType, String finalBlockType, 
             String blockDestination, String blockID, String operation)
     {
+        // updates buffer and writes to PLC
+        this.controlUnit.updateBuffer("Create P" + blockType);
         
-            System.out.println("DEBUG:: entrou no addBlock");
-
-            /*
-            BitVector blockToAdd = new BitVector(8);
-
-            blockToAdd.setBit(2,true);
-            protocolToPLC.writeModbus(144, blockToAdd);
-            */
-            
-            this.controlUnit.updateBuffer("Create P"+blockType);
-            
+        // creates new Block object
         Block newBlock = new Block(blockType, finalBlockType, blockDestination,
                 blockID, operation);
    
@@ -952,6 +945,8 @@ public class Factory extends Thread
             // adds a block to the hashtable
             this.blocksInFactory.put(newBlock.ID, newBlock);
             updateNumberOfBlocks("+");
+            // creates a transporter for this block
+            inputTransport.startTransport(newBlock);
             return true;
         }
     }

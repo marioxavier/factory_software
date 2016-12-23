@@ -19,11 +19,12 @@ public class Block {
     private String destination;
     
     public String operation;
-    public String enterOrder;
+    private String enterOrder;
     
     /**
      * Constructor
      * @param blockType
+     * @param finalBlockType
      * @param blockDestination
      * @param blockID 
      */
@@ -198,6 +199,8 @@ public class Block {
         else
         {
             destination = blockDestination;
+            // updates order to write to PLC;
+            this.setEnterOrder();
             return true;
         }
     }
@@ -210,5 +213,24 @@ public class Block {
     {
         // if position is equal to destination returns true
         return position.equals(destination);
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public String getEnterOrder()
+    {
+        return this.enterOrder;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public boolean setEnterOrder()
+    { 
+        enterOrder = "Enter " + this.destination;
+        return true;
     }
 }

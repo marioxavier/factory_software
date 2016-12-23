@@ -262,12 +262,20 @@ public class Controller extends Thread
                 dataToWrite.setBit(bufferOffset + 6, blockBitvector.getBit(6));
                 dataToWrite.setBit(bufferOffset + 7, blockBitvector.getBit(7));
             }
-            else
+            else if ("Enter".equals(orderArray[0]))
             {
                 factoryBuffer[bufferOffset] = "1";   
-                dataToWrite.setBit(bufferOffset, true);                
-            } 
-           
+                dataToWrite.setBit(bufferOffset, true);
+            }
+            else if ("KeepGoing".equals(orderArray[0]))
+            {
+                factoryBuffer[bufferOffset] = "1";   
+                dataToWrite.setBit(bufferOffset, true);
+            }
+            else
+                factoryBuffer[bufferOffset] = "1";   
+                dataToWrite.setBit(bufferOffset, true); 
+                
             // executes when you hold the mutex
             synchronized(mutex)
             {            
