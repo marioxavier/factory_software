@@ -47,8 +47,7 @@ public class Factory extends Thread
         while(!killThread)
         {
             //printConveyorStatus();
-            //System.out.println(conveyorsTable.get("0.0").getSensor());
-            if(firstConveyorReady)
+            if(true)
             {
                 try
                 {
@@ -977,22 +976,11 @@ public class Factory extends Thread
         //System.out.println(blockVector.get(newBlock.getType()));
 
         BitVector blockToAdd = new BitVector(8);
+        
+        blockToAdd.setBit(3, true);
         protocolToPLC.writeModbus(144, blockToAdd);
-
-        // Needs to wait before sending consecutive packets to PLC
-        try
-        {
-            TimeUnit.SECONDS.sleep(2);
-        }
-        catch(Exception Ex)
-        {
-            System.out.println("error in sleep " + Ex);
-        }
-
-        blockToAdd.setBit(0, true);
-        protocolToPLC.writeModbus(144, blockToAdd);
-
-        // Needs to wait before sending consecutive packets to PLC
+        
+         // Needs to wait before sending consecutive packets to PLC
         try
         {
             TimeUnit.SECONDS.sleep(2);
@@ -1001,9 +989,12 @@ public class Factory extends Thread
         {
             System.out.println("error in sleep");
         }
-
-        blockToAdd.setBit(0, false);
+        
+        // resets memory in PLC
+        blockToAdd = new BitVector(8);       
         protocolToPLC.writeModbus(144, blockToAdd);
+
+        
 
         // Needs to wait before sending consecutive packets to PLC
         try

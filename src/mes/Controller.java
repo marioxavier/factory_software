@@ -235,7 +235,7 @@ public class Controller extends Thread
      * @return 
      */
     public boolean updateBuffer(String order)
-    {
+    {        
         // if no order was given
         if (null == order)
         {

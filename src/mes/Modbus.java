@@ -466,6 +466,7 @@ public final class Modbus
             {
                 try
                 {
+                    modbusTransaction.setCheckingValidity(false);
                     // executes a write
                     modbusTransaction.execute();
                 }          

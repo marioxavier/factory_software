@@ -62,7 +62,7 @@ public class Monitor extends Thread
         {
             try
             {
-
+/*
                 // reads sensors from the factory
                 if (!this.readSensors())
                 {
@@ -84,11 +84,11 @@ public class Monitor extends Thread
                     System.out.println("MONITOR_THREAD:: Error updating block position.\n");
                     System.exit(-1);
                 }
-                
-                
+               
                 
                 // checks if factory is ready to receive a new block
                 this.virtualFactory.isReady(inputData + outputData);
+                */
                 
             }
             catch(Exception s)
