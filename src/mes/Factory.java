@@ -991,20 +991,8 @@ public class Factory extends Thread
             protocolToPLC.writeModbus(144, blockToAdd);
             */
             
-            this.controlUnit.updateBuffer("Create "+blockType);
-
-            System.out.println("passou a frente");
+            this.controlUnit.updateBuffer("Create P"+blockType);
             
-            try
-            {
-                TimeUnit.SECONDS.sleep(5);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-
-
         Block newBlock = new Block(blockType, finalBlockType, blockDestination,
                 blockID, operation);
    

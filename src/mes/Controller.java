@@ -8,6 +8,7 @@ package mes;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import net.wimpi.modbus.util.BitVector;
 
 /**
@@ -120,7 +121,7 @@ public class Controller extends Thread
         }
         else
         {
-            protocolToPLC = protocol;
+            this.protocolToPLC = protocol;
             capacity = 65;
             dataToWrite = new BitVector(capacity);
             blockBitvectorTable = virtualFactory.getBlockBitvectorTable();
@@ -273,12 +274,19 @@ public class Controller extends Thread
             // executes when you hold the mutex
             synchronized(mutex)
             {            
-                protocolToPLC.writeModbus(0, dataToWrite);
+                protocolToPLC.writeModbus(88, dataToWrite);
+                try
+                {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                catch(Exception Ex)
+                {
+                    System.out.println("error in sleep");
+                }
                 // resets data to write
                 dataToWrite = new BitVector(capacity);
+                protocolToPLC.writeModbus(88, dataToWrite);
                 return true;
-                
-                
             }
         }
     }
