@@ -32,12 +32,12 @@ public class systemManager
     
     public static void main (String[] args) throws SQLException, InvalidConstructionException
     { 
-       // creates new instance of database 
-       Database systemDatabase = new Database();
-       // initializes database
-       if(systemDatabase.initDatabase("org.postgresql.Driver", 
+        // creates new instance of database 
+        Database systemDatabase = new Database();
+        // initializes database
+        if(systemDatabase.initDatabase("org.postgresql.Driver", 
                 "jdbc:postgresql://dbm.fe.up.pt/sinf15g44"))
-       {
+        {
             // sets database credentials
             if(systemDatabase.setCredentials("sinf45g44", "123"))
             {
@@ -48,10 +48,11 @@ public class systemManager
                     //db.executeQuery("CREATE TABLE mes.TEST_FOUR();");
                 }
             }
-       }
+        }
        
         // creates new instance of system manager
         systemManager manager = new systemManager(systemDatabase);
+        
         // creates UDP protocol object
         UDP protocolToERP = new UDP(manager);
         // initializes UDP
@@ -70,18 +71,17 @@ public class systemManager
             {
                 System.out.println("Connection with factory opened.\n");
                 
-                /*It only makes sense to keep running if modbus conection is done*/
-                
                 // creates an instance of the factory
                 Factory virtualFactory = new Factory(protocolToPLC, manager);
-                // starts the factory thread
                 
-                
-                   
+                // creates control unit
                 Controller controlUnit = new Controller(protocolToPLC, virtualFactory);
+                // inititializing control unit
                 controlUnit.initController();
                 
+                // sets the control unit
                 virtualFactory.setControlUnit(controlUnit);
+                // starts the factory thread
                 virtualFactory.start();
             }
             else

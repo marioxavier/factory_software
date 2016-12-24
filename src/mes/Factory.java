@@ -170,7 +170,7 @@ public class Factory extends Thread
         machines = new Machine[8];
         
         // creating empty control unit to be set by system Manager
-        controlUnit = new Controller();
+        controlUnit = new Controller(this.protocolToPLC, this);
              
         /*
         // resets the first conveyor
@@ -221,7 +221,7 @@ public class Factory extends Thread
      */
     public void isReady(String factoryData)
     {
-        System.out.println("DEBUG:: Entro no isReady (Factory).\n");
+        //System.out.println("DEBUG:: Entro no isReady (Factory).\n");
         
         // if factory data was not given
         if (null == factoryData)
@@ -750,6 +750,8 @@ public class Factory extends Thread
         {
             // creates input transport
             inputTransport = new Transport("input", this, this.protocolToPLC);
+            // sets the control unit
+            inputTransport.setControlUnit(this.getControlUnit());
             
             // error creating input Transport unit
             if (null == inputTransport)
@@ -858,13 +860,12 @@ public class Factory extends Thread
      */
     public String getNewPosition(Block blockToUpdate)
     {
-        System.out.println("DEBUG:: Actualiza posição.");
-        String newPosition;
+        //System.out.println("DEBUG:: Actualiza posição.");
         
         
         // checks the position the block was in
         String currentBlockPosition = blockToUpdate.getPosition();
-        
+       
         // stores the conveyor index that the block was in
         int currentConveyorPosition = Integer.parseInt(currentBlockPosition.split("\\.")[1]);
         
@@ -894,7 +895,7 @@ public class Factory extends Thread
         else
         {
         }
-        System.out.println(currentBlockPosition);
+        System.out.println("Posição: " + currentBlockPosition);
         return currentBlockPosition;        
     }
 

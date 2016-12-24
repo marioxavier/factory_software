@@ -17,7 +17,7 @@ class Transporter implements Runnable
     Block blockToFollow;
     DecisionMaker decisionUnit;
     Factory virtualFactory;
-    Controller controlUnit = new Controller();
+    Controller controlUnit;
     
     public Transporter(Transport transportObject, Block blockToTransport, 
             DecisionMaker decisionObject, Factory currentFactory)
@@ -62,8 +62,7 @@ class Transporter implements Runnable
             
             if(!blockToFollow.isDestination())
             {
-               System.out.println("DEBUG:: Não é destino.");
-               
+               //System.out.println("DEBUG:: Não é destino.");
                // decides destination
                blockToFollow.setDestination(decisionUnit.decideDestination());
                
@@ -71,22 +70,22 @@ class Transporter implements Runnable
                switch(blockToFollow.getPosition())
                {
                     case "0.2":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T2");
+                        this.controlUnit.updateBuffer("KeepGoing T2");
                         break;
                     case "0.5":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T5");
+                        this.controlUnit.updateBuffer("KeepGoing T5");
                         break;
                     case "0.7":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T7");
+                        this.controlUnit.updateBuffer("KeepGoing T7");
                         break;
                     case "0.10":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T10");
+                        this.controlUnit.updateBuffer("KeepGoing T10");
                         break;
                     case "0.12":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T12");
+                        this.controlUnit.updateBuffer("KeepGoing T12");
                         break;
                     case "0.14":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing T14");
+                        this.controlUnit.updateBuffer("KeepGoing T14");
                         break;                       
                }
             }
@@ -94,7 +93,7 @@ class Transporter implements Runnable
             else
             {
                 // when block is at his destination, gives enter order and writes in the buffer
-                transportUnit.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
+                this.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     
                 // updates block status
                 blockToFollow.updateStatus("waiting");  
@@ -143,7 +142,8 @@ public class Transport extends Thread
             virtualFactory = currentFactory;
             protocolToPLC = protocol;
             blocksInFactory = currentFactory.getBlocksInFactory();
-            controlUnit = currentFactory.getControlUnit();
+            // creating empty control unit to be set by Factory
+            controlUnit = new Controller(this.protocolToPLC, virtualFactory);
             switch(transportType)
             {
                 case "input":
