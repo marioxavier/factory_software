@@ -5,69 +5,9 @@
  */
 package mes;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.wimpi.modbus.util.BitVector;
-
-/**
- * Implements the element of a buffer with orders from MES to PLC
- * @author Mário
- */
-class WriteModbus
-{
-    private BitVector mesOrder;
-    private int offset;
-    
-    /**
-     * Sets factory buffer
-     * @param newOrder
-     * @return 
-     */
-    public boolean setMesOrder(BitVector newOrder)
-    {
-        if (null == newOrder)
-        {
-            System.out.println("No bitvector given.\n");
-            return false;
-        }
-        else
-        {
-            this.mesOrder = newOrder;
-            return true;
-        }
-    }
-    
-   /**
-    * Gets MES order
-    * @return 
-    */
-    public BitVector getMesOrder()
-    {
-        return mesOrder;
-    }
-    
-    /**
-     * Sets the new offset
-     * @param newOffset
-     * @return 
-     */
-    public boolean setOffset(int newOffset)
-    {
-        this.offset = newOffset;
-        return true;
-    }
-    
-    /**
-     * Gets offset
-     * @return 
-     */
-    public int getOffset()
-    {
-        return offset;
-    }
-}
 
 /**
  *
@@ -90,12 +30,7 @@ public class Controller extends Thread
     // Hashtable that maps orders to offset in buffer
     private Hashtable<String, Integer> bufferMap;
     private Hashtable<String, BitVector> blockBitvectorTable;
-    
-    public Controller()
-    {
-        
-    }
-    
+
     /**
      * Constructor
      * @param protocol
@@ -103,18 +38,19 @@ public class Controller extends Thread
      */
     public Controller(Modbus protocol, Factory virtualFactory)
     {
+        // if no protocol was given
         if (null == protocol)
         {
             System.out.println("No protocol given to Controller");
             System.exit(-1);
-        }
-        
-        // if all input arguments are OK
+        }        
+        // if no factory was given
         else if (null == virtualFactory)
         {
             System.out.println("No block type map given.\n");
             System.exit(-1);
         }
+        // if all input arguments are OK
         else
         {
             this.protocolToPLC = protocol;
@@ -129,17 +65,12 @@ public class Controller extends Thread
         }
     }
     
-    
+    /**
+     * Initializes buffer from factory
+     * @return 
+     */
     public boolean initController()
-    { 
-            capacity = 65;
-            dataToWrite = new BitVector(capacity);            
-            if (!createBuffer(capacity))
-            {
-                System.out.println("Buffer not created.\n");
-                System.exit(-1);
-            }
-        
+    {
         bufferMap = new Hashtable<>();
 
         bufferMap.put("Enter T2",0);
@@ -256,47 +187,62 @@ public class Controller extends Thread
         {
             int bufferOffset = this.bufferMap.get(order);
             String[] orderArray = order.split(" "); 
-            if ("Create".equals(orderArray[0]))
-            {
-                BitVector blockBitvector = this.blockBitvectorTable.get(orderArray[1]);
-                // updates factory buffer
-                factoryBuffer[bufferOffset] = blockBitvector.toString();
-                dataToWrite.setBit(bufferOffset, blockBitvector.getBit(0));
-                dataToWrite.setBit(bufferOffset + 1, blockBitvector.getBit(1));
-                dataToWrite.setBit(bufferOffset + 2, blockBitvector.getBit(2));
-                dataToWrite.setBit(bufferOffset + 3, blockBitvector.getBit(3));
-                dataToWrite.setBit(bufferOffset + 4, blockBitvector.getBit(4));
-                dataToWrite.setBit(bufferOffset + 5, blockBitvector.getBit(5));
-                dataToWrite.setBit(bufferOffset + 6, blockBitvector.getBit(6));
-                dataToWrite.setBit(bufferOffset + 7, blockBitvector.getBit(7));
-            }
-            else if ("Enter".equals(orderArray[0]))
-            {
-                System.out.println("DEBUG:: Ordem de entrada!");
-                
-                this.factoryBuffer[bufferOffset] = "1";   
-                this.dataToWrite.setBit(bufferOffset, false);
-            }
-            else if ("KeepGoing".equals(orderArray[0]))
-            {
-                this.factoryBuffer[bufferOffset] = "1";   
-                this.dataToWrite.setBit(bufferOffset, false);
-            }
-            else
-                this.factoryBuffer[bufferOffset] = "1";   
-                this.dataToWrite.setBit(bufferOffset, true); 
-                
+            if (null != orderArray[0])
+                switch (orderArray[0]) 
+                {
+                    case "Create":
+                        System.out.println("DEBUG:: Ordem de criação de peça.");
+                        BitVector blockBitvector = this.blockBitvectorTable.get(orderArray[1]);
+                        // updates factory buffer
+                        factoryBuffer[bufferOffset] = blockBitvector.toString();
+                        // sets the bitvector to write
+                        dataToWrite.setBit(bufferOffset, blockBitvector.getBit(0));
+                        dataToWrite.setBit(bufferOffset + 1, blockBitvector.getBit(1));
+                        dataToWrite.setBit(bufferOffset + 2, blockBitvector.getBit(2));
+                        dataToWrite.setBit(bufferOffset + 3, blockBitvector.getBit(3));
+                        dataToWrite.setBit(bufferOffset + 4, blockBitvector.getBit(4));
+                        dataToWrite.setBit(bufferOffset + 5, blockBitvector.getBit(5));
+                        dataToWrite.setBit(bufferOffset + 6, blockBitvector.getBit(6));
+                        dataToWrite.setBit(bufferOffset + 7, blockBitvector.getBit(7));
+                        break;
+                        
+                    case "Enter":
+                        //System.out.println("DEBUG:: Ordem de entrada.");
+                         // updates factory buffer
+                        this.factoryBuffer[bufferOffset] = "1";
+                        // sets the bitvector to write
+                        this.dataToWrite.setBit(bufferOffset, true);
+                        break;
+                        
+                    case "KeepGoing":
+                        //System.out.println("DEBUG:: Ordem de KeepGoing.");
+                         // updates factory buffer
+                        //System.out.println("Offset: " + bufferOffset);
+                        this.factoryBuffer[bufferOffset] = "1";
+                        // sets the bitvector to write
+                        this.dataToWrite.setBit(bufferOffset, true);
+                        break;
+                        
+                    default:
+                        // updates the buffer
+                        this.factoryBuffer[bufferOffset] = "1";
+                        // sets the bitvector to write
+                        this.dataToWrite.setBit(bufferOffset, true);
+                        break;
+                }
+
             // executes when you hold the mutex
             synchronized(mutex)
-            {            
+            {   
+                // writes the order to the PLC
                 this.protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
-                    TimeUnit.MILLISECONDS.sleep(1500);
+                    TimeUnit.MILLISECONDS.sleep(100);
                 }
                 catch(Exception Ex)
                 {
-                    System.out.println("error in sleep");
+                    System.out.println("error in sleep " + Ex);
                 }
                 // resets data to write
                 this.dataToWrite = new BitVector(capacity);

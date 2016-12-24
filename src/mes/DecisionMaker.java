@@ -47,6 +47,6 @@ public class DecisionMaker {
     public String decideDestination()
     {
         // static decision to test
-        return "0.2";
+        return "0.10";
     }
    }

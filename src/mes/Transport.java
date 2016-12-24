@@ -17,7 +17,7 @@ class Transporter implements Runnable
     Block blockToFollow;
     DecisionMaker decisionUnit;
     Factory virtualFactory;
-    Controller controlUnit = new Controller();
+    Controller controlUnit;
     
     public Transporter(Transport transportObject, Block blockToTransport, 
             DecisionMaker decisionObject, Factory currentFactory)
@@ -62,8 +62,7 @@ class Transporter implements Runnable
             
             if(!blockToFollow.isDestination())
             {
-               System.out.println("DEBUG:: Não é destino.");
-               
+               //System.out.println("DEBUG:: Não é destino.");
                // decides destination
                blockToFollow.setDestination(decisionUnit.decideDestination());
                
@@ -143,7 +142,8 @@ public class Transport extends Thread
             virtualFactory = currentFactory;
             protocolToPLC = protocol;
             blocksInFactory = currentFactory.getBlocksInFactory();
-            controlUnit = currentFactory.getControlUnit();
+            // creating empty control unit to be set by Factory
+            controlUnit = new Controller(this.protocolToPLC, virtualFactory);
             switch(transportType)
             {
                 case "input":
