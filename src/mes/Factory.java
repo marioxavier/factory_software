@@ -13,7 +13,7 @@ import net.wimpi.modbus.util.BitVector;
  */
 public class Factory extends Thread 
 {
-    public Integer ID;
+    public String ID;
     private boolean status;
     private Graph<Conveyor> cellConveyors, transportConveyors;
     private Hashtable<String, Conveyor> conveyorsTable;
@@ -46,10 +46,16 @@ public class Factory extends Thread
     {
         while(!killThread)
         {
-            //printConveyorStatus();
-            //System.out.println(conveyorsTable.get("0.0").getSensor());
-
-            if(firstConveyorReady == true)
+            try
+            {
+                TimeUnit.MILLISECONDS.sleep(1500);
+            }
+            catch(Exception Ex)
+            {
+                System.out.println("error in sleep");
+            }
+            
+            if(this.firstConveyorReady)
             {
                 try
                 {
@@ -105,6 +111,7 @@ public class Factory extends Thread
      * 
      * @param modbusProtocol
      * @param manager 
+     * @throws mes.graph.exception.InvalidConstructionException 
      */
     public Factory(Modbus modbusProtocol, systemManager manager) throws InvalidConstructionException
     {
@@ -232,7 +239,7 @@ public class Factory extends Thread
      */
     public void isReady(String factoryData)
     {
-        //System.out.println("DEBUG:: Entro no isReady (Factory).\n");
+        System.out.println("DEBUG:: Entro no isReady (Factory).\n");
         
         // if factory data was not given
         if (null == factoryData)
@@ -245,8 +252,7 @@ public class Factory extends Thread
         {   
             char[] factoryDataArray = factoryData.toCharArray();
             // if the conveyor 0 is full returns false
-            this.firstConveyorReady = !(factoryDataArray[0] == '1'); 
-            
+            this.firstConveyorReady = !(factoryDataArray[0] == '1');             
         }        
     }
 
@@ -406,7 +412,6 @@ public class Factory extends Thread
         // if the input arguments are OK
         else
         {
-                    String ID;
                     // creates conveyors
                     for(int i = 0; i < numberOfConveyors; i++)
                     {
@@ -414,7 +419,7 @@ public class Factory extends Thread
                         if (i == 2 || i == 5 || i == 7 || i == 10)
                         {
                             //this.transportConveyors.addVertex(new Conveyor(conveyorGroup, "rotator"));
-                            ID = "0." + Integer.toString(i);
+                            this.ID = "0." + Integer.toString(i);
                             Conveyor rotatingConveyor = new Conveyor("transport", "rotator");
                             rotatingConveyor.setID(ID);
                             this.conveyorsTable.put(ID, rotatingConveyor);
@@ -773,7 +778,6 @@ public class Factory extends Thread
             // creates output transport
             else
             {
-                // ***************************** May create an ERROR ******************************
                 outputTransport = new Transport("output", this, this.protocolToPLC);
                 // error creating output Transport unit
                 if (null == outputTransport)
@@ -865,71 +869,51 @@ public class Factory extends Thread
        return true;
     }
     
-
-/*
-    public boolean generateTransportConveyorID()
-    {
-        
-        
-        
-        String conveyorID;
-        
-        for (int i = 0; i < transportConveyorsTable.size(); i++)
-        {
-            conveyorID = "0.";
-            conveyorID += Integer.toString(i);
-            //TO DO
-        }
-        
-        // Mudar return
-        return true;
-        
-    }
-
- */
-    
+    /**
+     * Gets the position of block
+     * @param blockToUpdate
+     * @return 
+     */
     public String getNewPosition(Block blockToUpdate)
     {
-        
+        System.out.println("DEBUG:: Actualiza posição.");
         String newPosition;
         
-        // gets a block with given ID
-        Block blockInFactory = blocksInFactory.get(blockToUpdate.ID);
         
         // checks the position the block was in
-        String pastBlockPosition = blockInFactory.getPosition();
+        String currentBlockPosition = blockToUpdate.getPosition();
         
         // stores the conveyor index that the block was in
-        int pastConveyor = Integer.parseInt(pastBlockPosition.split("\\.")[1]);
+        int currentConveyorPosition = Integer.parseInt(currentBlockPosition.split("\\.")[1]);
         
         // stores conveyor index of the conveyor in front of the block
-        int nextConveyor = pastConveyor + 1;
+        int nextConveyorPosition = currentConveyorPosition + 1;
   
+        // gets the data array
         char[] factoryDataArray = factoryData.toCharArray();
         
-        // gets the memory indexes of the conveyor the block was in
-        String[] memoryOfPastConveyor = transportMemoryIndexes[pastConveyor].split(",");
+        // checks where to read in memory
+        String[] memoryOfCurrentConveyor = transportMemoryIndexes[currentConveyorPosition].split(",");
         
-        // gets the memory indexes of the conveyor in front of the block
-        String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyor].split(",");
+        // checks where to read the next conveyor in memory
+        String[] memoryOfNextConveyor = transportMemoryIndexes[nextConveyorPosition].split(",");
 
         // stores the value of both sensors
-        char pastConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfPastConveyor[0])];
+        char currentConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfCurrentConveyor[0])];
         char nextConveyorSensor = factoryDataArray[Integer.parseInt(memoryOfNextConveyor[0])];
         
         // if block changed position
-        if (Character.getNumericValue(pastConveyorSensor)==0 && Character.getNumericValue(nextConveyorSensor)==1)
+        if (Character.getNumericValue(currentConveyorSensor) == 0 && Character.getNumericValue(nextConveyorSensor) == 1)
         {
-            newPosition = "0."+Integer.toString(nextConveyor);
+            currentBlockPosition = "0." + (currentConveyorPosition + 1); 
         }
         
         // if block didn't change position
         else
         {
-           newPosition = pastBlockPosition;
         }
-      
-        return newPosition;        
+        System.out.println(currentBlockPosition);
+        return currentBlockPosition;        
     }
 
     /**
@@ -990,7 +974,7 @@ public class Factory extends Thread
                 System.out.println("Cannot remove block because it does not exist in the factory.\n");
                 return false;
             }
-            
+            // no error
             else
                 return updateNumberOfBlocks("-");
             }
@@ -1083,11 +1067,7 @@ public class Factory extends Thread
         {
             // create auxiliar variables;
             String position;
-        
-            //System.out.println(factoryData);
-            
-            //*******************   BUG *****************************
-            
+         
             // runs for all blocks in factory
             for (String i : blocksInFactory.keySet())
             {
@@ -1429,6 +1409,25 @@ public class Factory extends Thread
     public Hashtable<String, BitVector> getBlockBitvectorTable()
     {
         return blockBitvectorTable;
+    }
+    
+    /**
+     * 
+     * @param newFactoryData
+     * @return 
+     */
+    public boolean updateFactoryData(String newFactoryData)
+    {
+        if (null == newFactoryData)
+        {
+            System.out.println("No factory data given.");
+            return false;
+        }
+        else
+        {
+            this.factoryData = newFactoryData;
+            return true;            
+        }
     }
 }
 

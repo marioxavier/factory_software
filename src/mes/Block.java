@@ -230,7 +230,8 @@ public class Block {
      */
     public boolean setEnterOrder()
     { 
-        enterOrder = "Enter " + this.destination;
+        String[] destinationArray = destination.split("\\.");
+        enterOrder = "Enter T" + destinationArray[1];
         return true;
     }
 }

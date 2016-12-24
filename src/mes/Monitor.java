@@ -19,13 +19,11 @@ public class Monitor extends Thread
     private volatile boolean killThread;
             
     /**
-     * 
-     * @param protocol
+     * Constructor
      * @param currentFactory 
      */
     public Monitor(Factory currentFactory)
-    {
-        
+    {        
         // if some protocol was given
         if (null == currentFactory)
         {
@@ -39,13 +37,14 @@ public class Monitor extends Thread
             virtualFactory = currentFactory;
             protocolToPLC = new Modbus();
             
+            // inicializes Monitor protocol with PLC
             if (protocolToPLC.setModbusConnection())
             {
                 System.out.println("Modbus Monitor connection on.\n");
                 // opens the modbus connection
                 if(protocolToPLC.openConnection())
                 {
-                    System.out.println("Connection with factory opened.\n");
+                    System.out.println("Connection with factory for reading opened.\n");
                 }
             }
 
@@ -68,7 +67,6 @@ public class Monitor extends Thread
         {
             try
             {
-
                 // reads sensors from the factory
                 if (!this.readSensors())
                 {
@@ -82,20 +80,21 @@ public class Monitor extends Thread
                     System.exit(-1);
                 }
                 
-                virtualFactory.updateConveyors(inputData + outputData);  
+                // updates conveyors
+                virtualFactory.updateConveyors(inputData + outputData);
                 
+                virtualFactory.updateFactoryData(inputData + outputData);
+                
+                /*
                 // updates block position
                 if (!this.virtualFactory.updateBlockPositions(inputData + outputData))
                 {
                     System.out.println("MONITOR_THREAD:: Error updating block position.\n");
                     System.exit(-1);
                 }
-               
-                
+                        */      
                 // checks if factory is ready to receive a new block
-                this.virtualFactory.isReady(inputData + outputData);
-                
-                
+                this.virtualFactory.isReady(inputData + outputData);                               
             }
             catch(Exception s)
             {

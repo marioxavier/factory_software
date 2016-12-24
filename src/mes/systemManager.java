@@ -82,17 +82,7 @@ public class systemManager
                 controlUnit.initController();
                 
                 virtualFactory.setControlUnit(controlUnit);
-                
                 virtualFactory.start();
-                
-                /*
-                BitVector vectorOfBits = new BitVector(8);
-                vectorOfBits.setBit(0, true);
-                
-                protocolToPLC.writeModbus(144, vectorOfBits);
-                */
-                
-                //controlUnit.updateBuffer("KeepGoing C1");
             }
             else
                 System.out.println("Connection with factory not opened.\n");
