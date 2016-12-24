@@ -50,16 +50,34 @@ class Transporter implements Runnable
         {
             while(!blockToFollow.isDestination())
             {
+               // decides destination
                blockToFollow.setDestination(decisionUnit.decideDestination());
                
+               // orders block to keep going 
                switch(blockToFollow.getPosition())
                {
-                   case "0.2":
-                    //transportUnit.controlUnit.updateBuffer();
-                       
+                    case "0.2":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C1");
+                        break;
+                    case "0.5":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C2");
+                        break;
+                    case "0.7":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C3");
+                        break;
+                    case "0.10":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C4");
+                        break;
+                    case "0.12":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C5");
+                        break;
+                    case "0.14":
+                        transportUnit.controlUnit.updateBuffer("KeepGoing C6");
+                        break;                       
                }
             }
-            // writes in the buffer
+            // when block is at destination
+            // gives enter order and writes in the buffer
             transportUnit.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     
             // updates block status
