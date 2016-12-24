@@ -44,9 +44,20 @@ public class DecisionMaker {
         }
     }
     
-    public String decideDestination()
+    public String decideDestination(Block blockToDecide)
     {
-        // static decision to test
-        return "0.10";
-    }
+        switch(blockToDecide.ID)
+        {
+            case "000":
+                return "0.2";
+            case "001":
+                return "0.5";
+            case "002":
+                return "0.7";
+            case "003":
+                return "0.10";
+            default:
+                return "0.14";
+        }        
    }
+}

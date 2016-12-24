@@ -18,6 +18,7 @@ class Transporter implements Runnable
     DecisionMaker decisionUnit;
     Factory virtualFactory;
     Controller controlUnit;
+    boolean killThread;
     
     public Transporter(Transport transportObject, Block blockToTransport, 
             DecisionMaker decisionObject, Factory currentFactory)
@@ -44,6 +45,7 @@ class Transporter implements Runnable
             this.controlUnit = currentFactory.getControlUnit();
             controlUnit.initController();
             controlUnit.protocolToPLC = this.transportUnit.getProtocol();
+            this.killThread=false;
         }
     }
     
@@ -55,7 +57,7 @@ class Transporter implements Runnable
     public void run()
     {
         // loops forever
-        while(true)
+        while(!killThread)
         {
             // updates position
             blockToFollow.setPosition(this.virtualFactory.getNewPosition(blockToFollow));            
@@ -64,7 +66,7 @@ class Transporter implements Runnable
             {
                //System.out.println("DEBUG:: Não é destino.");
                // decides destination
-               blockToFollow.setDestination(decisionUnit.decideDestination());
+               blockToFollow.setDestination(decisionUnit.decideDestination(blockToFollow));
                
                // orders block to keep going 
                switch(blockToFollow.getPosition())
@@ -97,6 +99,8 @@ class Transporter implements Runnable
                     
                 // updates block status
                 blockToFollow.updateStatus("waiting");  
+                
+                killThread=true;
             }            
         }
     }         
