@@ -83,7 +83,7 @@ public class Controller extends Thread
     // data to write to PLC in bitvector form
     private BitVector dataToWrite;
     // protocol used to communicate with PLC
-    private Modbus protocolToPLC;
+    public Modbus protocolToPLC;
     // boolean used to kill controller thread
     private boolean killThread = false;
     
@@ -99,7 +99,7 @@ public class Controller extends Thread
     /**
      * Constructor
      * @param protocol
-     * @param blockBitvector
+     * @param virtualFactory
      */
     public Controller(Modbus protocol, Factory virtualFactory)
     {
@@ -131,24 +131,32 @@ public class Controller extends Thread
     
     
     public boolean initController()
-    {
+    { 
+            capacity = 65;
+            dataToWrite = new BitVector(capacity);            
+            if (!createBuffer(capacity))
+            {
+                System.out.println("Buffer not created.\n");
+                System.exit(-1);
+            }
+        
         bufferMap = new Hashtable<>();
 
-        bufferMap.put("Enter C1",0);
-        bufferMap.put("Enter C2",1);
-        bufferMap.put("Enter C3",2);
-        bufferMap.put("Enter C4",3);
-        bufferMap.put("Enter C5",4);
-        bufferMap.put("Enter C6",5);
-        bufferMap.put("Enter C7",6);
+        bufferMap.put("Enter T2",0);
+        bufferMap.put("Enter T5",1);
+        bufferMap.put("Enter T7",2);
+        bufferMap.put("Enter T10",3);
+        bufferMap.put("Enter T12",4);
+        bufferMap.put("Enter T14",5);
+        bufferMap.put("Enter T15",6);
         
-        bufferMap.put("KeepGoing C1",7);
-        bufferMap.put("KeepGoing C2",8);
-        bufferMap.put("KeepGoing C3",9);
-        bufferMap.put("KeepGoing C4",10);
-        bufferMap.put("KeepGoing C5",11);
-        bufferMap.put("KeepGoing C6",12);
-        bufferMap.put("KeepGoing C7",13);
+        bufferMap.put("KeepGoing T2",7);
+        bufferMap.put("KeepGoing T5",8);
+        bufferMap.put("KeepGoing T7",9);
+        bufferMap.put("KeepGoing T10",10);
+        bufferMap.put("KeepGoing T12",11);
+        bufferMap.put("KeepGoing T14",12);
+        bufferMap.put("KeepGoing T15",13);
         
         bufferMap.put("P1P2 C1",14);
         bufferMap.put("P1P7 C1",15);
@@ -246,7 +254,7 @@ public class Controller extends Thread
         // if all input arguments are OK
         else
         {
-            int bufferOffset = bufferMap.get(order);
+            int bufferOffset = this.bufferMap.get(order);
             String[] orderArray = order.split(" "); 
             if ("Create".equals(orderArray[0]))
             {
@@ -264,22 +272,24 @@ public class Controller extends Thread
             }
             else if ("Enter".equals(orderArray[0]))
             {
-                factoryBuffer[bufferOffset] = "1";   
-                dataToWrite.setBit(bufferOffset, true);
+                System.out.println("DEBUG:: Ordem de entrada!");
+                
+                this.factoryBuffer[bufferOffset] = "1";   
+                this.dataToWrite.setBit(bufferOffset, false);
             }
             else if ("KeepGoing".equals(orderArray[0]))
             {
-                factoryBuffer[bufferOffset] = "1";   
-                dataToWrite.setBit(bufferOffset, true);
+                this.factoryBuffer[bufferOffset] = "1";   
+                this.dataToWrite.setBit(bufferOffset, false);
             }
             else
-                factoryBuffer[bufferOffset] = "1";   
-                dataToWrite.setBit(bufferOffset, true); 
+                this.factoryBuffer[bufferOffset] = "1";   
+                this.dataToWrite.setBit(bufferOffset, true); 
                 
             // executes when you hold the mutex
             synchronized(mutex)
             {            
-                protocolToPLC.writeModbus(88, dataToWrite);
+                this.protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
                     TimeUnit.MILLISECONDS.sleep(1500);
@@ -289,8 +299,8 @@ public class Controller extends Thread
                     System.out.println("error in sleep");
                 }
                 // resets data to write
-                dataToWrite = new BitVector(capacity);
-                protocolToPLC.writeModbus(88, dataToWrite);
+                this.dataToWrite = new BitVector(capacity);
+                this.protocolToPLC.writeModbus(88, dataToWrite);
                 return true;
             }
         }

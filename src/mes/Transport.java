@@ -16,8 +16,11 @@ class Transporter implements Runnable
     Transport transportUnit;
     Block blockToFollow;
     DecisionMaker decisionUnit;
+    Factory virtualFactory;
+    Controller controlUnit = new Controller();
     
-    public Transporter(Transport transportObject, Block blockToTransport, DecisionMaker decisionObject)
+    public Transporter(Transport transportObject, Block blockToTransport, 
+            DecisionMaker decisionObject, Factory currentFactory)
     {
         // if no transport object was given
         if (null == transportObject)
@@ -25,16 +28,22 @@ class Transporter implements Runnable
             System.out.println("No transport object given.\n");
             System.exit(-1);
         }
+        // if no block to transport was given
         else if (null == blockToTransport)
         {
             System.out.println("No block to transport was given.\n");
             System.exit(-1);
         }
+        // all input arguments are OK
         else 
         {
-            transportUnit = transportObject;
-            blockToFollow = blockToTransport;
-            decisionUnit = decisionObject;
+            this.transportUnit = transportObject;
+            this.blockToFollow = blockToTransport;
+            this.decisionUnit = decisionObject;
+            this.virtualFactory = currentFactory;
+            this.controlUnit = currentFactory.getControlUnit();
+            controlUnit.initController();
+            controlUnit.protocolToPLC = this.transportUnit.getProtocol();
         }
     }
     
@@ -48,8 +57,13 @@ class Transporter implements Runnable
         // loops forever
         while(true)
         {
-            while(!blockToFollow.isDestination())
+            // updates position
+            blockToFollow.setPosition(this.virtualFactory.getNewPosition(blockToFollow));            
+            
+            if(!blockToFollow.isDestination())
             {
+               System.out.println("DEBUG:: Não é destino.");
+               
                // decides destination
                blockToFollow.setDestination(decisionUnit.decideDestination());
                
@@ -57,43 +71,44 @@ class Transporter implements Runnable
                switch(blockToFollow.getPosition())
                {
                     case "0.2":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C1");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T2");
                         break;
                     case "0.5":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C2");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T5");
                         break;
                     case "0.7":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C3");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T7");
                         break;
                     case "0.10":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C4");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T10");
                         break;
                     case "0.12":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C5");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T12");
                         break;
                     case "0.14":
-                        transportUnit.controlUnit.updateBuffer("KeepGoing C6");
+                        transportUnit.controlUnit.updateBuffer("KeepGoing T14");
                         break;                       
                }
             }
-            // when block is at destination
-            // gives enter order and writes in the buffer
-            transportUnit.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
+            // arrived destination
+            else
+            {
+                // when block is at his destination, gives enter order and writes in the buffer
+                transportUnit.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     
-            // updates block status
-            blockToFollow.updateStatus("waiting");  
+                // updates block status
+                blockToFollow.updateStatus("waiting");  
+            }            
         }
     }         
 }
-
 
 /**
  *
  * @author Mário Xavier
  */
 public class Transport extends Thread  
-{
-    
+{    
     private int ID;
     private String type;
     private String status;
@@ -101,9 +116,7 @@ public class Transport extends Thread
     private Modbus protocolToPLC;
     public Hashtable<String, Block> blocksInFactory;
     public Controller controlUnit;
-    
-    
-    
+            
     /**
      * Constructor
      * @param transportType
@@ -162,186 +175,9 @@ public class Transport extends Thread
     public void startTransport(Block blockToTransport)
     {
         DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
-        Runnable transporter = new Transporter(this, blockToTransport, decisionUnit);
+        Runnable transporter = new Transporter(this, blockToTransport, decisionUnit, virtualFactory);
         new Thread(transporter).start();       
     }
-   
-    /*
-      // if no new block was given
-        if (null == blockToControl)
-        {
-            System.out.println("No block was given to start transport.\n");
-            System.exit(-1);
-        }
-        
-        
-        // if a block was given sends it to destination
-        else
-        {
-            // Adding the block to the virtual factory
-            if(!virtualFactory.addBlock(blockToControl))
-            {
-                System.out.println("No block was created\n");
-                System.exit(-1);
-            }
-            
-            // setting "Blocks to add in factory" to zero
-            BitVector setBlock = new BitVector(8);
-            protocolToPLC.writeModbus(144, setBlock);
-            
-            
-            // needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep.\n");
-            }
-            
-            // stores the bitVector to write in order to create this block
-            setBlock = blockVector.get(blockToControl.getType());
-            
-            // sends order to PLC to create this Block
-            protocolToPLC.writeModbus(144, setBlock);
-            
-            // variable to control in which cell entrance the decision is being made
-            short conditionEnterFlag = 0;
-            
-            // bitvector with decision to keep going
-            BitVector keepGoingDecision = new BitVector(8);
-    
-        
-            // creates byte array with size 1
-            byte[] decisionToBitvector = new byte[1];
-            
-            // creates a byte with the information about where to let the block enter
-            decisionToBitvector[0] = (byte)(conditionEnterFlag & 0xff);
-            
-            // turns byte into bitvector
-            BitVector enterDecision = BitVector.createBitVector(decisionToBitvector);
-            
-            // writes the decision where to enter in PLC
-            protocolToPLC.writeModbus(0, enterDecision);
-    
-    */
-    
-    
-/*
-    @Override
-    public void run()
-    {
-        
-        // if no new block was given
-        if (null == blockToControl)
-        {
-            System.out.println("No block was given to start transport.\n");
-            System.exit(-1);
-        }
-        
-        
-        // if a block was given sends it to destination
-        else
-        {
-            // Adding the block to the virtual factory
-            if(!virtualFactory.addBlock(blockToControl))
-            {
-                System.out.println("No block was created\n");
-                System.exit(-1);
-            }
-            
-            // setting "Blocks to add in factory" to zero
-            BitVector setBlock = new BitVector(8);
-            protocolToPLC.writeModbus(144, setBlock);
-            
-            
-            // needs to wait before sending consecutive packets to PLC
-            try
-            {
-                TimeUnit.SECONDS.sleep(2);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep.\n");
-            }
-            
-            // stores the bitVector to write in order to create this block
-            setBlock = blockVector.get(blockToControl.getType());
-            
-            // sends order to PLC to create this Block
-            protocolToPLC.writeModbus(144, setBlock);
-            
-            // variable to control in which cell entrance the decision is being made
-            short conditionEnterFlag = 0;
-            
-            // bitvector with decision to keep going
-            BitVector keepGoingDecision = new BitVector(8);
-            
-            // control algorithm
-            while(!blockToControl.isDestination())
-            {  
-                
-                System.out.println(blockToControl.getPosition());
-                
-                // decision not to enter in first Cell
-                if (blockToControl.getPosition().equals("0.2") && !(blockToControl.isDestination()) && conditionEnterFlag == 0)
-                {
-                    conditionEnterFlag +=1;
-                    keepGoingDecision.setBit(0, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-
-                }
-                // decision not to enter in second Cell
-                else if (blockToControl.getPosition().equals("0.5") && !(blockToControl.isDestination()) && conditionEnterFlag == 1)
-                {
-                    conditionEnterFlag+=1;
-                    keepGoingDecision.setBit(0, false);
-                    keepGoingDecision.setBit(1, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                // decision not to enter in third Cell
-                else if (blockToControl.getPosition().equals("0.7") && !(blockToControl.isDestination()) && conditionEnterFlag == 2)
-                {
-                    conditionEnterFlag += 1;
-                    keepGoingDecision.setBit(1, false);
-                    keepGoingDecision.setBit(2, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                // decision not to enter in fourth Cell
-                else if (blockToControl.getPosition().equals("0.10") && !(blockToControl.isDestination()) && conditionEnterFlag == 3)
-                {
-                    conditionEnterFlag += 1;
-                    keepGoingDecision.setBit(2, false);
-                    keepGoingDecision.setBit(3, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-                
-                // decision not to enter in fifth Cell
-                else
-                {
-                    conditionEnterFlag += 1;
-                    keepGoingDecision.setBit(3, false);
-                    keepGoingDecision.setBit(4, true);
-                    protocolToPLC.writeModbus(8, keepGoingDecision);
-                }
-            }
-            
-            // creates byte array with size 1
-            byte[] decisionToBitvector = new byte[1];
-            
-            // creates a byte with the information about where to let the block enter
-            decisionToBitvector[0] = (byte)(conditionEnterFlag & 0xff);
-            
-            // turns byte into bitvector
-            BitVector enterDecision = BitVector.createBitVector(decisionToBitvector);
-            
-            // writes the decision where to enter in PLC
-            protocolToPLC.writeModbus(0, enterDecision);
-        }
-    }
-    */
-    
     
     /**
      * Gets transport ID
@@ -417,9 +253,7 @@ public class Transport extends Thread
             status = transportStatus;
             return false;
         }  
-    }
-    
-    
+    }        
     
     /**
      * Gets factory
@@ -464,7 +298,6 @@ public class Transport extends Thread
        {
            controlUnit = factoryControl;
            return true;
-       }
-       
+       }       
    }
 }
