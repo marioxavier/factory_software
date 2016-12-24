@@ -45,16 +45,7 @@ public class Factory extends Thread
     public void run()
     {
         while(!killThread)
-        {
-            try
-            {
-                TimeUnit.MILLISECONDS.sleep(1500);
-            }
-            catch(Exception Ex)
-            {
-                System.out.println("error in sleep");
-            }
-            
+        {           
             if(this.firstConveyorReady)
             {
                 try
@@ -249,7 +240,7 @@ public class Factory extends Thread
         }
         // if factory data was given        
         else
-        {   
+        {                
             char[] factoryDataArray = factoryData.toCharArray();
             // if the conveyor 0 is full returns false
             this.firstConveyorReady = !(factoryDataArray[0] == '1');             
