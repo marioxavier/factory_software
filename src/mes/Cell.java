@@ -16,8 +16,18 @@ class Producer implements Runnable
 {
 
     Cell cellUnit;
+    Block blockToProduce;
+    DecisionMaker decisionUnit;
+    Factory virtualFactory;
+    Controller controlUnit;
+    boolean killThread;
     
-    public Producer(Cell cellObject)
+    String blockPosition;
+    String blockOperation;
+    String factoryData;
+    
+    
+    public Producer(Cell cellObject, Block newBlock, DecisionMaker decisionObject, Factory currentFactory)
     {
         // if no transport object was given
         if (null == cellObject)
@@ -26,7 +36,17 @@ class Producer implements Runnable
             System.exit(-1);
         }
         else
-            cellUnit = cellObject;
+        {
+            this.cellUnit = cellObject;
+            this.blockToProduce = newBlock;
+            this.decisionUnit = decisionObject;
+            this.virtualFactory = currentFactory;
+            this.controlUnit = currentFactory.getControlUnit();
+            controlUnit.initController();
+            controlUnit.protocolToPLC = this.cellUnit.getProtocol();
+            this.killThread = false;
+        }
+            
     }
     
     /**
@@ -37,8 +57,79 @@ class Producer implements Runnable
     public void run()
     {
         // loops forever
-        while(true)
+        while(!killThread)
         {
+            if ("waiting".equals(blockToProduce.getStatus()))
+            {
+                //
+                blockToProduce.setOperation(decisionUnit.decideTransformation(blockToProduce));
+                
+                //
+                System.out.println(blockToProduce.operation);
+                
+                //
+                controlUnit.updateBuffer(blockToProduce.operation);
+                
+                //
+                blockToProduce.updateStatus("producing");
+            }
+                
+                
+            
+            /*
+            factoryData = virtualFactory.getFactoryData();
+            
+            switch (cellUnit.ID)
+            {
+                case "1":
+                    blockPosition = factoryData.charAt()
+                case "2":
+                case "3":
+                case "4":
+                            
+            }
+            
+            switch(blockPosition)
+            {
+                case "1.2":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                case "1.5":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                case "1.7":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                case "1.10":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                case "1.12":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                case "1.14":
+                    System.out.println("escreveu no buffer - "+blockToProduce.operation);
+                    controlUnit.updateBuffer(blockToProduce.operation);
+                    break;
+                default:
+                    System.out.println(blockPosition);
+                    // Block still getting to first cell conveyor
+                    break;
+            }
+            */
+            
+            
+        }         
+    }
+
+}
+
+
+/*
             // loops all blocks
             for (String i : cellUnit.blocksInFactory.keySet())
             {
@@ -51,17 +142,14 @@ class Producer implements Runnable
                     // writes in the buffer
                     cellUnit.controlUnit.updateBuffer(blockToTransport.operation);
                 }
-                else if(blockToTransport.updateStatus("producing"));
+                else if("producing".equals(blockToTransport.getStatus()));
                 {
                     //TO DO escrever em máquina
                 }   
             }
-        }         
-    }
+*/
 
-    
-    
-}
+
 
 
 /**
@@ -79,12 +167,14 @@ public class Cell extends Thread{
     
     
     
-    /**
-     * Constructor
-     * @param cellType 
-     * @param currentFactory
-     * @throws mes.graph.exception.InvalidConstructionException
-     */
+/**
+ * 
+ * @param cellType
+ * @param currentFactory
+ * @param protocol
+ * @param id
+ * @throws InvalidConstructionException 
+ */
     public Cell(String cellType, Factory currentFactory, Modbus protocol, String id) 
             throws InvalidConstructionException
     {
@@ -128,11 +218,24 @@ public class Cell extends Thread{
             }
     }
     
+    public void startProduction(Block blockToProduce)
+    {
+        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
+        Runnable producer = new Producer(this, blockToProduce, decisionUnit, virtualFactory);
+        new Thread(producer).start();
+    }
+    
     
     
     public void setID(String idToSet)
     {
         ID = idToSet;
+    }
+    
+    
+    public Modbus getProtocol()
+    {
+        return protocolToPLC;
     }
     
 }

@@ -60,4 +60,10 @@ public class DecisionMaker {
                 return "0.14";
         }        
    }
+    
+    public String decideTransformation(Block blockToTransform)
+    {
+        return "P1P2 C1";
+    }
+    
 }
