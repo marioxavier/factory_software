@@ -9,7 +9,7 @@ import net.wimpi.modbus.util.BitVector;
 
 /**
  *
- * @author Mário Xavier
+ * @author MÃ¡rio Xavier
  */
 public class Factory extends Thread 
 {
@@ -36,7 +36,6 @@ public class Factory extends Thread
     private Controller controlUnit;
     private volatile boolean killThread;
     private boolean firstConveyorReady;
-    private boolean orderReady = false;
   
    
     /**
@@ -51,17 +50,13 @@ public class Factory extends Thread
             
             if(this.firstConveyorReady)
             {
-                
                 try
                 {
-                    //this.orderReady = false;
                     ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     if (null != nextOrder)
                     {
-                        //for (int producedBlocks = 0; producedBlocks < Integer.parseInt(nextOrder.quantity); producedBlocks++)                                                
-                        this.addBlock(nextOrder.originalType,nextOrder.finalType,"0.15", nextOrder.ID, nextOrder.blockOperation);
-                                    
-                        //this.orderReady = true;
+                        this.addBlock(nextOrder.originalType,nextOrder.finalType,
+                                "0.15", nextOrder.ID, nextOrder.blockOperation);
                     }
                           
                 }
@@ -86,6 +81,15 @@ public class Factory extends Thread
 
             
         }
+        
+        /*
+        ler fabrica
+        atualizar a posiÃ§ao de todos os blocos
+        
+        atualizar estado de tapetes
+        
+        atualizar estado de maquinas
+        */
     }
     
     /**
@@ -870,7 +874,7 @@ public class Factory extends Thread
      */
     public String getNewPosition(Block blockToUpdate)
     {
-        //System.out.println("DEBUG:: Actualiza posição.");
+        //System.out.println("DEBUG:: Actualiza posiÃ§Ã£o.");
 
         // checks the position the block was in
         String currentBlockPosition = blockToUpdate.getPosition();
@@ -904,7 +908,7 @@ public class Factory extends Thread
         else
         {
         }
-        //System.out.println("Posição: " + currentBlockPosition);
+        //System.out.println("PosiÃ§Ã£o: " + currentBlockPosition);
         return currentBlockPosition;        
     }
 
@@ -1022,16 +1026,13 @@ public class Factory extends Thread
     
     public boolean updateConveyorStatus(String factoryData)
     {
-        
-
-
         //status = "Ready", "Sending", "receiving"
         
         // percorrer todos os tapetes
-        // para cada tapete, ir à hashtable com o get (.hashcode).
+        // para cada tapete, ir Ã  hashtable com o get (.hashcode).
         // fazer parse "1,2,7" (split)
-        // rotativos (7), lineares, duplos (4) e paralelos (7 posições);
-        // ler nessas posições de memória e atualizar as variáveis abaixo
+        // rotativos (7), lineares, duplos (4) e paralelos (7 posiÃ§Ãµes);
+        // ler nessas posiÃ§Ãµes de memÃ³ria e atualizar as variÃ¡veis abaixo
         
  
         // orientation, status
@@ -1115,10 +1116,10 @@ public class Factory extends Thread
      */
     public boolean updateMachineStatus(String factoryData)
     {
-         // percorrer todas as máquinas
-        // para cada tapete, ir à hashtable com o get (.hashcode).
+         // percorrer todas as mÃ¡quinas
+        // para cada tapete, ir Ã  hashtable com o get (.hashcode).
         // fazer parse "1,2,7" (split)
-        // ler nessas posições de memória e atualizar as variáveis abaixo
+        // ler nessas posiÃ§Ãµes de memÃ³ria e atualizar as variÃ¡veis abaixo
         
         
         // status = "Working", "Shifting", "Ready"

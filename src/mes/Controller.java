@@ -109,7 +109,7 @@ public class Controller extends Thread
         bufferMap.put("P3P5 C2",30);
         bufferMap.put("P4P5 C2",31);
         bufferMap.put("P4P7 C2",32);
-        bufferMap.put("P1P7 C2",33);
+        bufferMap.put("P1P7 C2 2",33);
         bufferMap.put("P1P5 C2",34);
         
         bufferMap.put("P1P2 C3",35);
@@ -132,7 +132,7 @@ public class Controller extends Thread
         bufferMap.put("P3P5 C4",51);
         bufferMap.put("P4P5 C4",52);
         bufferMap.put("P4P7 C4",53);
-        bufferMap.put("P1P7 C4",54);
+        bufferMap.put("P1P7 C4 2",54);
         bufferMap.put("P1P5 C4",55);
         
         bufferMap.put("Create P1",56);
@@ -191,7 +191,7 @@ public class Controller extends Thread
                 switch (orderArray[0]) 
                 {
                     case "Create":
-                        System.out.println("DEBUG:: Ordem de criação de peça.");
+                        System.out.println("DEBUG:: Ordem de criaÃ§Ã£o de peÃ§a.");
                         BitVector blockBitvector = this.blockBitvectorTable.get(orderArray[1]);
                         // updates factory buffer
                         factoryBuffer[bufferOffset] = blockBitvector.toString();
@@ -207,7 +207,6 @@ public class Controller extends Thread
                         break;
                         
                     case "Enter":
-                        System.out.println("Order de enter");
                         //System.out.println("DEBUG:: Ordem de entrada.");
                          // updates factory buffer
                         this.factoryBuffer[bufferOffset] = "1";
@@ -239,7 +238,7 @@ public class Controller extends Thread
                 this.protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
-                    TimeUnit.MILLISECONDS.sleep(500);
+                    TimeUnit.MILLISECONDS.sleep(100);
                 }
                 catch(Exception Ex)
                 {
@@ -306,4 +305,7 @@ public class Controller extends Thread
     {
         killThread = true;
     }
+    
+    
+    
 }

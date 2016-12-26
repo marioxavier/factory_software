@@ -59,6 +59,9 @@ class Transporter implements Runnable
         // loops forever
         while(!killThread)
         {
+            
+            System.out.println(this.virtualFactory.getNewPosition(blockToFollow));
+            
             // updates position
             blockToFollow.setPosition(this.virtualFactory.getNewPosition(blockToFollow));            
             
@@ -94,6 +97,7 @@ class Transporter implements Runnable
             // arrived destination
             else
             {
+                
                 // when block is at his destination, gives enter order and writes in the buffer
                 this.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     

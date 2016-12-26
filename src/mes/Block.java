@@ -11,6 +11,7 @@ package mes;
  */
 public class Block {
     
+    
     public String ID;
     private String type;
     private String finalType;
@@ -245,6 +246,11 @@ public class Block {
     {
         operation = newOperation;
         return true;
+    }
+    
+    public String getFinalType()
+    {
+        return finalType;
     }
     
     

@@ -61,17 +61,19 @@ class Producer implements Runnable
         {
             if ("waiting".equals(blockToProduce.getStatus()))
             {
-                //
-                blockToProduce.setOperation(decisionUnit.decideTransformation(blockToProduce));
+                // updates the Block operation 
+                blockToProduce.setOperation("P"+blockToProduce.getType()+"P"+blockToProduce.getFinalType()+" C"+cellUnit.ID);
                 
-                //
-                System.out.println(blockToProduce.operation);
                 
-                //
+                System.out.println("DEBUG::"+blockToProduce.operation);
+                
+                // writes the transformation to make and in which cell
                 controlUnit.updateBuffer(blockToProduce.operation);
                 
-                //
+                // 
                 blockToProduce.updateStatus("producing");
+                
+                killThread = true;
             }
                 
                 
@@ -144,7 +146,7 @@ class Producer implements Runnable
                 }
                 else if("producing".equals(blockToTransport.getStatus()));
                 {
-                    //TO DO escrever em máquina
+                    //TO DO escrever em mÃ¡quina
                 }   
             }
 */
