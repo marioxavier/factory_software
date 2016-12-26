@@ -47,29 +47,28 @@ public class Factory extends Thread
         while(!killThread)
         {           
             if(this.firstConveyorReady)
-            {
+            {                
+                try
+                {
+                    TimeUnit.MILLISECONDS.sleep(2200);
+                }
+                catch(Exception Ex)
+                {
+                    System.out.println("error in sleep " + Ex);
+                }
+                
                 try
                 {
                     ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     if (null != nextOrder)
                         this.addBlock(nextOrder.originalType,nextOrder.finalType,
-                                "0.15", nextOrder.ID, nextOrder.blockOperation);
-                        
+                                "0.15", nextOrder.ID, nextOrder.blockOperation);                        
                 }
                 catch(Exception s)
                 {
                 }                
             }
         }
-        
-        /*
-        ler fabrica
-        atualizar a posiçao de todos os blocos
-        
-        atualizar estado de tapetes
-        
-        atualizar estado de maquinas
-        */
     }
     
     /**

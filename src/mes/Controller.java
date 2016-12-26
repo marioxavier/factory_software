@@ -238,7 +238,7 @@ public class Controller extends Thread
                 this.protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(500);
                 }
                 catch(Exception Ex)
                 {
@@ -305,7 +305,4 @@ public class Controller extends Thread
     {
         killThread = true;
     }
-    
-    
-    
 }
