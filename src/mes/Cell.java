@@ -61,19 +61,17 @@ class Producer implements Runnable
         {
             if ("waiting".equals(blockToProduce.getStatus()))
             {
-                // updates the Block operation 
-                blockToProduce.setOperation("P"+blockToProduce.getType()+"P"+blockToProduce.getFinalType()+" C"+cellUnit.ID);
+                //
+                blockToProduce.setOperation(decisionUnit.decideTransformation(blockToProduce));
                 
+                //
+                System.out.println(blockToProduce.operation);
                 
-                System.out.println("DEBUG::"+blockToProduce.operation);
-                
-                // writes the transformation to make and in which cell
+                //
                 controlUnit.updateBuffer(blockToProduce.operation);
                 
-                // 
+                //
                 blockToProduce.updateStatus("producing");
-                
-                killThread = true;
             }
                 
                 
