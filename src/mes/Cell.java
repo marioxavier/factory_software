@@ -70,10 +70,15 @@ class Producer implements Runnable
                 // writes the transformation to make and in which cell
                 controlUnit.updateBuffer(blockToProduce.operation);
                 
-                // 
+                // updates block status to producing
                 blockToProduce.updateStatus("producing");
                 
-                killThread = true;
+                //killThread = true;
+            }
+            
+            else if ("producing".equals(blockToProduce.getStatus()))
+            {
+                
             }
                 
                 

@@ -56,6 +56,8 @@ class Transporter implements Runnable
     @SuppressWarnings("empty-statement")
     public void run()
     {
+        
+        blockToFollow.setDestination(decisionUnit.decideDestination(blockToFollow));
         // loops forever
         while(!killThread)
         {
@@ -69,7 +71,7 @@ class Transporter implements Runnable
             {
                //System.out.println("DEBUG:: Não é destino.");
                // decides destination
-               blockToFollow.setDestination(decisionUnit.decideDestination(blockToFollow));
+               //blockToFollow.setDestination(decisionUnit.decideDestination(blockToFollow));
                
                // orders block to keep going 
                switch(blockToFollow.getPosition())
@@ -147,6 +149,7 @@ public class Transport extends Thread
     private Modbus protocolToPLC;
     public Hashtable<String, Block> blocksInFactory;
     public Controller controlUnit;
+
             
     /**
      * Constructor
@@ -200,13 +203,15 @@ public class Transport extends Thread
             }
     }
     
-    /**
-     * Creates and runs a new transporter
-     * @param blockToTransport 
-     */
-    public void startTransport(Block blockToTransport)
+   /**
+    * 
+    * @param blockToTransport
+    * @param decisionUnit 
+    */
+    public void startTransport(Block blockToTransport, DecisionMaker decisionUnit)
     {
-        DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
+        //DecisionMaker decisionUnit = new DecisionMaker(protocolToPLC, virtualFactory);
+        
         Runnable transporter = new Transporter(this, blockToTransport, decisionUnit, virtualFactory);
         new Thread(transporter).start();       
     }

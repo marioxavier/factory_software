@@ -19,6 +19,7 @@ public class DecisionMaker {
     public int ID;
     Modbus protocolToPLC;
     Factory virtualFactory;
+    private boolean switchFlag;
     
     /**
      * Constructor
@@ -44,6 +45,7 @@ public class DecisionMaker {
         }
     }
     
+    /*
     public String decideDestination(Block blockToDecide)
     {
         switch(blockToDecide.ID)
@@ -57,9 +59,150 @@ public class DecisionMaker {
             case "003":
                 return "0.10";
             case "004":
-                return "0.10";
+                return "0.5";
             default:
                 return "0.2";
+        }        
+    }
+*/
+    
+    public String decideDestination(Block blockToDecide)
+    {
+        switch("P" + blockToDecide.getType() + "P" + blockToDecide.getFinalType())
+        {
+            case "P1P7":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+                    
+            case "P1P2":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P2P3":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P3P4":
+               if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P3P6":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P4P6":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P4P7":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P5P7":
+               if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P6P7":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P1P6":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }
+            case "P3P7":
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.2";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.7";
+                }                           
+            default:
+                if (switchFlag)
+                {
+                    switchFlag = false;
+                    return "0.5";
+                }                    
+                else
+                {
+                    switchFlag = true;
+                    return "0.10";
+                }
         }        
     }
     

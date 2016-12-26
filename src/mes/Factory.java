@@ -36,6 +36,9 @@ public class Factory extends Thread
     private Controller controlUnit;
     private volatile boolean killThread;
     private boolean firstConveyorReady;
+    
+    public DecisionMaker decisionUnit;
+    
   
    
     /**
@@ -182,6 +185,8 @@ public class Factory extends Thread
         
         // creating empty control unit to be set by system Manager
         controlUnit = new Controller(this.protocolToPLC, this);
+        
+        decisionUnit = new DecisionMaker(protocolToPLC, this);
              
         /*
         // resets the first conveyor
@@ -944,7 +949,7 @@ public class Factory extends Thread
             this.blocksInFactory.put(newBlock.ID, newBlock);
             updateNumberOfBlocks("+");
             // creates a transporter for this block
-            inputTransport.startTransport(newBlock);
+            inputTransport.startTransport(newBlock, decisionUnit);
             
             return true;
         }
