@@ -97,10 +97,29 @@ class Transporter implements Runnable
                 // when block is at his destination, gives enter order and writes in the buffer
                 this.controlUnit.updateBuffer(blockToFollow.getEnterOrder());
                     
-                // updates block status
-                blockToFollow.updateStatus("waiting");  
+                //array with 'line' and 'column' of block in the factory matrix
+                String[] destinationArray = blockToFollow.getPosition().split("\\.");
                 
+                // 'line + 1' of the conveyor in the factory matrix is allways the first conveyor of the cell
+                int conveyorLine = Integer.parseInt(destinationArray[0]) + 1;
+                
+                // stores the value of the sensor of the first conveyor cell
+                char cellConveyorSensor = virtualFactory.getCellConveyorSensor(String.valueOf(conveyorLine)+"."+destinationArray[1]);
+                
+                // if the block arrived to the first sensor starts production
+                if (cellConveyorSensor == '1')
+                {
+                // updates block status
+                blockToFollow.updateStatus("waiting"); 
+                
+                // start production of same block
+                virtualFactory.startProduction(blockToFollow);
+                
+                // kills the transportation Thread
                 killThread=true;
+                    
+                }
+
             }            
         }
     }         

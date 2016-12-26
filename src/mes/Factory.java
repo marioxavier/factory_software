@@ -46,28 +46,41 @@ public class Factory extends Thread
     {
         while(!killThread)
         {           
+            //System.out.println(firstConveyorReady);
+            
             if(this.firstConveyorReady)
-            {                
-                try
-                {
-                    TimeUnit.MILLISECONDS.sleep(2200);
-                }
-                catch(Exception Ex)
-                {
-                    System.out.println("error in sleep " + Ex);
-                }
+            {
                 
                 try
                 {
                     ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     if (null != nextOrder)
+                    {
                         this.addBlock(nextOrder.originalType,nextOrder.finalType,
-                                "0.15", nextOrder.ID, nextOrder.blockOperation);                        
+                                "0.15", nextOrder.ID, nextOrder.blockOperation);
+                    }
+                          
                 }
                 catch(Exception s)
                 {
-                }                
+                }
             }
+            
+            else
+            {
+                /*
+                try
+                    {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    catch(Exception Ex)
+                    {
+                        System.out.println("UpdateBlock:: Error in sleep.\n");
+                    }
+                */
+            }
+
+            
         }
     }
     
@@ -223,8 +236,11 @@ public class Factory extends Thread
         else
         {                
             char[] factoryDataArray = factoryData.toCharArray();
-            // if the conveyor 0 is full returns false
-            this.firstConveyorReady = !(factoryDataArray[0] == '1');             
+            // checks if its ok to place a new Block
+            
+            this.firstConveyorReady = !((factoryDataArray[0] == '1') || (factoryDataArray[153]=='1') || (factoryDataArray[158]=='1') || (factoryDataArray[2]=='1'));
+            
+            //this.firstConveyorReady = !(factoryDataArray[0] == '1');
         }        
     }
 
@@ -851,8 +867,7 @@ public class Factory extends Thread
     public String getNewPosition(Block blockToUpdate)
     {
         //System.out.println("DEBUG:: Actualiza posição.");
-        
-        
+
         // checks the position the block was in
         String currentBlockPosition = blockToUpdate.getPosition();
        
@@ -885,7 +900,7 @@ public class Factory extends Thread
         else
         {
         }
-        System.out.println("Posição: " + currentBlockPosition);
+        //System.out.println("Posição: " + currentBlockPosition);
         return currentBlockPosition;        
     }
 
@@ -922,6 +937,7 @@ public class Factory extends Thread
             updateNumberOfBlocks("+");
             // creates a transporter for this block
             inputTransport.startTransport(newBlock);
+            
             return true;
         }
     }
@@ -1402,5 +1418,63 @@ public class Factory extends Thread
             return true;            
         }
     }
+    
+    
+    /**
+     * Orders the production of a Block
+     * @param blockToProduce
+     * @return 
+     */
+    public void startProduction(Block blockToProduce)
+    {
+        
+        switch(blockToProduce.getDestination())
+        {
+            case "0.2":
+                parallelCells[0].startProduction(blockToProduce);
+                break;
+            case "0.5":
+                serialCells[0].startProduction(blockToProduce);
+                break;
+            case "0.7":
+                parallelCells[1].startProduction(blockToProduce);
+                break;
+            case "0.10":
+                serialCells[1].startProduction(blockToProduce);
+                break;
+            // still need to create cell Object
+            case "0.12":
+                // *********** TO DO ******************
+                break;
+            // still need to create cell Object
+            case "0.14":
+                // ********** TO DO ****************
+                break;
+            
+            default:
+                System.out.println("Can't find cell that block to produce is in");
+                System.exit(-1);
+        }
+    }
+    
+    /**
+     * 
+     * @param conveyorID
+     * @return 
+     */
+    public char getCellConveyorSensor(String conveyorID)
+    {
+        String[] memoryIndexes = memoryMap.get(conveyorID).split(",");
+        
+        int indexOfConveyorSensor = Integer.parseInt(memoryIndexes[0]);
+        
+        char sensorValue = factoryData.toCharArray()[indexOfConveyorSensor];
+        
+        return sensorValue;
+    }
+    
+    
+    
+    
 }
 

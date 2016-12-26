@@ -234,4 +234,18 @@ public class Block {
         enterOrder = "Enter T" + destinationArray[1];
         return true;
     }
+    
+    
+    /**
+     * 
+     * @param newOperation
+     * @return 
+     */
+    public boolean setOperation(String newOperation)
+    {
+        operation = newOperation;
+        return true;
+    }
+    
+    
 }
