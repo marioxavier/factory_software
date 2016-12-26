@@ -49,17 +49,19 @@ public class DecisionMaker {
         switch(blockToDecide.ID)
         {
             case "000":
-                return "0.2";
-            case "001":
                 return "0.5";
+            case "001":
+                return "0.2";
             case "002":
                 return "0.7";
             case "003":
                 return "0.10";
+            case "004":
+                return "0.10";
             default:
-                return "0.14";
+                return "0.2";
         }        
-   }
+    }
     
     public String decideTransformation(Block blockToTransform)
     {

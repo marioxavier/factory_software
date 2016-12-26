@@ -247,5 +247,10 @@ public class Block {
         return true;
     }
     
+    public String getFinalType()
+    {
+        return finalType;
+    }
+    
     
 }

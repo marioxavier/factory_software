@@ -50,7 +50,6 @@ public class Factory extends Thread
             
             if(this.firstConveyorReady)
             {
-                
                 try
                 {
                     ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
@@ -1027,9 +1026,6 @@ public class Factory extends Thread
     
     public boolean updateConveyorStatus(String factoryData)
     {
-        
-
-
         //status = "Ready", "Sending", "receiving"
         
         // percorrer todos os tapetes
