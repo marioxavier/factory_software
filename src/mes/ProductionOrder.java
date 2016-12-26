@@ -20,7 +20,7 @@ public class ProductionOrder
      private Date orderDate;
      private String orderStatus;
      public String blockOperation;
-     private String quantity; 
+     public String quantity; 
      
      public ProductionOrder(String datagram)
      {
