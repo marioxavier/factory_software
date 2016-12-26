@@ -36,6 +36,7 @@ public class Factory extends Thread
     private Controller controlUnit;
     private volatile boolean killThread;
     private boolean firstConveyorReady;
+    private boolean orderReady = false;
   
    
     /**
@@ -52,11 +53,14 @@ public class Factory extends Thread
             {
                 try
                 {
+                    //this.orderReady = false;
                     ProductionOrder nextOrder = this.systemManager.orderQueue.pollLast();
                     if (null != nextOrder)
                     {
-                        this.addBlock(nextOrder.originalType,nextOrder.finalType,
-                                "0.15", nextOrder.ID, nextOrder.blockOperation);
+                        //for (int producedBlocks = 0; producedBlocks < Integer.parseInt(nextOrder.quantity); producedBlocks++)                                                
+                        this.addBlock(nextOrder.originalType,nextOrder.finalType,"0.15", nextOrder.ID, nextOrder.blockOperation);
+                                    
+                        //this.orderReady = true;
                     }
                           
                 }
@@ -81,15 +85,6 @@ public class Factory extends Thread
 
             
         }
-        
-        /*
-        ler fabrica
-        atualizar a posiçao de todos os blocos
-        
-        atualizar estado de tapetes
-        
-        atualizar estado de maquinas
-        */
     }
     
     /**

@@ -207,6 +207,7 @@ public class Controller extends Thread
                         break;
                         
                     case "Enter":
+                        System.out.println("Order de enter");
                         //System.out.println("DEBUG:: Ordem de entrada.");
                          // updates factory buffer
                         this.factoryBuffer[bufferOffset] = "1";
@@ -238,7 +239,7 @@ public class Controller extends Thread
                 this.protocolToPLC.writeModbus(88, dataToWrite);
                 try
                 {
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(500);
                 }
                 catch(Exception Ex)
                 {
@@ -305,7 +306,4 @@ public class Controller extends Thread
     {
         killThread = true;
     }
-    
-    
-    
 }

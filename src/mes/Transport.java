@@ -106,17 +106,22 @@ class Transporter implements Runnable
                 // stores the value of the sensor of the first conveyor cell
                 char cellConveyorSensor = virtualFactory.getCellConveyorSensor(String.valueOf(conveyorLine)+"."+destinationArray[1]);
                 
+                
+                System.out.println(cellConveyorSensor);
+                
                 // if the block arrived to the first sensor starts production
                 if (cellConveyorSensor == '1')
                 {
-                // updates block status
-                blockToFollow.updateStatus("waiting"); 
-                
-                // start production of same block
-                virtualFactory.startProduction(blockToFollow);
-                
-                // kills the transportation Thread
-                killThread=true;
+                    // updates block status
+                    blockToFollow.updateStatus("waiting"); 
+
+                    
+                    System.out.println("DEBUG:: antes de start production");
+                    // start production of same block
+                    virtualFactory.startProduction(blockToFollow);
+
+                    // kills the transportation Thread
+                    killThread=true;
                     
                 }
 
